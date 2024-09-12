@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+// abstract
+@import "abstracts/index";
+// Component
+@import "components/index";
+// utilities
+@import "utilities/index";
+// layout
+@import "layout/index";
+// Pages
+@import "pages/index";
+// Landing
+@import "landing/index";
