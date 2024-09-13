@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Repositories\Auth\AuthContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -41,13 +43,13 @@ class AuthController extends Controller
                 'alert-type' => 'error'
             );
             return redirect()
-                        ->back()
-                        ->withErrors($validator)
-                        ->withInput();
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
 
-        if($this->repo->login($request->all())) {
+        if ($this->repo->login($request->all())) {
             return redirect()->intended('dashboard');
         }
 
@@ -58,4 +60,17 @@ class AuthController extends Controller
         return back()->with($notification)->onlyInput('username');
     }
 
+    /**
+     * Log the user out of the application.
+     */
+    public function logout(Request $request): RedirectResponse
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/');
+    }
 }
