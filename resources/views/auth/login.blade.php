@@ -118,7 +118,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="https://www.google.com"
+                            <a href="{{ route('auth.google.redirect') }}"
                                 class="w-38 h-38 flex-center rounded-6 text-google-600 bg-google-50 hover-bg-google-600 hover-text-white text-lg">
                                 <i class="ph ph-google-logo"></i>
                             </a>
