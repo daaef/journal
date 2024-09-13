@@ -5,8 +5,8 @@ use App\Http\Controllers\RegistrationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    // return view('layouts.master');
-    return redirect()->route('auth.login.get');
+     return view('welcome');
+//    return redirect()->route('auth.login.get');
 });
 
 

@@ -22,7 +22,27 @@ export default {
                     '900': '#7f350f',
                     '950': '#451805',
                 },
+                secondary: {
+                    '50': '#fef4f2',
+                    '100': '#fde7e3',
+                    '200': '#fdd2cb',
+                    '300': '#fab2a7',
+                    '400': '#f48675',
+                    '500': '#ea5f49',
+                    '600': '#d7422b',
+                    '700': '#b53420',
+                    '800': '#962e1e',
+                    '900': '#762a1e',
+                    '950': '#43140c',
+                },
+
             }
+        },
+        container: {
+            center: true,
+        },
+        fontFamily: {
+            sans: ['Montserrat', 'sans-serif'],
         },
     },
     plugins: [
