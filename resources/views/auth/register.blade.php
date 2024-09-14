@@ -1,6 +1,6 @@
 <x-auth_layout>
     <x-slot:title>
-        Login t your JAPR account
+        Register your JAPR account
     </x-slot>
     <header class="lg:grid grid-cols-2 h-screen">
         <div
@@ -52,7 +52,7 @@
                                 </div>
                             @endforeach
                         @endif
-                        @csrf
+                        @csrf 
                         <div>
                             <label for="fullname" class="block text-sm font-medium leading-6 text-gray-900">Full
                                 Name</label>

@@ -1,6 +1,6 @@
 <x-auth_layout>
     <x-slot:title>
-        Login t your JAPR account
+        Login to your JAPR account
     </x-slot>
     <header class="lg:grid grid-cols-2 min-h-screen">
         <div class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
