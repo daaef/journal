@@ -48,16 +48,32 @@ class AuthController extends Controller
                 ->withInput();
         }
 
+        $credentials = $request->validate([
+            'email' => ['required'],
+            'password' => ['required'],
+        ]);
 
-        if ($this->repo->login($request->all())) {
-            return redirect()->intended('dashboard');
+        // Auth::attempt($credentials);
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate(); // Regenerate the session ID
+            $user = Auth::user();
+            $user->last_login_at = now();
+            $user->save();
+            
+            // dd('It work');
+            $notification = array(
+                'message' => 'Logged in successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->intended('dashboard')->with($notification);
         }
+
 
         $notification = array(
             'message' => 'The provided credentials do not match our records.',
             'alert-type' => 'error'
         );
-        return back()->with($notification)->onlyInput('username');
+        return back()->with($notification)->withInput();
     }
 
     /**

@@ -2,6 +2,7 @@
 namespace App\Repositories\Registration;
 use App\Repositories\Registration\RegistrationContract;
 use App\Models\User;
+use App\Notifications\RegistrationNotification;
 use Illuminate\Support\Facades\Hash;
 
 class EloquentRegistrationRepository implements RegistrationContract {
@@ -15,6 +16,13 @@ class EloquentRegistrationRepository implements RegistrationContract {
         $user->save();
 
         $user->assignRole('Author');
+
+        $user->notify(new RegistrationNotification($user));
         return $user;
+    }
+
+    public function verifyAcount($request)
+    {
+
     }
 }
