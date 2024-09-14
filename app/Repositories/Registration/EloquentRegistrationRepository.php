@@ -20,4 +20,9 @@ class EloquentRegistrationRepository implements RegistrationContract {
         $user->notify(new RegistrationNotification($user));
         return $user;
     }
+
+    public function verifyAcount($request)
+    {
+
+    }
 }

@@ -23,21 +23,24 @@ class GoogleController extends Controller
         $googleUser = Socialite::driver('google')->stateless()->user();
         // dd($googleUser);
         $user = User::where('email', $googleUser->email)->first();
-        if(!$user)
-        {
+        if (!$user) {
             $user = User::create([
                 'fullname' => $googleUser->name,
                 'username' => $googleUser->email,
                 'email' => $googleUser->email,
-                'password' => Hash::make(rand(100000,999999)),
+                'password' => Hash::make(rand(100000, 999999)),
                 'avatar' => $googleUser->avatar,
             ]);
 
             $user->markEmailAsVerified();
+
             $user->notify(new WelcomeNotification($user));
         }
 
         Auth::login($user);
+        $user = Auth::user();
+        $user->last_login_at = now();
+        $user->save();
 
         // Send Login Notification
         $clientIP = request()->ip();
@@ -46,5 +49,4 @@ class GoogleController extends Controller
         $user->notify(new LoginNotification($user, $clientIP, $userAgent));
         return redirect()->route('dashboard');
     }
-
 }
