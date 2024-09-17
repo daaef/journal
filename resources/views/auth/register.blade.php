@@ -51,7 +51,7 @@
                                 </div>
                             @endforeach
                         @endif
-                        @csrf 
+                        @csrf
                         <div>
                             <label for="fullname" class="block text-sm font-medium leading-6 text-gray-900">Full
                                 Name</label>
@@ -182,7 +182,7 @@
                             </div> --}}
 
                             <div class="text-sm leading-6">
-                                <a href="#"
+                                <a href="{{ route('auth.forgot.get') }}"
                                     class="font-semibold text-secondary-900 hover:text-secondary-700">Forgot
                                     password?</a>
                             </div>
