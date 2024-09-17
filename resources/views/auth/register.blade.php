@@ -1,6 +1,6 @@
 <x-auth_layout>
     <x-slot:title>
-        Register for your JAPR account
+        Register your JAPR account
     </x-slot>
     <header class="lg:grid grid-cols-2 h-screen">
         <div class="flex justify-center px-4 h-full overflow-y-auto sm:px-6 lg:flex-none lg:px-20 xl:px-24">
@@ -182,7 +182,7 @@
                             </div> --}}
 
                             <div class="text-sm leading-6">
-                                <a href="#"
+                                <a href="{{ route('auth.forgot.get') }}"
                                     class="font-semibold text-secondary-900 hover:text-secondary-700">Forgot
                                     password?</a>
                             </div>

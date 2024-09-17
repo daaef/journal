@@ -26,7 +26,7 @@ $colors: (
     "800": hsl(var(--main-two-h), var(--main-two-s), calc(var(--main-two-l) - var(--main-two-l) * 0.2)),
     "900": hsl(var(--main-two-h), var(--main-two-s), calc(var(--main-two-l) - var(--main-two-l) * 0.3))
   ),
-  
+
   "gray": (
     "50": #ECF1F9,
     "100": #D5DBE7,
@@ -48,18 +48,19 @@ $colors: (
     "700": #374151,
     "800": #1F2937,
   ),
-  
+
   "primary": (
-    "50": #E4F1FF,
-    "100": #BFDCFF,
-    "200": #95C7FF,
-    "300": #6BB1FF,
-    "400": #519FFF,
-    "500": #458EFF,
-    "600": #487FFF,
-    "700": #486CEA,
-    "800": #4759D6,
-    "900": #4536B6
+      '50': '#fff8ed',
+      '100': '#fff0d4',
+      '200': '#ffdea8',
+      '300': '#ffc570',
+      '400': '#ffa137',
+      '500': '#ff830c',
+      '600': '#f06906',
+      '700': '#c74e07',
+      '800': '#9e3e0e',
+      '900': '#7f350f',
+      '950': '#451805',
   ),
 
   "danger": (
@@ -89,7 +90,7 @@ $colors: (
   ),
 
   "warning": (
-    "50": #FFF5ED,  
+    "50": #FFF5ED,
     "100": #FEF9C3,
     "200": #FEF08A,
     "300": #FDE047,
@@ -185,10 +186,10 @@ $spaces: (
   "28": #{rem(28px)},
   "30": #{rem(30px)},
   "32": #{rem(32px)},
-  "36": #{rem(36px)}, 
-  "38": #{rem(38px)}, 
-  "40": #{rem(40px)}, 
-  "44": #{rem(44px)}, 
+  "36": #{rem(36px)},
+  "38": #{rem(38px)},
+  "40": #{rem(40px)},
+  "44": #{rem(44px)},
   "48": #{rem(48px)},
   "50": #{rem(50px)},
   "54": #{rem(54px)},
@@ -223,11 +224,11 @@ $font-sizes: (
 );
 
 /* ========================= Variable Css Start ======================== */
-:root {    
+:root {
   /* Font Family Variable */
   --heading-font: "Urbanist", sans-serif;
   --body-font: "Roboto", sans-serif;
-  
+
   /* Font Size Variable Start */
   --heading-one: clamp(2rem, -0.0733rem + 6.3692vw, 2.375rem); // Min:32px - Max:38px
   --heading-two: clamp(1.75rem, 0.7133rem + 2.8846vw, 2rem); // Min: 28px - Max: 32px
@@ -238,9 +239,9 @@ $font-sizes: (
   /* Font Size End */
 
   /* template main color */
-  --main-h: 219;
-  --main-s: 94%;
-  --main-l: 61%;
+  --main-h: 25.38;
+  --main-s: 95.12%;
+  --main-l: 48.24%;
   --main: var(--main-h) var(--main-s) var(--main-l);
 
   /* template main color */
@@ -253,18 +254,18 @@ $font-sizes: (
   --white: 0 0% 100%;
   --black: 220 33% 9%;
   --light: 180 45% 94%;
-  
+
   --heading-color: var(--black);
   --body-color: var(--gray-600);
   --body-bg: var(--gray);
   --border-color: 236 13% 77%;
   --section-bg: 210 25% 97%;
-    
+
   // spacing
   @each $property, $value in $spaces {
     --size-#{$property}: #{$value};
   }
-  
+
   // Colors
   @each $color, $shades in $colors {
     @each $shade, $value in $shades {
@@ -275,6 +276,6 @@ $font-sizes: (
   // font sizes
   @each $property, $value in $font-sizes {
     --font-#{$property}: #{$value};
-  }  
+  }
 }
 /* ========================= Variable Css End ======================== */
