@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class EloquentAuthRepository implements AuthContract
 {
@@ -48,5 +49,28 @@ class EloquentAuthRepository implements AuthContract
 
         $user = User::where('email', $request->email)->first();
         return $user->notify(new ResetPasswordNotification($user, $token));
+    }
+
+    public function resetPassword($request)
+    {
+        $token = $request->token;
+        $password = $request->password;
+
+        // Find the user associated with the token
+        $user = DB::table('password_reset_tokens')->where('token', $token)->first();
+
+        if (!$user) {
+            return false; // Token not found
+        }
+
+        // Update the user's password
+        $user = User::where('email', $user->email)->first();
+        $user->password = Hash::make($password);
+        $user->save();
+
+        // Delete the token after password reset
+        DB::table('password_reset_tokens')->where('token', $token)->delete();
+
+        return true;
     }
 }

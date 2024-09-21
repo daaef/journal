@@ -69,7 +69,6 @@ class AuthController extends Controller
             return redirect()->intended('dashboard')->with($notification);
         }
 
-
         $notification = array(
             'message' => 'The provided credentials do not match our records.',
             'alert-type' => 'error'
@@ -107,14 +106,17 @@ class AuthController extends Controller
         return view('auth.forgot');
     }
 
-    public funcion resetPassword(Request $request)
+    public function resetPassword(Request $request)
     {
         if ($request->isMethod('post')) {
             $validator = Validator::make($request->all(), [
                 'token' => 'required',
                 'email' => 'required|email|exists:users,email',
                 'password' => 'required',
+                'confirm_password' => 'required|same:password',
             ]);
+
+            // dd($request->all());
 
             if ($validator->fails()) {
                 $notification = array(
@@ -130,7 +132,8 @@ class AuthController extends Controller
                 'message' => 'Password has been reset successfully.',
                 'alert-type' => 'success'
             );
-            return redirect()->route('auth.login')->with($notification);
+            return redirect()->route('auth.success_reset.get')->with($notification);
+            // return redirect()->route('auth.login')->with($notification);
         }
 
         return view('auth.reset');
@@ -142,11 +145,8 @@ class AuthController extends Controller
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
-
         return redirect('/');
     }
 }
