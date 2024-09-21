@@ -7,12 +7,12 @@
             <div class="mx-auto w-full max-w-sm lg:w-96">
                 <div>
                     <img class="h-20 w-auto" src="{{ asset('images/japr-logo.png') }}" alt="Your Company">
-                    <h2 class="mt-8 text-2xl font-bold leading-9 tracking-tight text-gray-900">Forgot your password?!</h2>
+                    <h2 class="mt-8 text-2xl font-bold leading-9 tracking-tight text-gray-900">Forgot your password?</h2>
                 </div>
 
                 <div class="mt-6">
                     <div>
-                        <form action="{{ route('auth.login.post') }}" method="post" class="space-y-6">
+                        <form action="" method="post" class="space-y-6">
 
                             @csrf
                             <div>
@@ -26,18 +26,12 @@
                                 </div>
                                 @if ($errors->has('email'))
                                     <p class="text-sm text-red-600 mt-2" id="hs-validation-name-error-helper">
-                                        {{ $errors->first('email') }}</p>
+                                        {{ $errors->first('email') }}
+                                    </p>
                                 @endif
                             </div>
 
                             <div class="flex items-center justify-between">
-                                {{-- <div class="flex items-center">
-                                    <input id="remember-me" name="remember-me" type="checkbox"
-                                           class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                                    <label for="remember-me" class="ml-3 block text-sm leading-6 text-gray-700">Remember
-                                        me</label>
-                                </div> --}}
-
                                 <div class="text-sm leading-6">
                                     <a href="{{ route('auth.login.get') }}"
                                         class="font-semibold text-secondary-900 hover:text-secondary-700">Sign in</a>
@@ -47,7 +41,7 @@
                             <div>
                                 <button type="submit"
                                     class="flex w-full justify-center rounded-md bg-secondary-900 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-secondary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                                    Send reset link
+                                    Reset my password
                                 </button>
                             </div>
                             <div>

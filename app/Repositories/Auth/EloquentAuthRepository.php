@@ -1,19 +1,52 @@
 <?php
+
 namespace App\Repositories\Auth;
+
+use App\Notifications\ResetPasswordNotification;
 use App\Repositories\Auth\AuthContract;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
-
-class EloquentAuthRepository implements AuthContract {
-    public function login($credentials) {
+class EloquentAuthRepository implements AuthContract
+{
+    public function login($credentials)
+    {
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-            dd($user);
             $user->last_login_at = now();
             $user->save();
             request()->session()->regenerate();
             return true;
         }
         return false;
+    }
+
+    public function forgotPassword($request)
+    {
+        $email = $request->email;
+        $token = Str::random(64);
+
+        // Check if a password reset token already exists for the user
+        $existingToken = DB::table('password_reset_tokens')->where('email', $email)->first();
+        if ($existingToken) {
+            // If a token exists, update it
+            DB::table('password_reset_tokens')->where('email', $email)->update([
+                'token' => $token,
+                'created_at' => Carbon::now()
+            ]);
+        } else {
+            // If no token exists, create a new one
+            DB::table('password_reset_tokens')->insert([
+                'email' => $email,
+                'token' => $token,
+                'created_at' => Carbon::now()
+            ]);
+        }
+
+        $user = User::where('email', $request->email)->first();
+        return $user->notify(new ResetPasswordNotification($user, $token));
     }
 }

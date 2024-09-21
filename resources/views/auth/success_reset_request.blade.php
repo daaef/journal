@@ -19,9 +19,15 @@
                             @csrf
 
                             <div class="text-center">
+                                <a href="" type="submit" class="text-gray-700">
+                                    Didn't receive an email? <span class="font-bold">Resend</span>
+                                </a>
+                            </div>
+
+                            <div>
                                 <a href="{{ route('auth.login.get') }}" type="submit"
-                                   class="text-gray-700">
-                                    Didn’t receive an email? <span class="font-bold">Resend</span>
+                                    class="flex w-full justify-center rounded-md bg-secondary-900 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-secondary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                                    Back to Login
                                 </a>
                             </div>
                         </form>
@@ -30,7 +36,8 @@
             </div>
         </div>
         <div class="relative hidden w-full flex-1 lg:block">
-            <img class="absolute inset-0 h-full w-full object-cover" src="{{ asset('images/success.jpg') }}" alt="">
+            <img class="absolute inset-0 h-full w-full object-cover" src="{{ asset('images/success.jpg') }}"
+                alt="">
         </div>
     </header>
 

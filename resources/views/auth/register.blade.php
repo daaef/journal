@@ -182,7 +182,7 @@
                             </div> --}}
 
                             <div class="text-sm leading-6">
-                                <a href="{{ route('auth.forgot.get') }}"
+                                <a href="{{ route('auth.forgot-password') }}"
                                     class="font-semibold text-secondary-900 hover:text-secondary-700">Forgot
                                     password?</a>
                             </div>

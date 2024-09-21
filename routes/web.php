@@ -14,6 +14,11 @@ Route::get('/', function () {
 Route::group(['prefix' => 'auth'], function () {
     Route::get('/login', [AuthController::class, 'getLogin'])->name('auth.login.get');
     Route::post('/login', [AuthController::class, 'postLogin'])->name('auth.login.post');
+
+    Route::match(['get', 'post'], '/forgot-password', [AuthController::class, 'forgotPassword'])->name('auth.forgot-password');
+
+    Route::match(['get', 'post'], '/reset-password', [AuthController::class, 'resetPassword'])->name('auth.reset-password');
+
     Route::get('/forgot', function () {
         return view('auth.forgot');
     })->name('auth.forgot.get');
@@ -49,5 +54,3 @@ Route::group(['prefix' => 'dashboard'], function () {
         return view('layouts.master');
     })->name('dashboard');
 });
-
-

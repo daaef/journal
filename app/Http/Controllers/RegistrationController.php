@@ -57,6 +57,7 @@ class RegistrationController extends Controller
                     'message' => 'Successfully Registered',
                     'alert-type' => 'success'
                 );
+                return redirect()->route('auth.success_activation.get')->with($notification);
                 return redirect()->route('auth.login.get')->with($notification);
             }
 
