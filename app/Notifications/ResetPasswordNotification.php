@@ -11,12 +11,15 @@ class ResetPasswordNotification extends Notification
 {
     use Queueable;
 
+    protected $user;
+    protected $token;
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct($user, $token)
     {
-        //
+        $this->user = $user;
+        $this->token = $token;
     }
 
     /**
@@ -34,9 +37,10 @@ class ResetPasswordNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $route = route('auth.reset-password', ['token' => $this->token, 'email' => $this->user->email]);
         return (new MailMessage)
                     ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
+                    ->action('Notification Action', url($route))
                     ->line('Thank you for using our application!');
     }
 

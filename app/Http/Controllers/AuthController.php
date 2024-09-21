@@ -82,8 +82,6 @@ class AuthController extends Controller
     {
 
         if ($request->isMethod('post')) {
-            // dd($request->all());
-
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email|exists:users,email',
             ]);
@@ -99,13 +97,43 @@ class AuthController extends Controller
             $this->repo->forgotPassword($request);
 
             $notification = array(
-                'message' => 'Password reset token has been sent to your email.',
+                'message' => 'Password reset link has been sent to your email.',
                 'alert-type' => 'success'
             );
-            return redirect()->back()->with($notification);
+            return redirect()->route('auth.success_reset_request.get')->with($notification);
+            // return redirect()->back()->with($notification);
         }
 
         return view('auth.forgot');
+    }
+
+    public funcion resetPassword(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validator = Validator::make($request->all(), [
+                'token' => 'required',
+                'email' => 'required|email|exists:users,email',
+                'password' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                $notification = array(
+                    'message' => 'The provided credentials do not match our records.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            $this->repo->resetPassword($request);
+
+            $notification = array(
+                'message' => 'Password has been reset successfully.',
+                'alert-type' => 'success'
+            );
+            return redirect()->route('auth.login')->with($notification);
+        }
+
+        return view('auth.reset');
     }
 
     /**
