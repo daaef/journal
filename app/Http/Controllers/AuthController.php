@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
@@ -59,7 +60,7 @@ class AuthController extends Controller
             $user = Auth::user();
             $user->last_login_at = now();
             $user->save();
-            
+
             // dd('It work');
             $notification = array(
                 'message' => 'Logged in successfully',
@@ -74,6 +75,37 @@ class AuthController extends Controller
             'alert-type' => 'error'
         );
         return back()->with($notification)->withInput();
+    }
+
+
+    public function forgotPassword(Request $request)
+    {
+
+        if ($request->isMethod('post')) {
+            // dd($request->all());
+
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email|exists:users,email',
+            ]);
+
+            if ($validator->fails()) {
+                $notification = array(
+                    'message' => 'The provided email does not exist in our records.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            $this->repo->forgotPassword($request);
+
+            $notification = array(
+                'message' => 'Password reset token has been sent to your email.',
+                'alert-type' => 'success'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        return view('auth.forgot');
     }
 
     /**

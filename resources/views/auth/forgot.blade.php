@@ -12,7 +12,7 @@
 
                 <div class="mt-6">
                     <div>
-                        <form action="{{ route('auth.login.post') }}" method="post" class="space-y-6">
+                        <form action="" method="post" class="space-y-6">
 
                             @csrf
                             <div>
@@ -26,18 +26,12 @@
                                 </div>
                                 @if ($errors->has('email'))
                                     <p class="text-sm text-red-600 mt-2" id="hs-validation-name-error-helper">
-                                        {{ $errors->first('email') }}</p>
+                                        {{ $errors->first('email') }}
+                                    </p>
                                 @endif
                             </div>
 
                             <div class="flex items-center justify-between">
-                                {{-- <div class="flex items-center">
-                                    <input id="remember-me" name="remember-me" type="checkbox"
-                                           class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                                    <label for="remember-me" class="ml-3 block text-sm leading-6 text-gray-700">Remember
-                                        me</label>
-                                </div> --}}
-
                                 <div class="text-sm leading-6">
                                     <a href="{{ route('auth.login.get') }}"
                                         class="font-semibold text-secondary-900 hover:text-secondary-700">Sign in</a>
