@@ -2,7 +2,7 @@
     <x-slot:title>
         Welcome to JAPR Homepage
     </x-slot>
-    <section id="hero" class="py-[100px] min-h-[100vh] pt-[200px]">
+    <section id="hero" class="py-[50px] min-h-[80vh] pt-[120px]">
         <div class="container grid grid-cols-[300px_1fr]">
             <div class="border-[1px] rounded-[15px] p-2 border-primary-900 rounded-r-none border-r-0">
                 <div class="flex justify-between items-center">
@@ -11,7 +11,7 @@
                 </div>
                 <hr class="border-b border-t-0 border-primary-900 border-[px] mb-2">
                 <!-- Tree Root -->
-                <div class="hs-accordion-treeview-root" role="tree" aria-orientation="vertical">
+                <div class="hs-accordion-treeview-root font-bold uppercase" role="tree" aria-orientation="vertical">
                     <!-- 1st Level Accordion Group -->
                     <div class="hs-accordion-group" role="group" data-hs-accordion-always-open="">
                         <!-- 1st Level Accordion -->
@@ -19,32 +19,21 @@
                              id="hs-basic-tree-heading-one">
                             <!-- 1st Level Accordion Heading -->
                             <div class="hs-accordion-heading py-0.5 flex items-center gap-x-0.5 w-full">
-                                <button
+                                <label for="history"
                                     class="hs-accordion-toggle size-6 flex justify-center items-center hover:bg-gray-100 rounded-md focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none"
                                     aria-expanded="true" aria-controls="hs-basic-tree-collapse-one">
-                                    <svg class="size-4 text-gray-800"
-                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                         fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                         stroke-linejoin="round">
-                                        <path d="M5 12h14"></path>
-                                        <path class="hs-accordion-active:hidden block" d="M12 5v14"></path>
-                                    </svg>
-                                </button>
+                                    <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+
+                                    <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                </label>
 
                                 <div
                                     class="grow hs-accordion-selectable hs-accordion-selected:bg-gray-100 px-1.5 rounded-md cursor-pointer">
                                     <div class="flex items-center gap-x-3">
-                                        <svg class="shrink-0 size-4 text-gray-500"
-                                             xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                             viewBox="0 0 24 24"
-                                             fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                             stroke-linejoin="round">
-                                            <path
-                                                d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path>
-                                        </svg>
+                                        <input id="history" type="checkbox" class="pointer-event-none">
                                         <div class="grow">
                                           <span class="text-sm text-gray-800">
-                                            assets
+                                            Arts
                                           </span>
                                         </div>
                                     </div>
@@ -65,40 +54,29 @@
                                          id="hs-basic-tree-sub-heading-one">
                                         <!-- 2nd Level Accordion Heading -->
                                         <div class="hs-accordion-heading py-0.5 flex items-center gap-x-0.5 w-full">
-                                            <button
+                                            <label for="music"
                                                 class="hs-accordion-toggle size-6 flex justify-center items-center hover:bg-gray-100 rounded-md focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none"
                                                 aria-expanded="true" aria-controls="hs-basic-tree-sub-collapse-one">
-                                                <svg class="size-4 text-gray-800"
-                                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path d="M5 12h14"></path>
-                                                    <path class="hs-accordion-active:hidden block" d="M12 5v14"></path>
-                                                </svg>
-                                            </button>
+                                                <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+
+                                                <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                            </label>
 
                                             <div
                                                 class="grow hs-accordion-selectable hs-accordion-selected:bg-gray-100 px-1.5 rounded-md cursor-pointer">
                                                 <div class="flex items-center gap-x-3">
-                                                    <svg class="shrink-0 size-4 text-gray-500"
-                                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                         stroke-width="1.5" stroke-linecap="round"
-                                                         stroke-linejoin="round">
-                                                        <path
-                                                            d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path>
-                                                    </svg>
+                                                    <input type="checkbox" id="music">
                                                     <div class="grow">
-                    <span class="text-sm text-gray-800">
-                      css
-                    </span>
+                                                        <span class="text-sm text-gray-800">
+                                                          Music
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <!-- End 2nd Level Accordion Heading -->
 
-                                        <!-- 2nd Level Collapse -->
+                                        {{--<!-- 2nd Level Collapse -->
                                         <div id="hs-basic-tree-sub-collapse-one"
                                              class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300"
                                              role="group" aria-labelledby="hs-basic-tree-sub-heading-one">
@@ -308,7 +286,7 @@
                                             </div>
                                             <!-- End 3rd Level Accordion Group -->
                                         </div>
-                                        <!-- End 2nd Level Collapse -->
+                                        <!-- End 2nd Level Collapse -->--}}
                                     </div>
                                     <!-- End 2nd Level Nested Accordion -->
                                 </div>
@@ -347,7 +325,7 @@
             </div>
         </div>
     </section>
-    <section id="most_viewed" class="py-[100px]">
+    <section id="most_viewed" class="py-[50px]">
         <div class="container">
             <div class="flex justify-between">
                 <h3 class="font-bold text-primary-500">Most Viewed</h3>
@@ -422,7 +400,7 @@
             </div>
         </div>
     </section>
-    <section id="about_japr" class="py-[100px]">
+    <section id="about_japr" class="py-[50px]">
         <div class="container">
             <h3 class="text-2xl font-bold text-primary-500 mb-4">About JAPR</h3>
             <p class="text-secondary-900">
