@@ -47,7 +47,7 @@
                             <div>
                                 <button type="submit"
                                     class="flex w-full justify-center rounded-md bg-secondary-900 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-secondary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                                    Submit
+                                    Send reset link
                                 </button>
                             </div>
                             <div>
@@ -67,8 +67,7 @@
             </div>
         </div>
         <div class="relative hidden w-full flex-1 lg:block">
-            <img class="absolute inset-0 h-full w-full object-cover" src="{{ asset('images/forgot-password.jpg') }}"
-                alt="">
+            <img class="absolute inset-0 h-full w-full object-cover" src="{{ asset('images/forgot-password.jpg') }}" alt="">
         </div>
     </header>
 
