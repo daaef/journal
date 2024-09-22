@@ -33,7 +33,6 @@ class RegistrationController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'fullname' => 'required|max:255',
             'username' => 'required|unique:users',
@@ -44,10 +43,7 @@ class RegistrationController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()
-                        ->back()
-                        ->withErrors($validator)
-                        ->withInput();
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
         try {
@@ -58,7 +54,6 @@ class RegistrationController extends Controller
                     'alert-type' => 'success'
                 );
                 return redirect()->route('auth.success_activation.get')->with($notification);
-                return redirect()->route('auth.login.get')->with($notification);
             }
 
         } catch (\Throwable $th) {
@@ -67,7 +62,6 @@ class RegistrationController extends Controller
                 'message' => 'An Error Occured',
                 'alert-type' => 'error'
             );
-
             return redirect()->back()->with($notification);
         }
     }
