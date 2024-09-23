@@ -12,7 +12,7 @@
 
                 <div class="mt-6">
                     <div>
-                        <form action="{{ route('auth.login.post') }}" method="post" class="space-y-6">
+                        <form action="" method="post" class="space-y-6">
 
                             @csrf
 

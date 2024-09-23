@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
@@ -60,15 +59,13 @@ class AuthController extends Controller
             $user = Auth::user();
             $user->last_login_at = now();
             $user->save();
-
-            // dd('It work');
+            
             $notification = array(
                 'message' => 'Logged in successfully',
                 'alert-type' => 'success'
             );
             return redirect()->intended('dashboard')->with($notification);
         }
-
 
         $notification = array(
             'message' => 'The provided credentials do not match our records.',
@@ -87,10 +84,6 @@ class AuthController extends Controller
             ]);
 
             if ($validator->fails()) {
-                $notification = array(
-                    'message' => 'The provided email does not exist in our records.',
-                    'alert-type' => 'error'
-                );
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
@@ -100,20 +93,20 @@ class AuthController extends Controller
                 'message' => 'Password reset link has been sent to your email.',
                 'alert-type' => 'success'
             );
-            return redirect()->route('auth.success_reset_request.get')->with($notification);
-            // return redirect()->back()->with($notification);
+            return redirect()->route('auth.forgot-password-success.get')->with($notification);
         }
 
         return view('auth.forgot');
     }
 
-    public funcion resetPassword(Request $request)
+    public function resetPassword(Request $request)
     {
         if ($request->isMethod('post')) {
             $validator = Validator::make($request->all(), [
                 'token' => 'required',
                 'email' => 'required|email|exists:users,email',
                 'password' => 'required',
+                'confirm_password' => 'required|same:password',
             ]);
 
             if ($validator->fails()) {
@@ -130,7 +123,7 @@ class AuthController extends Controller
                 'message' => 'Password has been reset successfully.',
                 'alert-type' => 'success'
             );
-            return redirect()->route('auth.login')->with($notification);
+            return redirect()->route('auth.success_reset.get')->with($notification);
         }
 
         return view('auth.reset');
@@ -142,11 +135,8 @@ class AuthController extends Controller
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
-
         return redirect('/');
     }
 }
