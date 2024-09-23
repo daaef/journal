@@ -20,7 +20,8 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = $this->repo->getAll();
-        return view('', compact('categories'));
+        $categories->load('subCategories.subSubCategories'); // Eager load relationships
+        return view('welcome', ['categories' => $categories]);
     }
 
     /**

@@ -4,299 +4,63 @@
     </x-slot>
     <section id="hero" class="py-[50px] min-h-[80vh] pt-[120px]">
         <div class="container grid grid-cols-[300px_1fr]">
-            <div class="border-[1px] rounded-[15px] p-2 border-primary-900 rounded-r-none border-r-0">
+            <div class="border-[1px] rounded-[15px] h-[560px] p-2 border-primary-900 rounded-r-none border-r-0">
                 <div class="flex justify-between items-center">
                     <h3 class="pb-1 text-sm">Categories Filter</h3>
                     <a href="#" class="text-xs font-light">Clear All</a>
                 </div>
                 <hr class="border-b border-t-0 border-primary-900 border-[px] mb-2">
                 <!-- Tree Root -->
-                <div class="hs-accordion-treeview-root font-bold uppercase" role="tree" aria-orientation="vertical">
-                    <!-- 1st Level Accordion Group -->
-                    <div class="hs-accordion-group" role="group" data-hs-accordion-always-open="">
-                        <!-- 1st Level Accordion -->
-                        <div class="hs-accordion active" role="treeitem" aria-expanded="true"
-                             id="hs-basic-tree-heading-one">
-                            <!-- 1st Level Accordion Heading -->
-                            <div class="hs-accordion-heading py-0.5 flex items-center gap-x-0.5 w-full">
-                                <label for="history"
-                                    class="hs-accordion-toggle size-6 flex justify-center items-center hover:bg-gray-100 rounded-md focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none"
-                                    aria-expanded="true" aria-controls="hs-basic-tree-collapse-one">
-                                    <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
-
-                                    <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                <div class="sidebar overflow-y-auto h-[516px] pb-2 w-full">
+                    <ul class="tree">
+                        @foreach ($categories as $category)
+                            <li class="category collapsed font-semibold">
+                                <span class="caret-icon">
+                                    <svg class="inline" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                         stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </span>
+                                <input type="checkbox" class="category-checkbox" id="category-{{ $category->id }}"/>
+                                <label class="category-label" for="category-{{ $category->id }}">
+                                    {{ $category->name }}
                                 </label>
-
-                                <div
-                                    class="grow hs-accordion-selectable hs-accordion-selected:bg-gray-100 px-1.5 rounded-md cursor-pointer">
-                                    <div class="flex items-center gap-x-3">
-                                        <input id="history" type="checkbox" class="pointer-event-none">
-                                        <div class="grow">
-                                          <span class="text-sm text-gray-800">
-                                            Arts
-                                          </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- End 1st Level Accordion Heading -->
-
-                            <!-- 1st Level Collapse -->
-                            <div id="hs-basic-tree-collapse-one"
-                                 class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300"
-                                 role="group" aria-labelledby="hs-basic-tree-heading-one">
-                                <!-- 2nd Level Accordion Group -->
-                                <div
-                                    class="hs-accordion-group ps-7 relative before:absolute before:top-0 before:start-3 before:w-0.5 before:-ms-px before:h-full before:bg-gray-100"
-                                    role="group" data-hs-accordion-always-open="">
-                                    <!-- 2nd Level Nested Accordion -->
-                                    <div class="hs-accordion active" role="treeitem" aria-expanded="true"
-                                         id="hs-basic-tree-sub-heading-one">
-                                        <!-- 2nd Level Accordion Heading -->
-                                        <div class="hs-accordion-heading py-0.5 flex items-center gap-x-0.5 w-full">
-                                            <label for="music"
-                                                class="hs-accordion-toggle size-6 flex justify-center items-center hover:bg-gray-100 rounded-md focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none"
-                                                aria-expanded="true" aria-controls="hs-basic-tree-sub-collapse-one">
-                                                <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
-
-                                                <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                                            </label>
-
-                                            <div
-                                                class="grow hs-accordion-selectable hs-accordion-selected:bg-gray-100 px-1.5 rounded-md cursor-pointer">
-                                                <div class="flex items-center gap-x-3">
-                                                    <input type="checkbox" id="music">
-                                                    <div class="grow">
-                                                        <span class="text-sm text-gray-800">
-                                                          Music
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- End 2nd Level Accordion Heading -->
-
-                                        {{--<!-- 2nd Level Collapse -->
-                                        <div id="hs-basic-tree-sub-collapse-one"
-                                             class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300"
-                                             role="group" aria-labelledby="hs-basic-tree-sub-heading-one">
-                                            <!-- 3rd Level Accordion Group -->
-                                            <div
-                                                class="hs-accordion-group ps-7 relative before:absolute before:top-0 before:start-3 before:w-0.5 before:-ms-px before:h-full before:bg-gray-100"
-                                                role="group" data-hs-accordion-always-open="">
-                                                <!-- 3rd Level Accordion -->
-                                                <div class="hs-accordion active" role="treeitem" aria-expanded="true"
-                                                     id="hs-basic-tree-sub-level-two-heading-one">
-                                                    <!-- 3rd Level Accordion Heading -->
-                                                    <div
-                                                        class="hs-accordion-heading py-0.5 flex items-center gap-x-0.5 w-full">
-                                                        <button
-                                                            class="hs-accordion-toggle size-6 flex justify-center items-center hover:bg-gray-100 rounded-md focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none"
-                                                            aria-expanded="true"
-                                                            aria-controls="hs-basic-tree-sub-level-two-collapse-one">
-                                                            <svg class="size-4 text-gray-800"
-                                                                 xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                 height="24"
-                                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                                 stroke-width="1.5" stroke-linecap="round"
-                                                                 stroke-linejoin="round">
-                                                                <path d="M5 12h14"></path>
-                                                                <path class="hs-accordion-active:hidden block"
-                                                                      d="M12 5v14"></path>
-                                                            </svg>
-                                                        </button>
-
-                                                        <div
-                                                            class="grow hs-accordion-selectable hs-accordion-selected:bg-gray-100 px-1.5 rounded-md cursor-pointer">
-                                                            <div class="flex items-center gap-x-3">
-                                                                <svg
-                                                                    class="shrink-0 size-4 text-gray-500"
-                                                                    xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                    height="24" viewBox="0 0 24 24" fill="none"
-                                                                    stroke="currentColor" stroke-width="1.5"
-                                                                    stroke-linecap="round" stroke-linejoin="round">
-                                                                    <path
-                                                                        d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path>
-                                                                </svg>
-                                                                <div class="grow">
-                                                                  <span class="text-sm text-gray-800">
-                                                                    main
-                                                                  </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <!-- End 3rd Level Accordion Heading -->
-
-                                                    <!-- 3rd Level Collapse -->
-                                                    <div id="hs-basic-tree-sub-level-two-collapse-one"
-                                                         class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300"
-                                                         role="group"
-                                                         aria-labelledby="hs-basic-tree-sub-level-two-heading-one">
-                                                        <div
-                                                            class="ms-3 ps-3 relative before:absolute before:top-0 before:start-0 before:w-0.5 before:-ms-px before:h-full before:bg-gray-100">
-                                                            <!-- 3rd Level Item -->
-                                                            <div
-                                                                class="hs-accordion-selectable hs-accordion-selected:bg-gray-100 px-2 rounded-md cursor-pointer"
-                                                                role="treeitem">
-                                                                <div class="flex items-center gap-x-3">
-                                                                    <svg
-                                                                        class="shrink-0 size-4 text-gray-500"
-                                                                        xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                        height="24" viewBox="0 0 24 24" fill="none"
-                                                                        stroke="currentColor" stroke-width="1.5"
-                                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                                        <path
-                                                                            d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
-                                                                        <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
-                                                                    </svg>
-                                                                    <div class="grow">
-                                                                    <span class="text-sm text-gray-800">
-                                                                      main.css
-                                                                    </span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <!-- End 3rd Level Item -->
-
-                                                            <!-- 3rd Level Item -->
-                                                            <div
-                                                                class="hs-accordion-selectable hs-accordion-selected:bg-gray-100 px-2 rounded-md cursor-pointer"
-                                                                role="treeitem">
-                                                                <div class="flex items-center gap-x-3">
-                                                                    <svg
-                                                                        class="shrink-0 size-4 text-gray-500"
-                                                                        xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                        height="24" viewBox="0 0 24 24" fill="none"
-                                                                        stroke="currentColor" stroke-width="1.5"
-                                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                                        <path
-                                                                            d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
-                                                                        <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
-                                                                    </svg>
-                                                                    <div class="grow">
-                                                                    <span class="text-sm text-gray-800">
-                                                                      docs.css
-                                                                    </span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <!-- End 3rd Level Item -->
-
-                                                            <!-- 3rd Level Item -->
-                                                            <div class="px-2">
-                                                            <span class="text-sm text-gray-800">
-                                                              README.txt
-                                                            </span>
-                                                            </div>
-                                                            <!-- End 3rd Level Item -->
-                                                        </div>
-                                                    </div>
-                                                    <!-- End 3rd Level Collapse -->
-                                                </div>
-                                                <!-- End 3rd Level Accordion -->
-
-                                                <!-- 3rd Level Accordion -->
-                                                <div class="hs-accordion" role="treeitem" aria-expanded="false"
-                                                     id="hs-basic-tree-sub-level-two-heading-two">
-                                                    <!-- 3rd Level Accordion Heading -->
-                                                    <div
-                                                        class="hs-accordion-heading py-0.5 flex items-center gap-x-0.5 w-full">
-                                                        <button
-                                                            class="hs-accordion-toggle size-6 flex justify-center items-center hover:bg-gray-100 rounded-md focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none"
-                                                            aria-expanded="false"
-                                                            aria-controls="hs-basic-tree-sub-level-two-collapse-two">
-                                                            <svg class="size-4 text-gray-800"
-                                                                 xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                 height="24"
-                                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                                 stroke-width="1.5" stroke-linecap="round"
-                                                                 stroke-linejoin="round">
-                                                                <path d="M5 12h14"></path>
-                                                                <path class="hs-accordion-active:hidden block"
-                                                                      d="M12 5v14"></path>
-                                                            </svg>
-                                                        </button>
-
-                                                        <div
-                                                            class="grow hs-accordion-selectable hs-accordion-selected:bg-gray-100 px-1.5 rounded-md cursor-pointer">
-                                                            <div class="flex items-center gap-x-3">
-                                                                <svg
-                                                                    class="shrink-0 size-4 text-gray-500"
-                                                                    xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                    height="24" viewBox="0 0 24 24" fill="none"
-                                                                    stroke="currentColor" stroke-width="1.5"
-                                                                    stroke-linecap="round" stroke-linejoin="round">
-                                                                    <path
-                                                                        d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path>
-                                                                </svg>
-                                                                <div class="grow">
-                                                                  <span class="text-sm text-gray-800">
-                                                                    tailwind
-                                                                  </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <!-- End 3rd Level Accordion Heading -->
-
-                                                    <!-- 3rd Level Collapse -->
-                                                    <div id="hs-basic-tree-sub-level-two-collapse-two"
-                                                         class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300"
-                                                         role="group"
-                                                         aria-labelledby="hs-basic-tree-sub-level-two-heading-two">
-                                                        <div
-                                                            class="ms-3 ps-3 relative before:absolute before:top-0 before:start-0 before:w-0.5 before:-ms-px before:h-full before:bg-gray-100">
-                                                            <!-- 3rd Level Item -->
-                                                            <div
-                                                                class="hs-accordion-selectable hs-accordion-selected:bg-gray-100 px-2 rounded-md cursor-pointer"
-                                                                role="treeitem">
-                                                                <div class="flex items-center gap-x-3">
-                                                                    <svg
-                                                                        class="shrink-0 size-4 text-gray-500"
-                                                                        xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                        height="24" viewBox="0 0 24 24" fill="none"
-                                                                        stroke="currentColor" stroke-width="1.5"
-                                                                        stroke-linecap="round" stroke-linejoin="round">
-                                                                        <path
-                                                                            d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
-                                                                        <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
-                                                                    </svg>
-                                                                    <div class="grow">
-                                                                    <span class="text-sm text-gray-800">
-                                                                      input.css
-                                                                    </span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <!-- End 3rd Level Item -->
-                                                        </div>
-                                                    </div>
-                                                    <!-- End 3rd Level Collapse -->
-                                                </div>
-                                                <!-- End 3rd Level Accordion -->
-
-                                                <!-- 3rd Level Heading -->
-                                                <div class="py-0.5 px-1.5" role="treeitem">
-                                                  <span class="text-sm text-gray-800">
-                                                    .gitignore
-                                                  </span>
-                                                </div>
-                                                <!-- End 3rd Level Heading -->
-                                            </div>
-                                            <!-- End 3rd Level Accordion Group -->
-                                        </div>
-                                        <!-- End 2nd Level Collapse -->--}}
-                                    </div>
-                                    <!-- End 2nd Level Nested Accordion -->
-                                </div>
-                                <!-- 2nd Level Accordion Group -->
-                            </div>
-                            <!-- End 1st Level Collapse -->
-                        </div>
-                        <!-- End 1st Level Accordion -->
-                    </div>
-                    <!-- End 1st Level Accordion Group -->
+                                @if ($category->subCategories->count() > 0)
+                                    <ul class="subcategories">
+                                        @foreach ($category->subCategories as $subCategory)
+                                            <li class="subcategory">
+                                                <span class="caret-icon">
+                                                    <svg class="inline" xmlns="http://www.w3.org/2000/svg" width="20"
+                                                         height="20" viewBox="0 0 24 24" fill="none"
+                                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                         stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                                </span>
+                                                <input type="checkbox" class="subcategory-checkbox"
+                                                       id="subcategory-{{ $subCategory->id }}"/>
+                                                <label class="subcategory-label"
+                                                       for="subcategory-{{ $subCategory->id }}">
+                                                    {{ $subCategory->name }}
+                                                </label>
+                                                @if ($subCategory->subSubCategories->count() > 0)
+                                                    <ul class="subsubcategories">
+                                                        @foreach ($subCategory->subSubCategories as $subSubCategory)
+                                                            <li class="subsubcategory">
+                                                                <input type="checkbox" class="subsubcategory-checkbox"
+                                                                       id="subsubcategory-{{ $subSubCategory->id }}"/>
+                                                                <label class="subsubcategory-label"
+                                                                       for="subsubcategory-{{ $subSubCategory->id }}">
+                                                                    {{ $subSubCategory->name }}
+                                                                </label>
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                @endif
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
                 <!-- End Tree Root -->
             </div>
@@ -452,3 +216,89 @@
         </div>
     </section>
 </x-layout>
+<script>
+    const treeElements = document.querySelectorAll('.tree .category');
+    treeElements.forEach((element, index) => {
+            element.id = `element-${index}`;
+            console.log(element)
+            elementTriggers(element)
+
+
+        const subCategories = element.querySelectorAll('.subcategories .subcategory')
+        subCategories.forEach((subCategory) => {
+            elementTriggers(subCategory)
+            const subSubCategories = subCategory.querySelectorAll('.subsubcategories .subsubcategory')
+            elementTriggers(subSubCategories)
+        })
+    });
+
+    function elementTriggers(el) {
+        if (el && typeof el.querySelector === 'function') {const checkbox = el.querySelector('[type="checkbox"]')
+            console.log('checkbox', checkbox);
+            const label = el.querySelector('label');
+            console.log('label', label);
+            const caretIcon = el.querySelector('.caret-icon');
+            console.log('caretIcon', caretIcon);
+
+            const categoryId = checkbox.id.replace('category-', ''); // Extract category ID
+
+
+            // Add event listener to the caret icon for collapsing/expanding
+            caretIcon.addEventListener('click', () => {
+                toggleCategory(el);
+                el.classList.toggle('collapsed')// Use category ID to toggle
+            });
+
+            // Add event listener to the label for collapsing/expanding
+            label.addEventListener('click', () => {
+                if (checkbox.checked) {
+                    checkAllDescendants(el);
+                } else {
+                    uncheckAllDescendants(el);
+                } // Use category ID to toggle
+            });
+
+            // Add event listener to the checkbox for "check all" functionality
+            checkbox.addEventListener('change', () => {
+                if (checkbox.checked) {
+                    checkAllDescendants(el);
+                } else {
+                    uncheckAllDescendants(el);
+                }
+            });
+        } else {
+            console.error('elementTriggers received an invalid element');
+        }
+
+    }
+
+    function toggleCategory(el) {
+        const subcategoriesElement = el.querySelector(`li`); // Select the subcategories UL
+        if (subcategoriesElement) {
+            subcategoriesElement.classList.toggle('collapsed');
+        }
+    }
+
+    function toggleSubElements(element, isChecked) {
+        const subElements = element.querySelectorAll('li');
+        subElements.forEach((subElement) => {
+            const subCheckbox = subElement.querySelector('input[type="checkbox"]');
+            subCheckbox.checked = isChecked;
+            toggleSubElements(subElement, isChecked);
+        });
+    }
+
+    function checkAllDescendants(element) {
+        const descendants = element.querySelectorAll('input[type="checkbox"]');
+        descendants.forEach((descendant) => {
+            descendant.checked = true;
+        });
+    }
+
+    function uncheckAllDescendants(element) {
+        const descendants = element.querySelectorAll('input[type="checkbox"]');
+        descendants.forEach((descendant) => {
+            descendant.checked = false;
+        });
+    }
+</script>

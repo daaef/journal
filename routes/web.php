@@ -8,10 +8,7 @@ use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SubSubCategoryController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-//    return redirect()->route('auth.login.get');
-});
+Route::get('/', [CategoryController::class, 'index'])->name('home');
 
 
 Route::group(['prefix' => 'auth'], function () {
