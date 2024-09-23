@@ -14,8 +14,7 @@ class CategoriesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create seeder for journal categories iwht name and description
-
+        // Create seeder for journal categories with name and description
         $categories = [
             'Computer Science',
             'Mathematics',

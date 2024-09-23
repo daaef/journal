@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\SubCategoryController;
+use App\Http\Controllers\SubSubCategoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -47,7 +49,7 @@ Route::group(['prefix' => 'dashboard'], function () {
         return view('layouts.master');
     })->name('dashboard');
 
-    Route::group(['prefix' => 'categoris'], function () {
+    Route::group(['prefix' => 'categories'], function () {
         Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
         Route::get('/create', [CategoryController::class, 'create'])->name('categories.create');
         Route::post('/store', [CategoryController::class, 'store'])->name('categories.store');
@@ -55,5 +57,26 @@ Route::group(['prefix' => 'dashboard'], function () {
         Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
         Route::post('/{id}/update', [CategoryController::class, 'update'])->name('categories.update');
         Route::delete('/{id}/delete', [CategoryController::class, 'destroy'])->name('categories.destroy');
+    });
+
+
+    Route::group(['prefix' => 'sub-categories'], function () {
+        Route::get('/', [SubCategoryController::class, 'index'])->name('subcategories.index');
+        Route::get('/create', [SubCategoryController::class, 'create'])->name('subcategories.create');
+        Route::post('/store', [SubCategoryController::class, 'store'])->name('subcategories.store');
+        Route::get('/{id}', [SubCategoryController::class, 'show'])->name('subcategories.show');
+        Route::get('/{id}/edit', [SubCategoryController::class, 'edit'])->name('subcategories.edit');
+        Route::post('/{id}/update', [SubCategoryController::class, 'update'])->name('subcategories.update');
+        Route::delete('/{id}/delete', [SubCategoryController::class, 'destroy'])->name('subcategories.destroy');
+    });
+
+    Route::group(['prefix' => 'sub-sub-categories'], function () {
+        Route::get('/', [SubSubCategoryController::class, 'index'])->name('sub-subcategories.index');
+        Route::get('/create', [SubSubCategoryController::class, 'create'])->name('sub-subcategories.create');
+        Route::post('/store', [SubSubCategoryController::class, 'store'])->name('sub-subcategories.store');
+        Route::get('/{id}', [SubSubCategoryController::class, 'show'])->name('sub-subcategories.show');
+        Route::get('/{id}/edit', [SubSubCategoryController::class, 'edit'])->name('sub-subcategories.edit');
+        Route::post('/{id}/update', [SubSubCategoryController::class, 'update'])->name('sub-subcategories.update');
+        Route::delete('/{id}/delete', [SubSubCategoryController::class, 'destroy'])->name('sub-subcategories.destroy');
     });
 });
