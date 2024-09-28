@@ -13,6 +13,9 @@ Route::get('/', function () {
 //    return redirect()->route('auth.login.get');
 });
 
+Route::get('/login', function () {
+    return redirect()->route('auth.login.get');
+})->name('login');
 
 Route::group(['prefix' => 'auth'], function () {
     Route::get('/login', [AuthController::class, 'getLogin'])->name('auth.login.get');
@@ -44,7 +47,7 @@ Route::group(['prefix' => 'auth'], function () {
     });
 });
 
-Route::group(['prefix' => 'dashboard'], function () {
+Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
     Route::get('/', function () {
         return view('layouts.master');
     })->name('dashboard');
@@ -56,7 +59,7 @@ Route::group(['prefix' => 'dashboard'], function () {
         Route::get('/{id}', [CategoryController::class, 'show'])->name('categories.show');
         Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
         Route::post('/{id}/update', [CategoryController::class, 'update'])->name('categories.update');
-        Route::delete('/{id}/delete', [CategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::get('/{id}/delete', [CategoryController::class, 'destroy'])->name('categories.destroy');
     });
 
 
