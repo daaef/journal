@@ -45,6 +45,13 @@ Route::group(['prefix' => 'auth'], function () {
         Route::get('redirect', [GoogleController::class, 'redirectToGoogle'])->name('auth.google.redirect');
         Route::get('callback', [GoogleController::class, 'handleGoogleCallback'])->name('auth.google.callback');
     });
+
+    //Activation
+    Route::match(['get', 'post'], '/activate-account', [RegistrationController::class, 'showActivationPage'])->name('auth.activate');
+    Route::match(['get', 'post'], '/activate', [RegistrationController::class, 'activate'])->name('auth.activate.post');
+
+    // Logout
+    Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 });
 
 Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
