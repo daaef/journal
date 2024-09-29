@@ -20,8 +20,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = $this->repo->getAll();
-        $categories->load('subCategories.subSubCategories'); // Eager load relationships
-        return view('welcome', ['categories' => $categories]);
+        return view('categories.index', compact('categories'));
     }
 
     /**
@@ -29,7 +28,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('');
+        return view('categories.create');
     }
 
     /**
@@ -38,8 +37,7 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required',
-            'password' => 'required',
+            'name' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -47,7 +45,12 @@ class CategoryController extends Controller
         }
 
         $this->repo->create($request);
-        return redirect()->route('categories.index');
+
+        $notification = array(
+            'message' => 'Category Created successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('categories.index')->with($notification);
     }
 
     /**
@@ -64,8 +67,8 @@ class CategoryController extends Controller
      */
     public function edit(string $id)
     {
-        $category = $this->repo->findById($id);
-        return view('', compact('category'));
+        $category = $this->repo->findByUUID($id);
+        return view('categories.edit', compact('category'));
     }
 
     /**
@@ -73,11 +76,22 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $this->validate($request, [
-            'name' => 'required'
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
         $this->repo->update($request, $id);
-        return redirect()->route('categories.index');
+
+        $notification = array(
+            'message' => 'Category updated successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('categories.index')->with($notification);
     }
 
     /**

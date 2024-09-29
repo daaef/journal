@@ -8,13 +8,14 @@ use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SubSubCategoryController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [CategoryController::class, 'index'])->name('home');
-Route::get('/journals', function () {
-    return view('journals');
-})->name('journals.index');
-Route::get('/interests', function () {
-    return view('interests');
-})->name('interests.index');
+Route::get('/', function () {
+    return view('welcome');
+//    return redirect()->route('auth.login.get');
+});
+
+Route::get('/login', function () {
+    return redirect()->route('auth.login.get');
+})->name('login');
 
 Route::group(['prefix' => 'auth'], function () {
     Route::get('/login', [AuthController::class, 'getLogin'])->name('auth.login.get');
@@ -44,9 +45,16 @@ Route::group(['prefix' => 'auth'], function () {
         Route::get('redirect', [GoogleController::class, 'redirectToGoogle'])->name('auth.google.redirect');
         Route::get('callback', [GoogleController::class, 'handleGoogleCallback'])->name('auth.google.callback');
     });
+
+    //Activation
+    Route::match(['get', 'post'], '/activate-account', [RegistrationController::class, 'showActivationPage'])->name('auth.activate');
+    Route::match(['get', 'post'], '/activate', [RegistrationController::class, 'activate'])->name('auth.activate.post');
+
+    // Logout
+    Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 });
 
-Route::group(['prefix' => 'dashboard'], function () {
+Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
     Route::get('/', function () {
         return view('layouts.master');
     })->name('dashboard');
@@ -58,7 +66,7 @@ Route::group(['prefix' => 'dashboard'], function () {
         Route::get('/{id}', [CategoryController::class, 'show'])->name('categories.show');
         Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
         Route::post('/{id}/update', [CategoryController::class, 'update'])->name('categories.update');
-        Route::delete('/{id}/delete', [CategoryController::class, 'destroy'])->name('categories.destroy');
+        Route::get('/{id}/delete', [CategoryController::class, 'destroy'])->name('categories.destroy');
     });
 
 

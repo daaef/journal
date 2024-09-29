@@ -66,5 +66,46 @@ class RegistrationController extends Controller
         }
     }
 
+    //show actination page
+    public function showActivationPage()
+    {
+        return view('auth.activate');
+    }
+
+
+    // Activate Account
+    public function activate(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            // 'id' => 'required',
+            'code' => 'required',
+        ]);
+
+        // dd($request->all());
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            $user = $this->repo->verifyAcount($request);
+            if($user) {
+                $notification = array(
+                    'message' => 'Account Activated Successfully',
+                    'alert-type' => 'success'
+                );
+                return redirect()->route('auth.login.get')->with($notification);
+            }
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            $notification = array(
+                'message' => 'An Error Occured',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+    }
 
 }

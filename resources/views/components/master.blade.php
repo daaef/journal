@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Dashboard</title>
+    <title>{{ $title ?? 'JAPR Dashboard' }}</title>
+    <link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}">
     <link rel="shortcut icon" href="{{ asset('assets/images/logo/favicon.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/file-upload.css') }}">
@@ -17,6 +18,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/apexcharts.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/calendar.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/jquery-jvectormap-2.0.5.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" rel="stylesheet">
     @vite(['resources/js/app.js', 'resources/sass/main.scss'])
 </head>
 
@@ -388,210 +390,12 @@
 
 
         <div class="dashboard-body">
-            <div class="row gy-4">
-                <div class="col-lg-9">
-                    <!-- Grettings Box Start -->
-                    <div
-                        class="grettings-box position-relative rounded-16 bg-[#ff830c] overflow-hidden gap-16 flex-wrap z-1">
-                        <img src="assets/images/bg/grettings-pattern.png" alt=""
-                            class="position-absolute inset-block-start-0 inset-inline-start-0 z-n1 w-100 h-100 opacity-6">
-                        <div class="row gy-4">
-                            <div class="col-sm-7">
-                                <div class="grettings-box__content py-xl-4">
-                                    <h2 class="text-white mb-0">Hello! </h2>
-                                    <p class="text-15 fw-light mt-4 text-white">Let’s create something today</p>
-{{--                                    <p class="text-lg fw-light mt-24 text-white">Set your plan and growth with--}}
-{{--                                        community</p>--}}
-                                </div>
-                            </div>
-                            <div class="col-sm-5 d-sm-block d-none">
-                                <div class="text-center h-100 d-flex justify-content-center align-items-end ">
-                                    <img src="assets/images/thumbs/gretting-img.png" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Grettings Box End -->
-                    <!-- Table End -->
-
-                </div>
-                <div class="col-lg-3">
-
-                    <!-- Calendar Start -->
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="calendar">
-                                <div class="calendar__header">
-                                    <button type="button" class="calendar__arrow left"><i
-                                            class="ph ph-caret-left"></i></button>
-                                    <p class="display h6 mb-0">""</p>
-                                    <button type="button" class="calendar__arrow right"><i
-                                            class="ph ph-caret-right"></i></button>
-                                </div>
-
-                                <div class="calendar__week week">
-                                    <div class="calendar__week-text">Su</div>
-                                    <div class="calendar__week-text">Mo</div>
-                                    <div class="calendar__week-text">Tu</div>
-                                    <div class="calendar__week-text">We</div>
-                                    <div class="calendar__week-text">Th</div>
-                                    <div class="calendar__week-text">Fr</div>
-                                    <div class="calendar__week-text">Sa</div>
-                                </div>
-                                <div class="days"></div>
-                            </div>
-
-                            <!-- Events start -->
-                            <div class="">
-                                <div class="mt-24 mb-24">
-                                    <div class="flex-align mb-8 gap-16">
-                                        <span class="text-sm text-gray-300 flex-shrink-0">Today</span>
-                                        <span class="border border-gray-50 border-dashed flex-grow-1"></span>
-                                    </div>
-                                    <div class="event-item bg-gray-50 rounded-8 p-16">
-                                        <div class=" flex-between gap-4">
-                                            <div class="flex-align gap-8">
-                                                <span
-                                                    class="icon d-flex w-44 h-44 bg-white rounded-8 flex-center text-2xl"><i
-                                                        class="ph ph-squares-four"></i></span>
-                                                <div class="">
-                                                    <h6 class="mb-2">Element of design test</h6>
-                                                    <span class="">10:00 - 11:00 AM</span>
-                                                </div>
-                                            </div>
-                                            <div class="dropdown flex-shrink-0">
-                                                <button class="text-gray-400 text-xl d-flex rounded-4" type="button"
-                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="ph-fill ph-dots-three-outline"></i>
-                                                </button>
-                                                <div
-                                                    class="dropdown-menu dropdown-menu--md border-0 bg-transparent p-0">
-                                                    <div
-                                                        class="card border border-gray-100 rounded-12 box-shadow-custom">
-                                                        <div class="card-body p-12">
-                                                            <div class="max-h-200 overflow-y-auto scroll-sm pe-8">
-                                                                <ul>
-                                                                    <li class="mb-0">
-                                                                        <button type="button"
-                                                                            class="delete-btn py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 w-100 rounded-8 fw-normal text-xs d-block text-start hover-text-gray-600">
-                                                                            <span
-                                                                                class="text d-flex align-items-center gap-8">
-                                                                                <i class="ph ph-trash"></i>
-                                                                                Remove</span>
-                                                                        </button>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="">
-                                <div class="mt-24">
-                                    <div class="flex-align mb-8 gap-16">
-                                        <span class="text-sm text-gray-300 flex-shrink-0">Sat, Aug 24</span>
-                                        <span class="border border-gray-50 border-dashed flex-grow-1"></span>
-                                    </div>
-                                    <div class="event-item bg-gray-50 rounded-8 p-16">
-                                        <div class=" flex-between gap-4">
-                                            <div class="flex-align gap-8">
-                                                <span
-                                                    class="icon d-flex w-44 h-44 bg-white rounded-8 flex-center text-2xl"><i
-                                                        class="ph ph-magic-wand"></i></span>
-                                                <div class="">
-                                                    <h6 class="mb-2">Design Principles test</h6>
-                                                    <span class="">10:00 - 11:00 AM</span>
-                                                </div>
-                                            </div>
-                                            <div class="dropdown flex-shrink-0">
-                                                <button class="text-gray-400 text-xl d-flex rounded-4" type="button"
-                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="ph-fill ph-dots-three-outline"></i>
-                                                </button>
-                                                <div
-                                                    class="dropdown-menu dropdown-menu--md border-0 bg-transparent p-0">
-                                                    <div
-                                                        class="card border border-gray-100 rounded-12 box-shadow-custom">
-                                                        <div class="card-body p-12">
-                                                            <div class="max-h-200 overflow-y-auto scroll-sm pe-8">
-                                                                <ul>
-                                                                    <li class="mb-0">
-                                                                        <button type="button"
-                                                                            class="delete-btn py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 w-100 rounded-8 fw-normal text-xs d-block text-start hover-text-gray-600">
-                                                                            <span
-                                                                                class="text d-flex align-items-center gap-8">
-                                                                                <i class="ph ph-trash"></i>
-                                                                                Remove</span>
-                                                                        </button>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="event-item bg-gray-50 rounded-8 p-16 mt-16">
-                                        <div class=" flex-between gap-4">
-                                            <div class="flex-align gap-8">
-                                                <span
-                                                    class="icon d-flex w-44 h-44 bg-white rounded-8 flex-center text-2xl"><i
-                                                        class="ph ph-briefcase"></i></span>
-                                                <div class="">
-                                                    <h6 class="mb-2">Prepare Job Interview</h6>
-                                                    <span class="">09:00 - 10:00 AM</span>
-                                                </div>
-                                            </div>
-                                            <div class="dropdown flex-shrink-0">
-                                                <button class="text-gray-400 text-xl d-flex rounded-4" type="button"
-                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="ph-fill ph-dots-three-outline"></i>
-                                                </button>
-                                                <div
-                                                    class="dropdown-menu dropdown-menu--md border-0 bg-transparent p-0">
-                                                    <div
-                                                        class="card border border-gray-100 rounded-12 box-shadow-custom">
-                                                        <div class="card-body p-12">
-                                                            <div class="max-h-200 overflow-y-auto scroll-sm pe-8">
-                                                                <ul>
-                                                                    <li class="mb-0">
-                                                                        <button type="button"
-                                                                            class="delete-btn py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 w-100 rounded-8 fw-normal text-xs d-block text-start hover-text-gray-600">
-                                                                            <span
-                                                                                class="text d-flex align-items-center gap-8">
-                                                                                <i class="ph ph-trash"></i>
-                                                                                Remove</span>
-                                                                        </button>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <a href="event.html" class="btn btn-main w-100 mt-24">All Events</a>
-                            </div>
-                            <!-- Events End -->
-
-                        </div>
-                    </div>
-                    <!-- Calendar End -->
-                </div>
-            </div>
+            {{ $slot }}
         </div>
 
         <div class="dashboard-footer">
             <div class="flex-between flex-wrap gap-16">
-                <p class="text-gray-300 text-13 fw-normal"> &copy; Copyright Edmate 2024, All Right Reserverd</p>
+                <p class="text-gray-300 text-13 fw-normal"> &copy; Copyright {{ date('Y') }}, All Right Reserverd</p>
                 <div class="flex-align flex-wrap gap-16">
                     <a href="#"
                         class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">License</a>
@@ -623,8 +427,45 @@
     <script src="{{ asset('assets/js/jquery-jvectormap-world-mill-en.js') }}"></script>
     <!-- main js -->
     <script src="{{ asset('assets/js/main.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script>
+        @if (Session::has('message'))
+        const type = "{{ Session::get('alert-type', 'info') }}";
+        switch (type) {
+            case 'info':
 
+                toastr.options.timeOut = 10000;
+                toastr.info("{{ Session::get('message') }}");
+                var audio = new Audio('audio.mp3');
+                audio.play();
+                break;
+            case 'success':
 
+                toastr.options.timeOut = 10000;
+                toastr.success("{{ Session::get('message') }}");
+                var audio = new Audio('audio.mp3');
+                audio.play();
+
+                break;
+            case 'warning':
+
+                toastr.options.timeOut = 10000;
+                toastr.warning("{{ Session::get('message') }}");
+                var audio = new Audio('audio.mp3');
+                audio.play();
+
+                break;
+            case 'error':
+
+                toastr.options.timeOut = 10000;
+                toastr.error("{{ Session::get('message') }}");
+                var audio = new Audio('audio.mp3');
+                audio.play();
+
+                break;
+        }
+        @endif
+    </script>
 
     <script>
         // ============================ Donut Chart Start ==========================
