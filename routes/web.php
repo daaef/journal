@@ -9,7 +9,12 @@ use App\Http\Controllers\SubSubCategoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [CategoryController::class, 'index'])->name('home');
-
+Route::get('/journals', function () {
+    return view('journals');
+})->name('journals.index');
+Route::get('/interests', function () {
+    return view('interests');
+})->name('interests.index');
 
 Route::group(['prefix' => 'auth'], function () {
     Route::get('/login', [AuthController::class, 'getLogin'])->name('auth.login.get');

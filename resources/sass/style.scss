@@ -6,9 +6,7 @@
 }
 
 .sidebar {
-    // Sidebar styles
     padding: 10px;
-    background-color: #f5f5f5;
 }
 
 .tree {
@@ -63,4 +61,10 @@
 
 .caret-icon svg {
     transform: rotate(90deg);
+}
+.masonry-item {/* Space between items */
+    &.active {
+        background: #762a1e;
+        color: #FAFAFA;
+    }
 }

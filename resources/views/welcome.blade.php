@@ -7,11 +7,11 @@
             <div class="border-[1px] rounded-[15px] h-[560px] p-2 border-primary-900 rounded-r-none border-r-0">
                 <div class="flex justify-between items-center">
                     <h3 class="pb-1 text-sm">Categories Filter</h3>
-                    <a href="#" class="text-xs font-light">Clear All</a>
+{{--                    <a href="#" class="text-xs font-light">Clear All</a>--}}
                 </div>
                 <hr class="border-b border-t-0 border-primary-900 border-[px] mb-2">
                 <!-- Tree Root -->
-                <div class="sidebar overflow-y-auto h-[516px] pb-2 w-full">
+                <div class="sidebar overflow-y-auto h-[500px] pb-2 w-full">
                     <ul class="tree">
                         @foreach ($categories as $category)
                             <li class="category collapsed font-semibold">
