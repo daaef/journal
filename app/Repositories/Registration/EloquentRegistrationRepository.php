@@ -25,7 +25,8 @@ class EloquentRegistrationRepository implements RegistrationContract {
 
         // Assign Role
         $user->assignRole('Author');
-        $code = random_int(100000, 999999);
+        $code = generateCode(6);
+
         // Create Activation Record
         $user->activation()->create([
             'email' => $user->email,

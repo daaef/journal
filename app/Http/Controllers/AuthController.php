@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activation;
+use App\Models\User;
 use App\Repositories\Auth\AuthContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\RegistrationNotification;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -57,9 +61,43 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate(); // Regenerate the session ID
             $user = Auth::user();
+
+            $loggedUser = User::find($user->id);
+            $code = random_int(100000, 999999);
+
+            // Check if user is verified
+            if (!$loggedUser->hasVerifiedEmail()) {
+
+                // Get user activation record
+                $activation = Activation::where('email', $loggedUser->email)->first();
+                // Check if activation record exists
+                if ($activation) {
+                    $loggedUser->activation()->update([
+                        'email' => $loggedUser->email,
+                        'code' => $code,
+                        'uuid' => Str::uuid(),
+                    ]);
+                } else {
+                    // Create activation record
+                    $loggedUser->activation()->create([
+                        'email' => $loggedUser->email,
+                        'code' => $code,
+                        'uuid' => Str::uuid(),
+                    ]);
+                }
+
+                $loggedUser->notify(new RegistrationNotification($user));
+
+                $notification = array(
+                    'message' => 'Your account is not activated. Please check your email for activation link.',
+                    'alert-type' => 'error'
+                );
+                return back()->with($notification)->withInput();
+            }
+
             $user->last_login_at = now();
             $user->save();
-            
+
             $notification = array(
                 'message' => 'Logged in successfully',
                 'alert-type' => 'success'

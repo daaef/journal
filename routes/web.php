@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\SubCategoryController;
@@ -55,6 +56,9 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
+
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    
     Route::get('/', function () {
         return view('layouts.master');
     })->name('dashboard');

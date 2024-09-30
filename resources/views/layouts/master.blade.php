@@ -323,13 +323,13 @@
                                     <img src="assets/images/thumbs/user-img.png" alt=""
                                         class="w-54 h-54 rounded-circle">
                                     <div class="">
-                                        <h4 class="mb-0">Michel John</h4>
-                                        <p class="fw-medium text-13 text-gray-200">examplemail@mail.com</p>
+                                        <h4 class="mb-0">{{ auth()->user()->fullname }}</h4>
+                                        <p class="fw-medium text-13 text-gray-200"></p>
                                     </div>
                                 </div>
                                 <ul class="max-h-270 overflow-y-auto scroll-sm pe-4">
                                     <li class="mb-4">
-                                        <a href="setting.html"
+                                        <a href=""
                                             class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
                                             <span class="text-2xl text-primary-600 d-flex"><i
                                                     class="ph ph-gear"></i></span>
