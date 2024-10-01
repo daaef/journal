@@ -106,6 +106,10 @@ class CategoryController extends Controller
     public function destroy(string $id)
     {
         $this->repo->delete($id);
-        return redirect()->route('categories.index');
+        $notification = array(
+            'message' => 'Deleted successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('categories.index')->with($notification);
     }
 }

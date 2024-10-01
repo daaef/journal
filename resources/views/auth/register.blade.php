@@ -1,4 +1,4 @@
-<x-auth_layout>
+<x-layouts.auth_layout>
     <x-slot:title>
         Register your JAPR account
     </x-slot>
@@ -215,4 +215,4 @@
         </div>
     </header>
 
-</x-auth_layout>
+</x-layouts.auth_layout>

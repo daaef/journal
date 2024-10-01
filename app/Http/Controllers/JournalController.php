@@ -2,16 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\Journal\JournalContract;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class JournalController extends Controller
 {
+
+    protected $repo;
+    public function __construct(JournalContract $journalContract)
+    {
+        $this->repo = $journalContract;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $journals = $this->repo->getAll();
+        return view('journals.index', compact('journals'));
     }
 
     /**
@@ -19,7 +29,7 @@ class JournalController extends Controller
      */
     public function create()
     {
-        //
+        return view('journals.create');
     }
 
     /**
@@ -27,7 +37,21 @@ class JournalController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $this->repo->create($request);
+
+        $notification = array(
+            'message' => 'Journal Created successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('journals.index')->with($notification);
     }
 
     /**
@@ -35,7 +59,8 @@ class JournalController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $journal = $this->repo->findById($id);
+        return view('journals.show', compact('journal'));
     }
 
     /**
@@ -43,7 +68,8 @@ class JournalController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $journal = $this->repo->findById($id);
+        return view('journals.edit', compact('journal'));
     }
 
     /**
@@ -51,7 +77,21 @@ class JournalController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $this->repo->update($request, $id);
+
+        $notification = array(
+            'message' => 'Journal Updated successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('journals.index')->with($notification);
     }
 
     /**

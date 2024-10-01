@@ -1,4 +1,4 @@
-<x-auth_layout>
+<x-layouts.auth_layout>
     <x-slot:title>
         Create a new JAPR account password password
     </x-slot>
@@ -66,4 +66,4 @@
         </div>
     </header>
 
-</x-auth_layout>
+</x-layouts.auth_layout>

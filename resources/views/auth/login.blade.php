@@ -1,4 +1,4 @@
-<x-auth_layout>
+<x-layouts.auth_layout>
     <x-slot:title>
         Login to your JAPR account
     </x-slot>
@@ -44,7 +44,6 @@
                 <div class="mt-6">
                     <div>
                         <form action="{{ route('auth.login.post') }}" method="post" class="space-y-6">
-
                             @csrf
                             <div>
                                 <label for="username"
@@ -143,4 +142,4 @@
         </div>
     </header>
 
-</x-auth_layout>
+</x-layouts.auth_layout>

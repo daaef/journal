@@ -12,11 +12,11 @@ class Category extends Model
     use HasFactory;
 
     public  function subcategories(): HasMany {
-        return $this->hasMany(Subcategory::class);
+        return $this->hasMany(SubCategory::class);
     }
 
     public function subsubcategories(): HasManyThrough
     {
-        return $this->hasManyThrough(Subsubcategory::class, Category::class);
+        return $this->hasManyThrough(SubSubCategory::class, Category::class);
     }
 }

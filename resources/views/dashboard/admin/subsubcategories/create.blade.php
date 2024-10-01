@@ -5,14 +5,14 @@
             <ul class="flex-align gap-4">
                 <li><a href="index.html" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
                 <li> <span class="text-gray-500 fw-normal d-flex"><i class="ph ph-caret-right"></i></span> </li>
-                <li><span class="text-main-600 fw-normal text-15">Editing - {{ $category->name }}</span></li>
+                <li><span class="text-main-600 fw-normal text-15">Create a SubCategory</span></li>
             </ul>
         </div>
     </div>
     <div class="card">
         <div class="card-header border-bottom border-gray-100 flex-between flex-wrap gap-8">
             <div class="flex-align gap-8 flex-wrap">
-                <h5 class="mb-0">Journal Category</h5>
+                <h5 class="mb-0">Journal Subcategory</h5>
                 <button type="button" class="text-main-600 text-md d-flex" data-bs-toggle="tooltip"
                     data-bs-placement="top" data-bs-title="Journal Category">
                     <i class="ph-fill ph-question"></i>
@@ -21,19 +21,19 @@
         </div>
 
         <div class="card-body">
-            <form action="{{ route('categories.update', $category->uuid) }}" method="post">
+            <form action="{{ route('subcategories.store') }}" method="post">
                 @csrf
 
                 <div class="mb-20">
-                    <label for="name" class="h6 mb-8 fw-semibold">Category Name</label>
+                    <label for="name" class="h6 mb-8 fw-semibold">Name</label>
                     <input type="text" class="form-control fw-medium text-15" id="name" name="name"
-                        value="{{ $category->name }}" placeholder="Journal Name">
+                        value="{{ old('name') }}" placeholder="Subcategory Name">
 
                 </div>
                 <div class="mb-20">
-                    <label for="description" class="h6 mb-8 fw-semibold">Category Description</label>
+                    <label for="description" class="h6 mb-8 fw-semibold">Description</label>
                     <textarea class="form-control fw-medium text-15" id="description" name="description" placeholder="Journal Description"
-                        rows="5">{{ $category->description }}</textarea>
+                        rows="5">{{ old('description') }}</textarea>
 
                 </div>
 
@@ -42,7 +42,7 @@
                     <div class="select-has-ico">
                         <select class="form-control form-select rounded-8 bg-gray-50 border border-main-200 py-19" id="active_status" name="active_status">
                             <option value="" disabled>Select status</option>
-                            <option value="1">Enable</option>
+                            <option value="1" selected>Enable</option>
                             <option value="0">Disable</option>
                         </select>
                     </div>

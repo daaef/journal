@@ -5,10 +5,10 @@
 
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-bold leading-9 text-gray-900">Categories</h2>
-            <a href="{{ route('categories.create') }}"
+            <h2 class="text-2xl font-bold leading-9 text-gray-900">Sub Subcategories</h2>
+            <a href="{{ route('sub-subcategories.index') }}"
                 class="flex items-center justify-center px-3 py-1.5 bg-primary-600 text-white font-semibold leading-6 rounded-md shadow-sm hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                Create Category
+                Create a Sub SubCategory
             </a>
         </div>
 
@@ -27,7 +27,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($categories as $category)
+                        @foreach ($subsubcategories as $category)
                             <tr>
                                 <td>
                                     <span class="h6 mb-0 fw-medium text-gray-300">
@@ -89,6 +89,5 @@
             </div>
         </div>
     </div>
-
 
 </x-layouts.admin_layout>

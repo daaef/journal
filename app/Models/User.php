@@ -32,6 +32,16 @@ class User extends Authenticatable
         return $this->hasOne(Activation::class);
     }
 
+    public function journals()
+    {
+        return $this->hasMany(Journal::class);
+    }
+
+    public function hasVerifiedEmail(): bool
+    {
+        return $this->email_verified_at !== null;
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

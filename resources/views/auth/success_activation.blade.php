@@ -1,4 +1,4 @@
-<x-auth_layout>
+<x-layouts.auth_layout>
     <x-slot:title>
         Successfully registered JAPR account
     </x-slot>
@@ -45,4 +45,4 @@
             <img class="absolute inset-0 h-full w-full object-cover" src="{{ asset('images/success.jpg') }}" alt="">
         </div>
     </header>
-</x-auth_layout>
+</x-layouts.auth_layout>

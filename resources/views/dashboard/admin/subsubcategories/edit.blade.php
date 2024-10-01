@@ -40,7 +40,8 @@
                 <div class="mb-20">
                     <label for="active_status" class="h6 mb-8 fw-semibold">Active Status</label>
                     <div class="select-has-ico">
-                        <select class="form-control form-select rounded-8 bg-gray-50 border border-main-200 py-19" id="active_status" name="active_status">
+                        <select class="form-control form-select rounded-8 bg-gray-50 border border-main-200 py-19"
+                            id="active_status" name="active_status">
                             <option value="" disabled>Select status</option>
                             <option value="1">Enable</option>
                             <option value="0">Disable</option>
@@ -49,12 +50,12 @@
                 </div>
 
 
-            <div class="flex-align justify-content-end gap-8">
-                <a href="{{ url()->previous() }}" class="btn btn-outline-main rounded-pill py-9">Back</a>
-                <button type="submit" class="btn btn-main rounded-pill py-9">Continue</button>
+                <div class="flex-align justify-content-end gap-8">
+                    <a href="{{ url()->previous() }}" class="btn btn-outline-main rounded-pill py-9">Back</a>
+                    <button type="submit" class="btn btn-main rounded-pill py-9">Continue</button>
 
-            </div>
-        </form>
+                </div>
+            </form>
         </div>
     </div>
 </x-layouts.admin_layout>

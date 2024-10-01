@@ -1,4 +1,4 @@
-<x-dash_layout>
+<x-layouts.dash_layout>
     <x-slot:title>
         Welcome to your Dashboard
     </x-slot:title>
@@ -9,7 +9,7 @@
         <div class="row gy-4">
             <div class="col-sm-7">
                 <div class="grettings-box__content py-xl-4">
-                    <h2 class="text-white mb-0">Hello! </h2>
+                    <h2 class="text-white mb-0">Hello {{ Str::words(auth()->user()->fullname, 1, '') }}! </h2>
                     <p class="text-15 fw-light mt-4 text-white">Let’s create something today</p>
                 </div>
             </div>
@@ -20,4 +20,4 @@
             </div>
         </div>
     </div>
-</x-dash_layout>
+</x-layouts.dash_layout>
