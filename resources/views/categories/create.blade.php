@@ -1,4 +1,4 @@
-<x-master>
+<x-layouts.admin_layout>
     <div class="breadcrumb-with-buttons mb-24 flex-between flex-wrap gap-8">
         <!-- Breadcrumb Start -->
         <div class="breadcrumb mb-24">
@@ -57,4 +57,4 @@
         </form>
         </div>
     </div>
-</x-master>
+</x-layouts.admin_layout>

@@ -1,18 +1,19 @@
 <?php
 
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EditorDashboardController;
 use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SubSubCategoryController;
+use App\Http\Controllers\JournalController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-//    return redirect()->route('auth.login.get');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/login', function () {
     return redirect()->route('auth.login.get');
@@ -55,13 +56,10 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 });
 
-Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
 
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    
-    Route::get('/', function () {
-        return view('layouts.master');
-    })->name('dashboard');
+// Admin Routes
+Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::group(['prefix' => 'categories'], function () {
         Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
@@ -92,5 +90,33 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
         Route::get('/{id}/edit', [SubSubCategoryController::class, 'edit'])->name('sub-subcategories.edit');
         Route::post('/{id}/update', [SubSubCategoryController::class, 'update'])->name('sub-subcategories.update');
         Route::delete('/{id}/delete', [SubSubCategoryController::class, 'destroy'])->name('sub-subcategories.destroy');
+    });
+});
+
+//Editor Routes
+Route::group(['prefix' => 'editor', 'middleware' => 'auth'], function () {
+    Route::get('/', [EditorDashboardController::class, 'index'])->name('editor.dashboard');
+});
+
+Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
+
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Route::get('/', function () {
+    //     return view('layouts.master');
+    // })->name('dashboard');
+
+
+
+
+    // Journal Routes
+    Route::group(['prefix' => 'journals'], function () {
+        Route::get('/', [JournalController::class, 'index'])->name('journals.index');
+        Route::get('/create', [JournalController::class, 'create'])->name('journals.create');
+        Route::post('/store', [JournalController::class, 'store'])->name('journals.store');
+        Route::get('/{id}', [JournalController::class, 'show'])->name('journals.show');
+        Route::get('/{id}/edit', [JournalController::class, 'edit'])->name('journals.edit');
+        Route::post('/{id}/update', [JournalController::class, 'update'])->name('journals.update');
+        Route::delete('/{id}/delete', [JournalController::class, 'destroy'])->name('journals.destroy');
     });
 });

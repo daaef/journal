@@ -6,6 +6,7 @@ use App\Repositories\Registration\RegistrationContract;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class RegistrationController extends Controller
 {
@@ -23,6 +24,9 @@ class RegistrationController extends Controller
      */
     public function getRegister()
     {
+        if (Auth::check()) {
+            return redirect()->intended('dashboard');
+        }
         return view('auth.register');
     }
 

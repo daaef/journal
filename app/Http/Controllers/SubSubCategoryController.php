@@ -2,16 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\SubSubCategory\SubSubCategoryContract;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class SubSubCategoryController extends Controller
 {
+
+    protected $repo;
+    public function __construct(SubSubCategoryContract $subSubCategoryContract)
+    {
+        $this->repo = $subSubCategoryContract;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $subsubcategories = $this->repo->getAll();
+        return view('dashboard.admin.subsubcategories.index', compact('subsubcategories'));
     }
 
     /**
@@ -19,7 +29,7 @@ class SubSubCategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('dashboard.admin.subsubcategories.create');
     }
 
     /**
@@ -27,7 +37,21 @@ class SubSubCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $this->repo->create($request);
+
+        $notification = array(
+            'message' => 'Created successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('sub-subcategories.index')->with($notification);
     }
 
     /**
@@ -43,7 +67,8 @@ class SubSubCategoryController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $category = $this->repo->findByUUID($id);
+        return view('dashboard.admin.subcategories.edit', compact('category'));
     }
 
     /**
@@ -51,7 +76,22 @@ class SubSubCategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $this->repo->update($request, $id);
+
+        $notification = array(
+            'message' => 'Category updated successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('sub-subcategories.index')->with($notification);
     }
 
     /**
@@ -59,6 +99,11 @@ class SubSubCategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $this->repo->delete($id);
+        $notification = array(
+            'message' => 'Deleted successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('sub-subcategories.index')->with($notification);
     }
 }

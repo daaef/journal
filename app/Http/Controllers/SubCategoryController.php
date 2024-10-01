@@ -2,16 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\SubCategory\SubCategoryContract;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class SubCategoryController extends Controller
 {
+
+    protected $repo;
+    public function __construct(SubCategoryContract $subCategoryContract)
+    {
+        $this->repo = $subCategoryContract;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $subcategories = $this->repo->getAll();
+        return view('dashboard.admin.subcategories.index', compact('subcategories'));
     }
 
     /**
@@ -19,7 +29,7 @@ class SubCategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('dashboard.admin.subcategories.create');
     }
 
     /**
@@ -27,7 +37,21 @@ class SubCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $this->repo->create($request);
+
+        $notification = array(
+            'message' => 'SubCategory Created successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('subcategories.index')->with($notification);
     }
 
     /**
@@ -35,7 +59,8 @@ class SubCategoryController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $category = $this->repo->findById($id);
+        return view('', compact('category'));
     }
 
     /**
@@ -43,7 +68,8 @@ class SubCategoryController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $category = $this->repo->findByUUID($id);
+        return view('dashboard.admin.subcategories.edit', compact('category'));
     }
 
     /**
@@ -51,7 +77,22 @@ class SubCategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $this->repo->update($request, $id);
+
+        $notification = array(
+            'message' => 'Category updated successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('subcategories.index')->with($notification);
     }
 
     /**
@@ -59,6 +100,11 @@ class SubCategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $this->repo->delete($id);
+        $notification = array(
+            'message' => 'Deleted successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('subcategories.index')->with($notification);
     }
 }

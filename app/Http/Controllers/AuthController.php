@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\RegistrationNotification;
+use App\Notifications\LoginNotification;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -26,6 +27,9 @@ class AuthController extends Controller
      */
     public function getLogin()
     {
+        if (Auth::check()) {
+            return redirect()->intended('dashboard');
+        }
         return view('auth.login');
     }
 
@@ -97,6 +101,27 @@ class AuthController extends Controller
 
             $user->last_login_at = now();
             $user->save();
+
+            // Send Login Notification
+            $clientIP = request()->ip();
+            $userAgent = request()->userAgent();
+            // dd($userAgent);
+            $user->notify(new LoginNotification($user, $clientIP, $userAgent));
+
+            //If user is an admin
+            if ($user->hasRole('Admin')) {
+                return redirect()->route('admin.dashboard');
+            }
+
+            //If user is an editor
+            if ($user->hasRole('Editor')) {
+                return redirect()->route('editor.dashboard');
+            }
+
+            //If user is an author
+            if ($user->hasRole('Author')) {
+                return redirect()->route('dashboard');
+            }
 
             $notification = array(
                 'message' => 'Logged in successfully',
