@@ -20,8 +20,11 @@ class UsersTableSeeder extends Seeder
         $user->email = 'admin@example.com';
         $user->country = 'Nigeria';
         $user->password = bcrypt('password');
+        $user->uuid = \Illuminate\Support\Str::uuid();
         $user->avatar = 'https://via.placeholder.com/150';
         $user->email_verified_at = now();
+        $user->is_first_login = true;
+        $user->is_active = true;
         $user->save();
         $user->assignRole('Admin');
 
@@ -32,8 +35,11 @@ class UsersTableSeeder extends Seeder
         $editor->email = 'editor@example.com';
         $editor->country = 'Nigeria';
         $editor->password = bcrypt('password');
+        $editor->uuid = \Illuminate\Support\Str::uuid();
         $editor->avatar = 'https://via.placeholder.com/150';
         $editor->email_verified_at = now();
+        $editor->is_first_login = true;
+        $editor->is_active = true;
         $editor->save();
         $editor->assignRole('Editor');
 
@@ -44,10 +50,28 @@ class UsersTableSeeder extends Seeder
         $author->email = 'author@example.com';
         $author->country = 'Nigeria';
         $author->password = bcrypt('password');
+        $author->uuid = \Illuminate\Support\Str::uuid();
         $author->avatar = 'https://via.placeholder.com/150';
         $author->email_verified_at = now();
+        $author->is_first_login = true;
+        $author->is_active = true;
         $author->save();
         $author->assignRole('Author');
+
+        // Seed Publisher user
+        $publisher = new \App\Models\User();
+        $publisher->fullname = 'Publisher User';
+        $publisher->username = 'publisher';
+        $publisher->email = 'publisher@example.com';
+        $publisher->country = 'Nigeria';
+        $publisher->password = bcrypt('password');
+        $publisher->uuid = \Illuminate\Support\Str::uuid();
+        $publisher->avatar = 'https://via.placeholder.com/150';
+        $publisher->email_verified_at = now();
+        $publisher->is_first_login = true;
+        $publisher->is_active = true;
+        $publisher->save();
+        $publisher->assignRole('Publisher');
 
     }
 }
