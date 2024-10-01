@@ -50,11 +50,23 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-20">
-                            <label for="email" class="h6 mb-8 fw-semibold">Country</label>
+                            <label for="country" class="h6 mb-8 fw-semibold">Country</label>
                             <select name="country" id="country" class="form-select py-9 placeholder-13 text-15">
                                 <option value="">Select a Country</option>
                                 <option value="Nigeria">Nigeria</option>
                                 <option value="Ghana">Ghana</option>
+                            </select>
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-20">
+                            <label for="role" class="h6 mb-8 fw-semibold">Assign User Role</label>
+                            <select name="role" id="role" class="form-select py-9 placeholder-13 text-15">
+                                <option value="">Select a Country</option>
+                                @foreach ($roles as $role)
+                                    <option value="{{ $role->name }}">{{ $role->name }}</option>
+                                @endforeach
                             </select>
 
                         </div>

@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\Role\RoleContract;
 use App\Repositories\User\UserContract;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
 
     protected $repo;
+    protected $roleRepo;
 
-    public function __construct(UserContract $userContract)
+    public function __construct(UserContract $userContract, RoleContract $roleContract)
     {
         $this->repo = $userContract;
+        $this->roleRepo = $roleContract;
     }
 
     /**
@@ -29,7 +33,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('dashboard.admin.users.create');
+        $roles  = $this->roleRepo->getAll();
+        return view('dashboard.admin.users.create', compact('roles'));
     }
 
     /**
@@ -37,7 +42,34 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'fullname' => 'required',
+            'username' => 'required',
+            'email' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $user = $this->repo->create($request);
+
+        if (!$user) {
+            $notification = array(
+                'message' => 'User creation failed',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification)->withInput();
+        }
+
+        $notification = array(
+            'message' => 'User created successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('users.index')->with($notification);
     }
 
     /**

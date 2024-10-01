@@ -2,6 +2,7 @@
 namespace App\Repositories\User;
 use App\Repositories\User\UserContract;
 use App\Models\User;
+use App\Notifications\CreateUserNotification;
 
 class EloquentUserRepository implements UserContract {
 
@@ -17,10 +18,19 @@ class EloquentUserRepository implements UserContract {
         public function create($request)
         {
             $user = new User;
-            $user->name = $request->name;
+            $user->fullname = $request->fullname;
+            $user->username = $request->username;
             $user->email = $request->email;
-            $user->password = bcrypt($request->password);
+            $user->country = $request->country;
+            $user->uuid = \Illuminate\Support\Str::uuid();
+            $user->password = bcrypt($request->password ?: 'password');
+            $user->is_active = $request->active_status;
             $user->save();
+
+            $user->assignRole($request->role);
+
+            // Send notification
+            $user->notify(new CreateUserNotification($user));
             return $user;
         }
 
