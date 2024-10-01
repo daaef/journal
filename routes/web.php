@@ -12,6 +12,7 @@ use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SubSubCategoryController;
 use App\Http\Controllers\JournalController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -115,6 +116,17 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
             Route::get('/{id}/edit', [RoleController::class, 'edit'])->name('permissions.edit');
             Route::post('/{id}/update', [RoleController::class, 'update'])->name('permissions.update');
             Route::delete('/{id}/delete', [RoleController::class, 'destroy'])->name('permissions.destroy');
+        });
+
+        // Manage users
+        Route::group(['prefix' => 'users'], function() {
+            Route::get('/', [UserController::class, 'index'])->name('users.index');
+            Route::get('/create', [UserController::class, 'create'])->name('users.create');
+            Route::post('/store', [UserController::class, 'store'])->name('users.store');
+            Route::get('/{id}', [UserController::class, 'show'])->name('users.show');
+            Route::get('/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+            Route::post('/{id}/update', [UserController::class, 'update'])->name('users.update');
+            Route::delete('/{id}/delete', [UserController::class, 'destroy'])->name('users.destroy');
         });
 
     });

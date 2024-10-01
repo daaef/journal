@@ -123,6 +123,11 @@ class AuthController extends Controller
                 return redirect()->route('dashboard');
             }
 
+            //If user is an author
+            if ($user->hasRole('Publisher')) {
+                return redirect()->route('dashboard');
+            }
+
             $notification = array(
                 'message' => 'Logged in successfully',
                 'alert-type' => 'success'

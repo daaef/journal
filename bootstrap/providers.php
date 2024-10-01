@@ -12,4 +12,5 @@ return [
     App\Providers\RoleServiceProvider::class,
     App\Providers\SubCategoryServiceProvider::class,
     App\Providers\SubSubCategoryServiceProvider::class,
+    App\Providers\UserServiceProvider::class,
 ];

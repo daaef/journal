@@ -19,9 +19,11 @@ return new class extends Migration
             $table->string('country')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('uuid')->unique();
             $table->string('avatar')->nullable();
             $table->timestamp('last_login_at')->nullable();
             $table->boolean('is_first_login')->default(false);
+            $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });

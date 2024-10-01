@@ -84,13 +84,30 @@
 
                     <li class="sidebar-menu__item has-dropdown">
                         <a href="javascript:void(0)" class="sidebar-menu__link">
-                            <span class="icon"><i class="ph ph-graduation-cap"></i></span>
+                            <span class="icon"><i class="ph ph-shield-check"></i></span>
                             <span class="text">Roles and Permissions</span>
                         </a>
                         <!-- Submenu start -->
                         <ul class="sidebar-submenu">
                             <li class="sidebar-submenu__item">
                                 <a href="{{ route('roles.index') }}" class="sidebar-submenu__link"> Manage Roles </a>
+                            </li>
+                            <li class="sidebar-submenu__item">
+                                <a href="{{ route('permissions.index') }}" class="sidebar-submenu__link"> Manage Permissions </a>
+                            </li>
+                        </ul>
+                        <!-- Submenu End -->
+                    </li>
+
+                    <li class="sidebar-menu__item has-dropdown">
+                        <a href="javascript:void(0)" class="sidebar-menu__link">
+                            <span class="icon"><i class="ph ph-users-three"></i></span>
+                            <span class="text">Manage Users</span>
+                        </a>
+                        <!-- Submenu start -->
+                        <ul class="sidebar-submenu">
+                            <li class="sidebar-submenu__item">
+                                <a href="{{ route('users.index') }}" class="sidebar-submenu__link"> Users </a>
                             </li>
                             <li class="sidebar-submenu__item">
                                 <a href="{{ route('permissions.index') }}" class="sidebar-submenu__link"> Manage Permissions </a>
