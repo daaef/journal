@@ -16,10 +16,7 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $user = Auth::user();
-        $role = $user->getRoleNames();
-        $permissions = $user->getPermissionsViaRoles();
-        // dd($role, $permissions);
+        dd(' User Dashboard');
         return view('layouts.master');
     }
 }
