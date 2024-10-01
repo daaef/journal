@@ -37,6 +37,11 @@ class User extends Authenticatable
         return $this->hasMany(Journal::class);
     }
 
+    public function journalComments()
+    {
+        return $this->hasMany(JournalComment::class);
+    }
+
     public function hasVerifiedEmail(): bool
     {
         return $this->email_verified_at !== null;
