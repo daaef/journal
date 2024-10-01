@@ -5,5 +5,6 @@ interface RoleContract {
     public function update($id, $request);
     public function getAll();
     public function findById($id);
+    public function findByUuid($id);
     public function deleteById($id);
 }

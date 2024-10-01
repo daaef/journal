@@ -46,38 +46,72 @@
         <img class="w-25s" src="{{ asset('images/japr-logo.png') }}" alt="Logo">
     </a>
 
-    <div class="sidebar-menu-wrapper overflow-y-auto scroll-sm">
-        <div class="p-20 pt-10">
-            <ul class="sidebar-menu">
-                <li class="sidebar-menu__item">
-                    <a href="javascript:void(0)" class="sidebar-menu__link">
-                        <span class="icon"><i class="ph ph-squares-four"></i></span>
-                        <span class="text">Dashboard</span>
-                        {{-- <span class="link-badge">3</span> --}}
-                    </a>
-                    <!-- Submenu End -->
-                </li>
-                <li class="sidebar-menu__item">
-                    <a href="{{ route('categories.index') }}" class="sidebar-menu__link">
-                        <span class="icon"><i class="ph ph-squares-four"></i></span>
-                        <span class="text">Categories</span>
-                        {{-- <span class="link-badge">3</span> --}}
-                    </a>
-                    <!-- Submenu End -->
-                </li>
-                <li class="sidebar-menu__item">
-                            <span
-                                class="text-gray-300 text-sm px-20 pt-20 fw-semibold border-top border-gray-100 d-block text-uppercase">Settings</span>
-                </li>
-                <li class="sidebar-menu__item">
-                    <a href="" class="sidebar-menu__link">
-                        <span class="icon"><i class="ph ph-gear"></i></span>
-                        <span class="text">Account Settings</span>
-                    </a>
-                </li>
-            </ul>
+        <div class="sidebar-menu-wrapper overflow-y-auto scroll-sm">
+            <div class="p-20 pt-10">
+                <ul class="sidebar-menu">
+                    <li class="sidebar-menu__item">
+                        <a href="{{ route('admin.dashboard') }}" class="sidebar-menu__link">
+                            <span class="icon"><i class="ph ph-squares-four"></i></span>
+                            <span class="text">Dashboard</span>
+                            {{-- <span class="link-badge">3</span> --}}
+                        </a>
+                        <!-- Submenu End -->
+                    </li>
+                    <li class="sidebar-menu__item has-dropdown">
+                        <a href="javascript:void(0)" class="sidebar-menu__link">
+                            <span class="icon"><i class="ph ph-graduation-cap"></i></span>
+                            <span class="text">Manage Categories</span>
+                        </a>
+                        <!-- Submenu start -->
+                        <ul class="sidebar-submenu">
+                            <li class="sidebar-submenu__item">
+                                <a href="{{ route('categories.index') }}" class="sidebar-submenu__link"> Categories </a>
+                            </li>
+                            <li class="sidebar-submenu__item">
+                                <a href="{{ route('subcategories.index') }}" class="sidebar-submenu__link"> Sub Categories </a>
+                            </li>
+                            <li class="sidebar-submenu__item">
+                                <a href="{{ route('sub-subcategories.index') }}" class="sidebar-submenu__link"> Sub Subcategories </a>
+                            </li>
+                        </ul>
+                        <!-- Submenu End -->
+                    </li>
+
+                    <li class="sidebar-menu__item">
+                        <span
+                            class="text-gray-300 text-sm px-20 pt-20 fw-semibold border-top border-gray-100 d-block text-uppercase">Settings</span>
+                    </li>
+
+                    <li class="sidebar-menu__item has-dropdown">
+                        <a href="javascript:void(0)" class="sidebar-menu__link">
+                            <span class="icon"><i class="ph ph-graduation-cap"></i></span>
+                            <span class="text">Roles and Permissions</span>
+                        </a>
+                        <!-- Submenu start -->
+                        <ul class="sidebar-submenu">
+                            <li class="sidebar-submenu__item">
+                                <a href="{{ route('roles.index') }}" class="sidebar-submenu__link"> Manage Roles </a>
+                            </li>
+                            <li class="sidebar-submenu__item">
+                                <a href="{{ route('permissions.index') }}" class="sidebar-submenu__link"> Manage Permissions </a>
+                            </li>
+                        </ul>
+                        <!-- Submenu End -->
+                    </li>
+
+                    <li class="sidebar-menu__item">
+                        <a href="" class="sidebar-menu__link">
+                            <span class="icon"><i class="ph ph-gear"></i></span>
+                            <span class="text">Account Settings</span>
+                        </a>
+                    </li>
+
+
+
+
+                </ul>
+            </div>
         </div>
-    </div>
 
 </aside>
 
@@ -91,16 +125,8 @@
                     class="ph ph-list"></i></button>
             <!-- Toggle Button End -->
 
-            <form action="#" class="w-350 d-sm-block d-none">
-                <div class="position-relative">
-                    <button type="submit" class="input-icon text-xl d-flex text-gray-100 pointer-event-none"><i
-                            class="ph ph-magnifying-glass"></i></button>
-                    <input type="text"
-                           class="form-control ps-40 h-40 border-transparent focus-border-main-600 bg-main-50 rounded-pill placeholder-15"
-                           placeholder="Search...">
-                </div>
-            </form>
-        </div>
+
+            </div>
 
         <div class="flex-align gap-16">
             <div class="flex-align gap-8">
@@ -127,95 +153,14 @@
                                             </button>
                                             <button type="button"
                                                     class="close-dropdown hover-scale-1 text-xl text-white"><i
-                                                    class="ph ph-x"></i></button>
+                                                        class="ph ph-x"></i></button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="p-24 max-h-270 overflow-y-auto scroll-sm">
-                                    <div class="d-flex align-items-start gap-12">
-                                        <img src="assets/images/thumbs/notification-img1.png" alt=""
-                                             class="w-48 h-48 rounded-circle object-fit-cover">
-                                        <div class="border-bottom border-gray-100 mb-24 pb-24">
-                                            <div class="flex-align gap-4">
-                                                <a href="#"
-                                                   class="fw-medium text-15 mb-0 text-gray-300 hover-text-main-600 text-line-2">Ashwin
-                                                    Bose is requesting access to Design File - Final Project. </a>
-                                                <!-- Three Dot Dropdown Start -->
-                                                <div class="dropdown flex-shrink-0">
-                                                    <button class="text-gray-200 rounded-4" type="button"
-                                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="ph-fill ph-dots-three-outline"></i>
-                                                    </button>
-                                                    <div
-                                                        class="dropdown-menu dropdown-menu--md border-0 bg-transparent p-0">
-                                                        <div
-                                                            class="card border border-gray-100 rounded-12 box-shadow-custom">
-                                                            <div class="card-body p-12">
-                                                                <div
-                                                                    class="max-h-200 overflow-y-auto scroll-sm pe-8">
-                                                                    <ul>
-                                                                        <li class="mb-0">
-                                                                            <a href="#"
-                                                                               class="py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 rounded-8 fw-normal text-xs d-block">
-                                                                                    <span class="text">Mark as
-                                                                                        read</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li class="mb-0">
-                                                                            <a href="#"
-                                                                               class="py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 rounded-8 fw-normal text-xs d-block">
-                                                                                    <span class="text">Delete
-                                                                                        Notification</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li class="mb-0">
-                                                                            <a href="#"
-                                                                               class="py-6 text-15 px-8 hover-bg-gray-50 text-gray-300 rounded-8 fw-normal text-xs d-block">
-                                                                                <span class="text">Report</span>
-                                                                            </a>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- Three Dot Dropdown End -->
-                                            </div>
-                                            <div class="flex-align gap-6 mt-8">
-                                                <img src="assets/images/icons/google-drive.png" alt="">
-                                                <div class="flex-align gap-4">
-                                                    <p class="text-gray-900 text-sm text-line-1">Design brief and
-                                                        ideas.txt</p>
-                                                    <span class="text-xs text-gray-200 flex-shrink-0">2.2 MB</span>
-                                                </div>
-                                            </div>
-                                            <div class="mt-16 flex-align gap-8">
-                                                <button type="button"
-                                                        class="btn btn-main py-8 text-15 fw-normal px-16">Accept
-                                                </button>
-                                                <button type="button"
-                                                        class="btn btn-outline-gray py-8 text-15 fw-normal px-16">
-                                                    Decline
-                                                </button>
-                                            </div>
-                                            <span class="text-gray-200 text-13 mt-8">2 mins ago</span>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-start gap-12">
-                                        <img src="assets/images/thumbs/notification-img2.png" alt=""
-                                             class="w-48 h-48 rounded-circle object-fit-cover">
-                                        <div class="">
-                                            <a href="#"
-                                               class="fw-medium text-15 mb-0 text-gray-300 hover-text-main-600 text-line-2">Patrick
-                                                added a comment on Design Assets - Smart Tags file:</a>
-                                            <span class="text-gray-200 text-13">2 mins ago</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <a href="#"
-                                   class="py-13 px-24 fw-bold text-center d-block text-primary-600 border-top border-gray-100 hover-text-decoration-underline">
-                                    View All </a>
+
+                                    <a href="#"
+                                        class="py-13 px-24 fw-bold text-center d-block text-primary-600 border-top border-gray-100 hover-text-decoration-underline">
+                                        View All </a>
 
                             </div>
                         </div>
@@ -223,148 +168,75 @@
                 </div>
                 <!-- Notification Start -->
 
-                <!-- Language Start -->
-                <div class="dropdown">
-                    <button
-                        class="text-gray-500 w-40 h-40 bg-main-50 hover-bg-main-100 transition-2 rounded-circle text-xl flex-center"
-                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="ph ph-globe"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu--md border-0 bg-transparent p-0">
-                        <div class="card border border-gray-100 rounded-12 box-shadow-custom">
-                            <div class="card-body">
-                                <div class="max-h-270 overflow-y-auto scroll-sm pe-8">
-                                    <div
-                                        class="form-check form-radio d-flex align-items-center justify-content-between ps-0 mb-16">
-                                        <label
-                                            class="ps-0 form-check-label line-height-1 fw-medium text-secondary-light"
-                                            for="arabic">
-                                                <span
-                                                    class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-8">
-                                                    <img src="assets/images/thumbs/flag1.png" alt=""
-                                                         class="w-32-px h-32-px border borde border-gray-100 rounded-circle flex-shrink-0">
-                                                    <span class="text-15 fw-semibold mb-0">Arabic</span>
-                                                </span>
-                                        </label>
-                                        <input class="form-check-input" type="radio" name="language"
-                                               id="arabic">
-                                    </div>
-                                    <div
-                                        class="form-check form-radio d-flex align-items-center justify-content-between ps-0 mb-16">
-                                        <label
-                                            class="ps-0 form-check-label line-height-1 fw-medium text-secondary-light"
-                                            for="germany">
-                                                <span
-                                                    class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-8">
-                                                    <img src="assets/images/thumbs/flag2.png" alt=""
-                                                         class="w-32-px h-32-px border borde border-gray-100 rounded-circle flex-shrink-0">
-                                                    <span class="text-15 fw-semibold mb-0">Germany</span>
-                                                </span>
-                                        </label>
-                                        <input class="form-check-input" type="radio" name="language"
-                                               id="germany">
-                                    </div>
-                                    <div
-                                        class="form-check form-radio d-flex align-items-center justify-content-between ps-0 mb-16">
-                                        <label
-                                            class="ps-0 form-check-label line-height-1 fw-medium text-secondary-light"
-                                            for="english">
+                    <!-- Language Start -->
+                    <div class="dropdown">
+                        <button
+                            class="text-gray-500 w-40 h-40 bg-main-50 hover-bg-main-100 transition-2 rounded-circle text-xl flex-center"
+                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="ph ph-globe"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu--md border-0 bg-transparent p-0">
+                            <div class="card border border-gray-100 rounded-12 box-shadow-custom">
+                                <div class="card-body">
+                                    <div class="max-h-270 overflow-y-auto scroll-sm pe-8">
+                                        <div
+                                            class="form-check form-radio d-flex align-items-center justify-content-between ps-0 mb-16">
+                                            <label
+                                                class="ps-0 form-check-label line-height-1 fw-medium text-secondary-light"
+                                                for="english">
                                                 <span
                                                     class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-8">
                                                     <img src="assets/images/thumbs/flag3.png" alt=""
                                                          class="w-32-px h-32-px border borde border-gray-100 rounded-circle flex-shrink-0">
                                                     <span class="text-15 fw-semibold mb-0">English</span>
                                                 </span>
-                                        </label>
-                                        <input class="form-check-input" type="radio" name="language"
-                                               id="english">
-                                    </div>
-                                    <div
-                                        class="form-check form-radio d-flex align-items-center justify-content-between ps-0">
-                                        <label
-                                            class="ps-0 form-check-label line-height-1 fw-medium text-secondary-light"
-                                            for="spanish">
-                                                <span
-                                                    class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-8">
-                                                    <img src="assets/images/thumbs/flag4.png" alt=""
-                                                         class="w-32-px h-32-px border borde border-gray-100 rounded-circle flex-shrink-0">
-                                                    <span class="text-15 fw-semibold mb-0">Spanish</span>
-                                                </span>
-                                        </label>
-                                        <input class="form-check-input" type="radio" name="language"
-                                               id="spanish">
+                                            </label>
+                                            <input class="form-check-input" type="radio" name="language"
+                                                id="english">
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <!-- Language Start -->
                 </div>
-                <!-- Language Start -->
-            </div>
 
 
-            <!-- User Profile Start -->
-            <div class="dropdown">
-                <button
-                    class="users arrow-down-icon border border-gray-200 rounded-pill p-4 d-inline-block pe-40 position-relative"
-                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    {{ Str::words(auth()->user()->fullname, 1, '') }}
-                </button>
-                <div class="dropdown-menu dropdown-menu--lg border-0 bg-transparent p-0">
-                    <div class="card border border-gray-100 rounded-12 box-shadow-custom">
-                        <div class="card-body">
-                            <div class="flex-align gap-8 mb-20 pb-20 border-bottom border-gray-100">
-                                <img src="assets/images/thumbs/user-img.png" alt=""
-                                     class="w-54 h-54 rounded-circle">
-                                <div class="">
-                                    <h4 class="mb-0">{{ auth()->user()->fullname }}</h4>
-                                    <p class="fw-medium text-13 text-gray-200">{{ auth()->user()->email }}</p>
+                <!-- User Profile Start -->
+                <div class="dropdown">
+                    <button
+                        class="users arrow-down-icon border border-gray-200 rounded-pill p-4 d-inline-block pe-40 position-relative"
+                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{--<span class="position-relative">
+                            <img src="{{ auth()->user()->avatar }}" alt="avatar"
+                                class="h-32 w-32 rounded-circle">
+                        </span>--}}
+                        {{ Str::words(auth()->user()->fullname, 1, '') }}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu--lg border-0 bg-transparent p-0">
+                        <div class="card border border-gray-100 rounded-12 box-shadow-custom">
+                            <div class="card-body">
+                                <div class="flex-align gap-8 mb-20 pb-20 border-bottom border-gray-100">
+                                    <div class="">
+                                        <h4 class="mb-0">{{ auth()->user()->fullname }}</h4>
+                                        <p class="fw-medium text-13 text-gray-200"></p>
+                                    </div>
                                 </div>
-                            </div>
-                            <ul class="max-h-270 overflow-y-auto scroll-sm pe-4">
-                                <li class="mb-4">
-                                    <a href="setting.html"
-                                       class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
+                                <ul class="max-h-270 overflow-y-auto scroll-sm pe-4">
+                                    <li class="mb-4">
+                                        <a href=""
+                                            class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
                                             <span class="text-2xl text-primary-600 d-flex"><i
                                                     class="ph ph-gear"></i></span>
-                                        <span class="text">Account Settings</span>
-                                    </a>
-                                </li>
-                                <li class="mb-4">
-                                    <a href="pricing-plan.html"
-                                       class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
-                                            <span class="text-2xl text-primary-600 d-flex"><i
-                                                    class="ph ph-chart-bar"></i></span>
-                                        <span class="text">Upgrade Plan</span>
-                                    </a>
-                                </li>
-                                <li class="mb-4">
-                                    <a href="analytics.html"
-                                       class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
-                                            <span class="text-2xl text-primary-600 d-flex"><i
-                                                    class="ph ph-chart-line-up"></i></span>
-                                        <span class="text">Daily Activity</span>
-                                    </a>
-                                </li>
-                                <li class="mb-4">
-                                    <a href="message.html"
-                                       class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
-                                            <span class="text-2xl text-primary-600 d-flex"><i
-                                                    class="ph ph-chats-teardrop"></i></span>
-                                        <span class="text">Inbox</span>
-                                    </a>
-                                </li>
-                                <li class="mb-4">
-                                    <a href="email.html"
-                                       class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
-                                            <span class="text-2xl text-primary-600 d-flex"><i
-                                                    class="ph ph-envelope-simple"></i></span>
-                                        <span class="text">Email</span>
-                                    </a>
-                                </li>
-                                <li class="pt-8 border-top border-gray-100">
-                                    <a href="sign-in.html"
-                                       class="py-12 text-15 px-20 hover-bg-danger-50 text-gray-300 hover-text-danger-600 rounded-8 flex-align gap-8 fw-medium text-15">
+                                            <span class="text">Account Settings</span>
+                                        </a>
+                                    </li>
+
+                                    <li class="pt-8 border-top border-gray-100">
+                                        <a href="{{ route('auth.logout') }}"
+                                            class="py-12 text-15 px-20 hover-bg-danger-50 text-gray-300 hover-text-danger-600 rounded-8 flex-align gap-8 fw-medium text-15">
                                             <span class="text-2xl text-danger-600 d-flex"><i
                                                     class="ph ph-sign-out"></i></span>
                                         <span class="text">Log Out</span>
@@ -561,57 +433,41 @@
         </div>
     </div>
 
-    <div class="dashboard-footer">
-        <div class="flex-between flex-wrap gap-16">
-            <p class="text-gray-300 text-13 fw-normal"> &copy; Copyright Edmate 2024, All Right Reserverd</p>
-            <div class="flex-align flex-wrap gap-16">
-                <a href="#"
-                   class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">License</a>
-                <a href="#"
-                   class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">More
-                    Themes</a>
-                <a href="#"
-                   class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">Documentation</a>
-                <a href="#"
-                   class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">Support</a>
+        <div class="dashboard-footer">
+            <div class="flex-between flex-wrap gap-16">
+                <p class="text-gray-300 text-13 fw-normal"> &copy; Copyright {{ date('Y') }}, All Right Reserverd</p>
+                <div class="flex-align flex-wrap gap-16">
+
+                    <a href="#"
+                        class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">Documentation</a>
+                    <a href="#"
+                        class="text-gray-300 text-13 fw-normal hover-text-main-600 hover-text-decoration-underline">Support</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Jquery js -->
-<script src="{{ asset('js/jquery-3.7.1.min.js') }}"></script>
-<!-- Bootstrap Bundle Js -->
-<script src="{{ asset('js/boostrap.bundle.min.js') }}"></script>
-<!-- Phosphor Js -->
-<script src="{{ asset('js/phosphor-icon.js') }}"></script>
-<!-- file upload -->
-<script src="{{ asset('js/file-upload.js') }}"></script>
-<!-- file upload -->
-<script src="{{ asset('js/plyr.js') }}"></script>
-<!-- dataTables -->
-<script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
-<!-- full calendar -->
-<script src="{{ asset('js/full-calendar.js') }}"></script>
-<!-- jQuery UI -->
-<script src="{{ asset('js/jquery-ui.js') }}"></script>
-<!-- jQuery UI -->
-<script src="{{ asset('js/editor-quill.js') }}"></script>
-<!-- apex charts -->
-<script src="{{ asset('js/apexcharts.min.js') }}"></script>
-<!-- Calendar Js -->
-<script src="{{ asset('js/calendar.js') }}"></script>
-<!-- jvectormap Js -->
-<script src="{{ asset('js/jquery-jvectormap-2.0.5.min.js') }}"></script>
-<!-- jvectormap world Js -->
-<script src="{{ asset('js/jquery-jvectormap-world-mill-en.js') }}"></script>
-<!-- main js -->
-<script src="{{ asset('js/main.js') }}"></script>
-<script src="./node_modules/preline/dist/preline.js"></script>
-<script>
-    function createChart(chartId, chartColor) {
 
-        let currentYear = new Date().getFullYear();
+    <!-- Jquery js -->
+    <script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ asset('assets/js/boostrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/js/phosphor-icon.js') }}"></script>
+    <script src="{{ asset('assets/js/file-upload.js') }}"></script>
+    <script src="{{ asset('assets/js/plyr.js') }}"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
+    <script src="{{ asset('assets/js/full-calendar.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery-ui.js') }}"></script>
+    <script src="{{ asset('assets/js/editor-quill.js') }}"></script>
+    <script src="{{ asset('assets/js/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('assets/js/calendar.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery-jvectormap-2.0.5.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery-jvectormap-world-mill-en.js') }}"></script>
+    <!-- main js -->
+    <script src="{{ asset('assets/js/main.js') }}"></script>
 
+
+
+    <script>
+        // ============================ Donut Chart Start ==========================
         var options = {
             series: [
                 {
