@@ -23,6 +23,12 @@ class CategoryController extends Controller
         return view('categories.index', compact('categories'));
     }
 
+    public function welcome()
+    {
+        $categories = $this->repo->getAll();
+        return view('welcome', compact('categories'));
+    }
+
     /**
      * Show the form for creating a new resource.
      */

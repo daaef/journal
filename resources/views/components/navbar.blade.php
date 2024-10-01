@@ -8,7 +8,7 @@
                 <div class="flex flex-col gap-5 mt-5 lg:flex-row lg:items-center lg:mt-0 lg:ps-5">
                     <a class="focus:outline-none @if(Route::is('home')) text-primary-500 font-bold @elseif(true) text-gray-900 font-medium @endif" href="{{ route('home') }}" aria-current="page">Home</a>
                     <a class="font-medium text-gray-900 hover:text-gray-400 focus:outline-none focus:text-gray-400 " href="#">About JAPR</a>
-                    <a class="hover:text-gray-400 focus:outline-none focus:text-gray-400 @if(Route::is('journals.index')) text-primary-500 font-bold @elseif(true) text-gray-900 font-medium @endif" href="{{ route('journals.index') }}">Journals</a>
+                    <a class="hover:text-gray-400 focus:outline-none focus:text-gray-400 @if(Route::is('journals.index')) text-primary-500 font-bold @elseif(true) text-gray-900 font-medium @endif" href="{{ route('journals') }}">Journals</a>
                     <a class="font-medium text-gray-900 hover:text-gray-400 focus:outline-none focus:text-gray-400 " href="#">Contact Us</a>
                     <a class="font-bold lg:hidden text-gray-900 hover:text-gray-400 focus:outline-none focus:text-gray-400 " href="#">
                         Submit Manuscript

@@ -8,10 +8,16 @@ use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SubSubCategoryController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-//    return redirect()->route('auth.login.get');
-});
+Route::get('/', [CategoryController::class, 'welcome'])->name('home');
+
+Route::get('/journals', function () {
+    return view('journals');
+})->name('journals');
+
+Route::get('/interests', function () {
+    return view('interests');
+})->name('interests');
+
 
 Route::get('/login', function () {
     return redirect()->route('auth.login.get');
@@ -48,7 +54,7 @@ Route::group(['prefix' => 'auth'], function () {
 
     //Activation
     Route::match(['get', 'post'], '/activate-account', [RegistrationController::class, 'showActivationPage'])->name('auth.activate');
-    Route::match(['get', 'post'], '/activate', [RegistrationController::class, 'activate'])->name('auth.activate.post');
+    Route::post('/activate', [RegistrationController::class, 'activate'])->name('auth.activate.post');
 
     // Logout
     Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
@@ -56,7 +62,7 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
     Route::get('/', function () {
-        return view('layouts.master');
+        return view('dashboard.admin.dashboard');
     })->name('dashboard');
 
     Route::group(['prefix' => 'categories'], function () {

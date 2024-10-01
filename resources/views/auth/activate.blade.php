@@ -31,8 +31,8 @@
                                                 class="block w-full bg-[#F9FAFB] rounded-md border-0 px-3 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 @if ($errors->has('code')) text-red-600 ring-red-600 @endif"
                                                 placeholder="123456">
 
-                                            <input type="hidden" name="email" value="{{ request()->email }}">
-                                            <input type="hidden" name="id" value="{{ request()->id }}">
+
+                                            <input type="hidden" name="email" value="{{ session('user_email') }}">
                                         </div>
                                     </div>
                                 </div>
