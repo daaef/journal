@@ -4,6 +4,7 @@ namespace App\Repositories\Role;
 
 use App\Repositories\Role\RoleContract;
 use App\Models\Role;
+use Illuminate\Support\Str;
 
 class EloquentRoleRepository implements RoleContract
 {
@@ -22,6 +23,8 @@ class EloquentRoleRepository implements RoleContract
         $role = new Role;
         $role->name = $request->name;
         $role->guard_name = 'web';
+        $role->is_active = true;
+        $role->uuid = Str::uuid();
         $role->save();
         return $role;
     }
@@ -39,8 +42,9 @@ class EloquentRoleRepository implements RoleContract
      */
     public function update($id, $request)
     {
-        $role = $this->findById($id);
+        $role = $this->findByUuid($id);
         $role->name = $request->name;
+        $role->is_active = $request->active_status;
         $role->save();
         return $role;
     }
@@ -69,6 +73,17 @@ class EloquentRoleRepository implements RoleContract
         return Role::find($id);
     }
 
+    /**
+     * Find a role by its ID.
+     *
+     * @param int $id The ID of the role to find
+     * @return \App\Models\Role|null The Role model if found, or null if not found
+     */
+    public function findByUuid($id)
+    {
+        return Role::where('uuid', $id)->first();
+    }
+
 
     /**
      * Update a role by its ID.
@@ -84,6 +99,7 @@ class EloquentRoleRepository implements RoleContract
     {
         $role = $this->findById($id);
         $role->name = $request->name;
+        $role->is_active = $request->is_active;
         $role->save();
         return $role;
     }

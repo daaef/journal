@@ -11,6 +11,7 @@ use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SubSubCategoryController;
 use App\Http\Controllers\JournalController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -91,6 +92,32 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::post('/{id}/update', [SubSubCategoryController::class, 'update'])->name('sub-subcategories.update');
         Route::delete('/{id}/delete', [SubSubCategoryController::class, 'destroy'])->name('sub-subcategories.destroy');
     });
+
+    // Manage Roles and permissions
+    Route::group(['prefix' => 'settings'], function() {
+        // Manage Roles
+        Route::group(['prefix' => 'roles'], function() {
+            Route::get('/', [RoleController::class, 'index'])->name('roles.index');
+            Route::get('/create', [RoleController::class, 'create'])->name('roles.create');
+            Route::post('/store', [RoleController::class, 'store'])->name('roles.store');
+            Route::get('/{id}', [RoleController::class, 'show'])->name('roles.show');
+            Route::get('/{id}/edit', [RoleController::class, 'edit'])->name('roles.edit');
+            Route::post('/{id}/update', [RoleController::class, 'update'])->name('roles.update');
+            Route::delete('/{id}/delete', [RoleController::class, 'destroy'])->name('roles.destroy');
+        });
+
+        // Manage Permissions
+        Route::group(['prefix' => 'permissions'], function() {
+            Route::get('/', [RoleController::class, 'index'])->name('permissions.index');
+            Route::get('/create', [RoleController::class, 'create'])->name('permissions.create');
+            Route::post('/store', [RoleController::class, 'store'])->name('permissions.store');
+            Route::get('/{id}', [RoleController::class, 'show'])->name('permissions.show');
+            Route::get('/{id}/edit', [RoleController::class, 'edit'])->name('permissions.edit');
+            Route::post('/{id}/update', [RoleController::class, 'update'])->name('permissions.update');
+            Route::delete('/{id}/delete', [RoleController::class, 'destroy'])->name('permissions.destroy');
+        });
+
+    });
 });
 
 //Editor Routes
@@ -102,9 +129,6 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Route::get('/', function () {
-    //     return view('layouts.master');
-    // })->name('dashboard');
 
 
 

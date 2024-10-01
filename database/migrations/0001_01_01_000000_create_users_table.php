@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('avatar')->nullable();
             $table->timestamp('last_login_at')->nullable();
+            $table->boolean('is_first_login')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
