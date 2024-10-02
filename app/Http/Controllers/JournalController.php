@@ -94,6 +94,16 @@ class JournalController extends Controller
         return redirect()->route('journals.index')->with($notification);
     }
 
+    public function pendingApproval() {
+        $journals = $this->repo->getPendingApprovedJournals();
+    }
+
+
+    public function approvedJournals() {
+        $journals = $this->repo->getApprovedJournals();
+        return view('journals.approvedJournals', compact('journals'));
+    }
+
     /**
      * Remove the specified resource from storage.
      */

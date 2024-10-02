@@ -73,7 +73,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::get('/{id}/delete', [CategoryController::class, 'destroy'])->name('categories.destroy');
     });
 
-
     Route::group(['prefix' => 'sub-categories'], function () {
         Route::get('/', [SubCategoryController::class, 'index'])->name('subcategories.index');
         Route::get('/create', [SubCategoryController::class, 'create'])->name('subcategories.create');
@@ -135,12 +134,17 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 //Editor Routes
 Route::group(['prefix' => 'editor', 'middleware' => 'auth'], function () {
     Route::get('/', [EditorDashboardController::class, 'index'])->name('editor.dashboard');
+
+    Route::group(['prefix' => 'journals'], function () {
+        Route::get('/pending', [JournalController::class, 'pendingApproval'])->name('editor.journals.pendingApproval');
+        Route::get('/approved', [JournalController::class, 'create'])->name('editor.journals.approved');
+    });
+
 });
 
 Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-
     // Journal Routes
     Route::group(['prefix' => 'journals'], function () {
         Route::get('/', [JournalController::class, 'index'])->name('journals.index');

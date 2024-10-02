@@ -8,4 +8,6 @@ interface JournalContract {
     public function getAll();
     public function findByUUID($uuid);
     public function delete($id);
+    public function getPendingApprovedJournals();
+    public function getApprovedJournals();
 }

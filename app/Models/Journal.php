@@ -61,4 +61,15 @@ class Journal extends Model
     public function comments() {
         return $this->hasMany(JournalComment::class);
     }
+
+    protected function cast()
+    {
+        return [
+            'is_active' => 'boolean',
+            'meta_keywords' => 'json',
+            'created_by' => 'json',
+            'updated_by' => 'json',
+            'approved_by' => 'json',
+        ];
+    }
 }

@@ -30,7 +30,6 @@ return new class extends Migration
             $table->longText('institution')->nullable();
             $table->string('license')->nullable();
 
-
             //approval levels
             $table->enum('approval_level', ['level0', 'level1', 'level2', 'level3'])->default('level0');
 
