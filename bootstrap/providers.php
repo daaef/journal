@@ -6,6 +6,7 @@ return [
     App\Providers\AuthServiceProvider::class,
     App\Providers\CategoryServiceProvider::class,
     App\Providers\GoogleServiceProvider::class,
+    App\Providers\JournalCommentServiceProvider::class,
     App\Providers\JournalServiceProvider::class,
     App\Providers\PermissionServiceProvider::class,
     App\Providers\RegistrationServiceProvider::class,

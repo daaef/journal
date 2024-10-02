@@ -13,20 +13,26 @@ return new class extends Migration
     {
         Schema::create('journals', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->longText('title');
             $table->string('slug')->unique();
-            $table->string('description');
-            $table->string('image')->nullable();
+            $table->longText('description');
+            $table->string('cover_image')->nullable();
             $table->boolean('is_active')->default(true);
             $table->string('uuid')->unique();
             $table->string('journal_format')->nullable();
             $table->string('journal_language')->nullable();
             $table->string('journal_url')->nullable();
-            $table->enum('approval_status', ['pending', 'in-progree', 'appoved'])->default('pending');
+            $table->enum('approval_status', ['pending', 'in-progress', 'approved', 'declined'])->default('pending');
             $table->string('meta_title')->nullable();
-            $table->string('meta_description')->nullable();
-            $table->string('license')->nullable();
             $table->json('meta_keywords')->nullable();
+            $table->longText('meta_description')->nullable();
+            $table->longText('abstract')->nullable();
+            $table->longText('institution')->nullable();
+            $table->string('license')->nullable();
+
+
+            //approval levels
+            $table->enum('approval_level', ['level0', 'level1', 'level2', 'level3'])->default('level0');
 
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
@@ -40,11 +46,9 @@ return new class extends Migration
             $table->unsignedBigInteger('sub_sub_category_id')->nullable();
             $table->foreign('sub_sub_category_id')->references('id')->on('sub_sub_categories')->onDelete('cascade');
 
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->unsignedBigInteger('approved_by')->nullable();
-            $table->unsignedBigInteger('deleted_by')->nullable();
-
+            $table->json('created_by')->nullable();
+            $table->json('updated_by')->nullable();
+            $table->json('approved_by')->nullable();
             $table->timestamps();
         });
     }

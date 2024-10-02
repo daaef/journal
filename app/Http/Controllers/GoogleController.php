@@ -31,7 +31,7 @@ class GoogleController extends Controller
                 'password' => Hash::make(rand(100000, 999999)),
                 'avatar' => $googleUser->avatar,
             ]);
-            $user->assignRole('Author');
+            $user->assignRole('Publisher');
             $user->markEmailAsVerified();
 
             $user->notify(new WelcomeNotification($user));
@@ -55,7 +55,7 @@ class GoogleController extends Controller
         if ($user->hasRole('Author')) {
             return redirect()->route('dashboard');
         }
-        
+
         // Send Login Notification
         $clientIP = request()->ip();
         $userAgent = request()->userAgent();
