@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             SubCategoriesTableSeeder::class,
             SubSubCategoriesSeeder::class,
             UsersTableSeeder::class,
+            AfricanRegionsTableSeeder::class,
         ]);
     }
 }

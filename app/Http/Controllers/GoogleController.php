@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Notifications\LoginNotification;
 use App\Notifications\WelcomeNotification;
+use Illuminate\Support\Str;
 
 class GoogleController extends Controller
 {
@@ -30,6 +31,7 @@ class GoogleController extends Controller
                 'email' => $googleUser->email,
                 'password' => Hash::make(rand(100000, 999999)),
                 'avatar' => $googleUser->avatar,
+                'uuid' => Str::uuid(),
             ]);
             $user->assignRole('Publisher');
             $user->markEmailAsVerified();
