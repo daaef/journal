@@ -28,6 +28,10 @@ Route::get('/journals', function () {
     return view('journals')->with('categories', Category::all());
 })->name('journals');
 
+Route::get('/submit-manuscript', function () {
+    return view('user.submit-manuscript');
+})->name('submit-manuscript');
+
 Route::group(['prefix' => 'user'], function () {
     Route::get('/settings', function () {
         return view('user.settings');
