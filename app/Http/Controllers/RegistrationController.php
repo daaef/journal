@@ -57,7 +57,7 @@ class RegistrationController extends Controller
                     'message' => 'Successfully Registered',
                     'alert-type' => 'success'
                 );
-                return redirect()->route('auth.success_activation.get')->with($notification);
+                return redirect()->route('auth.activate')->with($notification)->with('user_email', $user->email);
             }
 
         } catch (\Throwable $th) {
@@ -69,13 +69,6 @@ class RegistrationController extends Controller
             return redirect()->back()->with($notification);
         }
     }
-
-    //show actination page
-    public function showActivationPage()
-    {
-        return view('auth.activate');
-    }
-
 
     // Activate Account
     public function activate(Request $request)
@@ -111,5 +104,12 @@ class RegistrationController extends Controller
             return redirect()->back()->with($notification);
         }
     }
+    //show actination page
+    public function showActivationPage()
+    {
+        return view('auth.activate');
+    }
+
+
 
 }
