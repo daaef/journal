@@ -13,6 +13,7 @@ use App\Http\Controllers\SubSubCategoryController;
 use App\Http\Controllers\JournalController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -20,6 +21,23 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/login', function () {
     return redirect()->route('auth.login.get');
 })->name('login');
+
+Route::get('/interests', [HomeController::class, 'interests'])->name('interests');
+
+Route::get('/journals', function () {
+    return view('journals')->with('categories', Category::all());
+})->name('journals');
+
+Route::group(['prefix' => 'user'], function () {
+    Route::get('/settings', function () {
+        return view('user.settings');
+    })->name('user.settings');
+
+    Route::get('/submissions', function () {
+        return view('user.submissions');
+    })->name('user.submissions');
+
+});
 
 Route::group(['prefix' => 'auth'], function () {
     Route::get('/login', [AuthController::class, 'getLogin'])->name('auth.login.get');
@@ -140,9 +158,6 @@ Route::group(['prefix' => 'editor', 'middleware' => 'auth'], function () {
 Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-
-
-
 
 
     // Journal Routes
