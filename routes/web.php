@@ -28,9 +28,7 @@ Route::get('/journals', function () {
     return view('journals')->with('categories', Category::all());
 })->name('journals');
 
-Route::get('/submit-manuscript', function () {
-    return view('user.submit-manuscript');
-})->name('submit-manuscript');
+
 
 Route::group(['prefix' => 'user'], function () {
     Route::get('/settings', function () {
@@ -167,6 +165,11 @@ Route::group(['prefix' => 'editor', 'middleware' => 'auth'], function () {
 Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/submit-manuscript', function () {
+        return view('user.submit-manuscript');
+    })->name('submit-manuscript');
+    
     // Journal Routes
     Route::group(['prefix' => 'journals'], function () {
         Route::get('/', [JournalController::class, 'index'])->name('journals.index');
