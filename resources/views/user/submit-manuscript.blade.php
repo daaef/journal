@@ -5,45 +5,42 @@
                 <h2 class="text-base font-semibold leading-7 text-gray-900">Submit a Manuscript</h2>
                 <p class="mt-1 text-sm leading-6 text-gray-600">Submit a manuscript for reviews by our editors</p>
 
-                <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
 
-                    <div class="sm:col-span-4">
+                    <div>
                         <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Title</label>
                         <div class="mt-2">
                             <input id="email" name="email" type="email" autocomplete="email"
                                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
-                    <div class="sm:col-span-4">
+                    <div>
                         <label for="author" class="block text-sm font-medium leading-6 text-gray-900">Author</label>
                         <div class="mt-2">
                             <input id="author" name="author" type="email" autocomplete="author"
                                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
-                    <div class="sm:col-span-4">
-                        <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Location</label>
-                        <div class="mt-2">
-                            <input id="email" name="email" type="email" autocomplete="email"
-                                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        </div>
-                    </div>
-                    <div class="sm:col-span-3">
+                    <div class="w-full">
                         <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country / Region</label>
                         <div class="mt-2">
                             <select id="country" name="country" autocomplete="country-name"
-                                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
                                 <option>United States</option>
                                 <option>Canada</option>
                                 <option>Mexico</option>
                             </select>
                         </div>
                     </div>
-                    <div class="sm:col-span-4">
-                        <label for="author" class="block text-sm font-medium leading-6 text-gray-900">Language</label>
+                    <div class="w-full">
+                        <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Language</label>
                         <div class="mt-2">
-                            <input id="author" name="author" type="email" autocomplete="author"
-                                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            <select id="country" name="country" autocomplete="country-name"
+                                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                                <option>American English</option>
+                                <option>British English</option>
+                                <option>French</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-span-full">
