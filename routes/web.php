@@ -159,7 +159,6 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-
     // Journal Routes
     Route::group(['prefix' => 'journals'], function () {
         Route::get('/', [JournalController::class, 'index'])->name('journals.index');
