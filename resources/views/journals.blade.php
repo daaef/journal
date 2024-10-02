@@ -423,8 +423,10 @@
         </div>
         <div class="border pl-8 border-transparent border-l-secondary-900/50">
             <div class="flex justify-between mb-6">
-                <select
-                    data-hs-select='{
+                <div class="grid gap-2">
+                    <label for="">Sort by</label>
+                    <select
+                        data-hs-select='{
   "placeholder": "<span class=\"inline-flex items-center\"><svg class=\"shrink-0 size-3.5 me-2\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3\"/></svg> Filter</span>",
   "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
   "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-3 ps-4 pe-9 flex gap-x-2 text-nowrap w-full cursor-pointer bg-white border border-gray-200 rounded-0 text-start text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[240px]",
@@ -433,14 +435,25 @@
   "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-3.5 text-blue-600 \" xmlns=\"http:.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
   "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-gray-500 \" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
 }' class="hidden">
-                    <option value="">Filter</option>
-                    <option selected>Added to JAPR (newest)</option>
-                    <option>Added to JAPR (oldest)</option>
-                    <option>Last Updated (most recent)</option>
-                    <option>Last Updated (less recent)</option>
-                    <option>ISBN</option>
-                    <option>DOI</option>
-                </select>
+                        <option value="">Filter</option>
+                        <option selected>Added to JAPR (newest)</option>
+                        <option>Added to JAPR (oldest)</option>
+                        <option>Last Updated (most recent)</option>
+                        <option>Last Updated (less recent)</option>
+                        <option>Title (A - Z)</option>
+                        <option>Title (Z - A)</option>
+                        <option>Relevance</option>
+                    </select>
+                </div>
+                <div class="grid gap-2">
+                    <label for="">Sort by</label>
+                    <select name="" id="">
+                        <option value="">10</option>
+                        <option value="">50</option>
+                        <option value="">100</option>
+                        <option value="">200</option>
+                    </select>
+                </div>
             </div>
             <div class="flex justify-between mb-6">
                 <div class="flex gap-x-4">
