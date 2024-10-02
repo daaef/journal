@@ -22,8 +22,16 @@
                     {{-- @dd(Auth::check()) --}}
                     @auth()
                         <a class="font-bold lg:hidden text-gray-900 hover:text-gray-400 focus:outline-none focus:text-gray-400 "
-                            href="#">
+                           href="{{ route('submit-manuscript') }}">
+                            Submit Manuscript
+                        </a>
+                        <a class="font-bold lg:hidden text-gray-900 hover:text-gray-400 focus:outline-none focus:text-gray-400 "
+                            href="{{ route('dashboard') }}">
                             Dashboard
+                        </a>
+                        <a class="font-bold lg:hidden text-gray-900 hover:text-gray-400 focus:outline-none focus:text-gray-400 "
+                            href="{{ route('user.settings') }}">
+                            Settings
                         </a>
                     @else
                         <a class="font-bold lg:hidden text-gray-900 hover:text-gray-400 focus:outline-none focus:text-gray-400 "

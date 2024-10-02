@@ -46,6 +46,7 @@ export default {
         },
     },
     plugins: [
-        require('preline/plugin')
+        require('preline/plugin'),
+        require('@tailwindcss/forms')
     ],
 }
