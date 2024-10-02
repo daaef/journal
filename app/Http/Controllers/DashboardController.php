@@ -16,7 +16,7 @@ class DashboardController extends Controller
 
     public function index()
     {
-        dd(' User Dashboard');
-        return view('layouts.master');
+//        dd(' User Dashboard');
+        return view('user.dashboard');
     }
 }

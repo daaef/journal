@@ -8,17 +8,22 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    protected $categoryRepo;
+    protected CategoryContract $categoryRepo;
 
     public function __construct(CategoryContract $categoryContract)
     {
         $this->categoryRepo = $categoryContract;
-
     }
 
     public function index()
     {
         $categories = $this->categoryRepo->getAll();
         return view('welcome', compact('categories'));
+    }
+
+    public function interests()
+    {
+        $categories = $this->categoryRepo->getAll();
+        return view('interests', compact('categories'));
     }
 }
