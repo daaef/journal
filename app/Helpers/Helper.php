@@ -41,14 +41,11 @@ if (!function_exists('uploadFile')) {
      */
     function uploadFile($file, $name, $path, $disk = 'public')
     {
-        // Check if file is valid
-        if (!$file->isValid()) {
-            return null;
-        }
+        // dd($file);
 
         // Generate unique file name
-        $fileName = $name . '_' . $file->getClientOriginalName();
-
+        $fileName = $name;
+        // dd($fileName);
         // Create the directory if it doesn't exist
         if (!Storage::disk($disk)->exists($path)) {
             Storage::disk($disk)->makeDirectory($path);
@@ -86,3 +83,89 @@ if (!function_exists('deleteFile')) {
     }
 }
 
+// African regions and their countries
+if (!function_exists('africanRegions')) {
+    /**
+     * African Regions and their countries
+     *
+     * @return array
+     */
+    function africanRegions()
+    {
+        return [
+            'Central Africa' => [
+                'Angola',
+                'Cameroon',
+                'Central African Republic',
+                'Chad',
+                'Congo',
+                'Democratic Republic of the Congo',
+                'Equatorial Guinea',
+                'Gabon',
+                'São Tomé and Príncipe'
+            ],
+            'East Africa' => [
+                'Burundi',
+                'Comoros',
+                'Djibouti',
+                'Eritrea',
+                'Ethiopia',
+                'Kenya',
+                'Madagascar',
+                'Malawi',
+                'Mauritius',
+                'Mozambique',
+                'Rwanda',
+                'Seychelles',
+                'Somalia',
+                'South Sudan',
+                'Tanzania',
+                'Uganda',
+                'Zambia',
+                'Zimbabwe'
+            ],
+            'North Africa' => [
+                'Algeria',
+                'Egypt',
+                'Libya',
+                'Morocco',
+                'Sudan',
+                'Tunisia',
+            ],
+            'Southern Africa' => [
+                'Botswana',
+                'Eswatini',
+                'Lesotho',
+                'Namibia',
+                'South Africa'
+            ],
+            'West Africa' => [
+                'Benin',
+                'Burkina Faso',
+                'Cape Verde',
+                'Gambia',
+                'Ghana',
+                'Guinea',
+                'Guinea-Bissau',
+                'Ivory Coast',
+                'Liberia',
+                'Mali',
+                'Mauritania',
+                'Niger',
+                'Nigeria',
+                'Senegal',
+                'Sierra Leone',
+                'Togo'
+            ]
+        ];
+    }
+}
+
+
+function journalLanguages() {
+    return [
+        'American English',
+        'British English',
+        'French'
+    ];
+}

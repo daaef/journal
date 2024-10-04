@@ -11,6 +11,7 @@ class Journal extends Model
 
     protected $fillable = [
         'title',
+        'author',
         'slug',
         'uuid',
         'description',
@@ -35,11 +36,6 @@ class Journal extends Model
         'updated_by',
         'approved_by'
     ];
-
-    public function entries()
-    {
-        // return $this->hasMany(Entry::class);
-    }
 
     public function user()
     {

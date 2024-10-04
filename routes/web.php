@@ -31,13 +31,9 @@ Route::get('/journals', function () {
 
 
 Route::group(['prefix' => 'user'], function () {
-    Route::get('/settings', function () {
-        return view('user.settings');
-    })->name('user.settings');
 
-    Route::get('/submissions', function () {
-        return view('user.submissions');
-    })->name('user.submissions');
+
+
 
 });
 
@@ -166,10 +162,17 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/submit-manuscript', function () {
-        return view('user.submit-manuscript');
-    })->name('submit-manuscript');
-    
+    Route::get('/submit-manuscript', [JournalController::class, 'creatManuscript'])->name('submit-manuscript');
+    Route::post('/submit-manuscript', [JournalController::class, 'submitManuscript'])->name('submit-manuscript.post');
+
+    Route::get('settings/{uuid}', [UserController::class, 'edit'])->name('user.settings');
+    Route::post('settings/{uuid}', [UserController::class, 'update'])->name('user.settings.update');
+
+
+    Route::get('/submissions', function () {
+        return view('user.submissions');
+    })->name('user.submissions');
+
     // Journal Routes
     Route::group(['prefix' => 'journals'], function () {
         Route::get('/', [JournalController::class, 'index'])->name('journals.index');

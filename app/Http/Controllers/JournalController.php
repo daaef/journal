@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Repositories\Journal\JournalContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class JournalController extends Controller
 {
@@ -30,6 +31,49 @@ class JournalController extends Controller
     public function create()
     {
         return view('journals.create');
+    }
+
+
+    public function creatManuscript() {
+        $regions = africanRegions();
+        $languages = journalLanguages();
+        return view('user.submit-manuscript', compact('regions', 'languages'));
+    }
+
+
+    public function submitManuscript(Request $request) {
+        
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'author' => 'required',
+            'country' => 'required',
+            'journal_language' => 'required',
+            'abstract' => 'required',
+            'manuscripts' => 'required',
+            'file' => 'required|mimes:pdf|max:10000',
+            'accept' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $journal = $this->repo->submitManuscript($request);
+
+        if($journal) {
+            $notification = array(
+                'message' => 'Manuscript Submitted successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->route('journals.index')->with($notification);
+        }
+
+        $notification = array(
+            'message' => 'Error submitting Manuscript',
+            'alert-type' => 'error'
+        );
+
+        return redirect()->back()->with($notification);
     }
 
     /**
