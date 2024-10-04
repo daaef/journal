@@ -21,7 +21,7 @@
                 {{ $breadcrumb }}
             </div>
         @endisset
-        @if((str_starts_with(Route::currentRouteName(), 'dashboard.') || (Route::is('dashboard'))) && auth()->check())
+        @if((str_starts_with(Route::currentRouteName(), 'user.') || (Route::is('dashboard'))) && auth()->check())
             <x-user-navbar/>
         @endif
         {{ $slot }}

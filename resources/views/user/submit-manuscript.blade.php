@@ -1,3 +1,4 @@
+<script src="https://unpkg.com/htmx.org@1.1.0"></script>
 <x-layouts.layout>
     <form action="" method="post" enctype="multipart/form-data">
         @csrf
@@ -18,8 +19,24 @@
                     <div>
                         <label for="author" class="block text-sm font-medium leading-6 text-gray-900">Author</label>
                         <div class="mt-2">
-                            <input id="author" name="author" type="text" value="{{ old('author') }}" required
+                            <input id="author" name="author" type="text" value="{{ old('author') ?: auth()->user()->fullname }}" required
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country / Region</label>
+                        <div class="mt-2">
+                            <select name="country" id="country"
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                                <option value="" disabled selected>Select Country</option>
+                                @foreach($regions as $region => $countries)
+                                    <optgroup label="{{ $region }}">
+                                        @foreach($countries as $country)
+                                            <option value="{{ $country }}">{{ $country }}</option>
+                                        @endforeach
+                                    </optgroup>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="w-full">
