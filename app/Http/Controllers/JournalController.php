@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Repositories\Category\CategoryContract;
 use App\Repositories\Journal\JournalContract;
+use App\Repositories\SubCategory\SubCategoryContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -13,11 +14,13 @@ class JournalController extends Controller
 
     protected $repo;
     protected $categoryRepo;
+    protected $subCategoryRepo;
 
-    public function __construct(JournalContract $journalContract, CategoryContract $categoryContract)
+    public function __construct(JournalContract $journalContract, CategoryContract $categoryContract, SubCategoryContract $subCategoryContract)
     {
         $this->repo = $journalContract;
         $this->categoryRepo = $categoryContract;
+        $this->subCategoryRepo = $subCategoryContract;
     }
 
     /**
@@ -42,6 +45,7 @@ class JournalController extends Controller
         $regions = africanRegions();
         $languages = journalLanguages();
         $categories = $this->categoryRepo->getAll();
+        $subcategories = $this->subCategoryRepo->getAll();
         return view('user.submit-manuscript', compact('regions', 'languages', 'categories'));
     }
 
