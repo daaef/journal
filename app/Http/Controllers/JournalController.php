@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\Category\CategoryContract;
 use App\Repositories\Journal\JournalContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -11,9 +12,12 @@ class JournalController extends Controller
 {
 
     protected $repo;
-    public function __construct(JournalContract $journalContract)
+    protected $categoryRepo;
+
+    public function __construct(JournalContract $journalContract, CategoryContract $categoryContract)
     {
         $this->repo = $journalContract;
+        $this->categoryRepo = $categoryContract;
     }
 
     /**
@@ -37,12 +41,13 @@ class JournalController extends Controller
     public function creatManuscript() {
         $regions = africanRegions();
         $languages = journalLanguages();
-        return view('user.submit-manuscript', compact('regions', 'languages'));
+        $categories = $this->categoryRepo->getAll();
+        return view('user.submit-manuscript', compact('regions', 'languages', 'categories'));
     }
 
 
     public function submitManuscript(Request $request) {
-        
+
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'author' => 'required',

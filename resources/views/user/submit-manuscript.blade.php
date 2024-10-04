@@ -11,14 +11,14 @@
                     <div>
                         <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title</label>
                         <div class="mt-2">
-                            <input id="title" name="title" type="text" value="{{ old('title') }}"
+                            <input id="title" name="title" type="text" value="{{ old('title') }}" required
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
                     <div>
                         <label for="author" class="block text-sm font-medium leading-6 text-gray-900">Author</label>
                         <div class="mt-2">
-                            <input id="author" name="author" type="text" value="{{ old('author') }}"
+                            <input id="author" name="author" type="text" value="{{ old('author') }}" required
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
@@ -46,6 +46,18 @@
                                 <option value="" disabled selected>Select Language</option>
                                 @foreach ($languages as $language)
                                     <option value="{{ $language }}">{{ $language }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <label for="category_id" class="block text-sm font-medium leading-6 text-gray-900">Category</label>
+                        <div class="mt-2">
+                            <select id="category_id" name="category_id" required
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                                <option value="" disabled selected>Select Category</option>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
                         </div>
