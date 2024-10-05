@@ -47,6 +47,10 @@ class EloquentSubCategoryRepository implements SubCategoryContract {
         return SubCategory::where('uuid', $uuid)->first();
     }
 
+    public function findByCategory($category_id) {
+        return SubCategory::where('category_id', $category_id)->get();
+    }
+
     public function delete($id){
         $category = $this->findByUUID($id);
         return $category->delete();

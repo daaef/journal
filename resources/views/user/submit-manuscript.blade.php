@@ -1,4 +1,7 @@
-<script src="https://unpkg.com/htmx.org@1.1.0"></script>
+<script src="https://unpkg.com/htmx.org@2.0.2"
+    integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous">
+</script>
+
 <x-layouts.layout>
     <form action="" method="post" enctype="multipart/form-data">
         @csrf
@@ -19,19 +22,21 @@
                     <div>
                         <label for="author" class="block text-sm font-medium leading-6 text-gray-900">Author</label>
                         <div class="mt-2">
-                            <input id="author" name="author" type="text" value="{{ old('author') ?: auth()->user()->fullname }}" required
+                            <input id="author" name="author" type="text"
+                                value="{{ old('author') ?: auth()->user()->fullname }}" required
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
                     <div class="w-full">
-                        <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country / Region</label>
+                        <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country /
+                            Region</label>
                         <div class="mt-2">
                             <select name="country" id="country"
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
                                 <option value="" disabled selected>Select Country</option>
-                                @foreach($regions as $region => $countries)
+                                @foreach ($regions as $region => $countries)
                                     <optgroup label="{{ $region }}">
-                                        @foreach($countries as $country)
+                                        @foreach ($countries as $country)
                                             <option value="{{ $country }}">{{ $country }}</option>
                                         @endforeach
                                     </optgroup>
@@ -39,24 +44,10 @@
                             </select>
                         </div>
                     </div>
+
                     <div class="w-full">
-                        <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country / Region</label>
-                        <div class="mt-2">
-                            <select name="country" id="country"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
-                                <option value="" disabled selected>Select Country</option>
-                                @foreach($regions as $region => $countries)
-                                    <optgroup label="{{ $region }}">
-                                        @foreach($countries as $country)
-                                            <option value="{{ $country }}">{{ $country }}</option>
-                                        @endforeach
-                                    </optgroup>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="w-full">
-                        <label for="journal_language" class="block text-sm font-medium leading-6 text-gray-900">Language</label>
+                        <label for="journal_language"
+                            class="block text-sm font-medium leading-6 text-gray-900">Language</label>
                         <div class="mt-2">
                             <select id="journal_language" name="journal_language" autocomplete="language-name"
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
@@ -71,7 +62,9 @@
                         <label for="category_id" class="block text-sm font-medium leading-6 text-gray-900">Category</label>
                         <div class="mt-2">
                             <select id="category_id" name="category_id" required
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                                hx-get="/load-subcategories" hx-target="#subcategories"
+                                hx-params="category_id=${select.value}" hx-trigger="change">
                                 <option value="" disabled selected>Select Category</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -79,6 +72,38 @@
                             </select>
                         </div>
                     </div>
+                    <div id="subcategories">
+                        <label for="subcategory_id" class="block text-sm font-medium leading-6 text-gray-900">Sub Category</label>
+                        <div class="mt-2">
+                            <select id="subcategory_id" name="subcategory_id" required
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                                <!-- subcategories will be listed here using option -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <script>
+                        const categorySelect = document.getElementById('category_id');
+                        const subcategorySelect = document.getElementById('subcategory_id');
+
+                        categorySelect.addEventListener('change', () => {
+                            const categoryId = categorySelect.value;
+                            fetch(`/api/subcategories/${categoryId}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    subcategorySelect.innerHTML = '';
+                                    data.forEach(subcategory => {
+                                        const option = document.createElement('option');
+                                        option.value = subcategory.id;
+                                        option.textContent = subcategory.name;
+                                        subcategorySelect.appendChild(option);
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                });
+                        });
+                    </script>
                     <div class="col-span-full">
                         <label for="abstract" class="block text-sm font-medium leading-6 text-gray-900">Abstract</label>
                         <div class="mt-2">
@@ -122,10 +147,12 @@
                             <div class="relative flex gap-x-3">
                                 <div class="flex h-6 items-center">
                                     <input id="accept" name="accept" type="checkbox"
-                                        class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600" required>
+                                        class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                        required>
                                 </div>
                                 <div class="text-sm leading-6">
-                                    <label for="accept" class="text-gray-500">I agree with JAPR's Review policy</label>
+                                    <label for="accept" class="text-gray-500">I agree with JAPR's Review
+                                        policy</label>
                                 </div>
                             </div>
                         </div>

@@ -32,6 +32,8 @@ return new class extends Migration
             $table->string('license')->nullable();
             $table->string('country')->nullable();
 
+            $table->integer('likes')->default(0);
+            $table->integer('dislikes')->default(0);
             //approval levels
             $table->integer('approval_level')->default(0);
 

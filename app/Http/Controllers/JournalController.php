@@ -32,6 +32,18 @@ class JournalController extends Controller
         return view('journals.index', compact('journals'));
     }
 
+    public function searchJournal(Request $request)
+    {
+        $journals = $this->repo->getAll();
+        $categories = $this->categoryRepo->getAll();
+        // dd($request->all());
+        if($request->search) {
+            $journals = $this->repo->searchJournal($request);
+            // dd($journals);
+        }
+        return view('journals', compact('journals', 'categories'));
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -156,6 +168,9 @@ class JournalController extends Controller
         $journals = $this->repo->getApprovedJournals();
         return view('journals.approvedJournals', compact('journals'));
     }
+
+
+
 
     /**
      * Remove the specified resource from storage.
