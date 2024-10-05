@@ -2,17 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\Category\CategoryContract;
 use App\Repositories\Journal\JournalContract;
+use App\Repositories\SubCategory\SubCategoryContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class JournalController extends Controller
 {
 
     protected $repo;
-    public function __construct(JournalContract $journalContract)
+    protected $categoryRepo;
+    protected $subCategoryRepo;
+
+    public function __construct(JournalContract $journalContract, CategoryContract $categoryContract, SubCategoryContract $subCategoryContract)
     {
         $this->repo = $journalContract;
+        $this->categoryRepo = $categoryContract;
+        $this->subCategoryRepo = $subCategoryContract;
     }
 
     /**
@@ -30,6 +38,51 @@ class JournalController extends Controller
     public function create()
     {
         return view('journals.create');
+    }
+
+
+    public function creatManuscript() {
+        $regions = africanRegions();
+        $languages = journalLanguages();
+        $categories = $this->categoryRepo->getAll();
+        $subcategories = $this->subCategoryRepo->getAll();
+        return view('user.submit-manuscript', compact('regions', 'languages', 'categories'));
+    }
+
+
+    public function submitManuscript(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'author' => 'required',
+            'country' => 'required',
+            'journal_language' => 'required',
+            'abstract' => 'required',
+            'manuscripts' => 'required',
+            'file' => 'required|mimes:pdf|max:10000',
+            'accept' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $journal = $this->repo->submitManuscript($request);
+
+        if($journal) {
+            $notification = array(
+                'message' => 'Manuscript Submitted successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->route('journals.index')->with($notification);
+        }
+
+        $notification = array(
+            'message' => 'Error submitting Manuscript',
+            'alert-type' => 'error'
+        );
+
+        return redirect()->back()->with($notification);
     }
 
     /**
@@ -92,6 +145,16 @@ class JournalController extends Controller
             'alert-type' => 'success'
         );
         return redirect()->route('journals.index')->with($notification);
+    }
+
+    public function pendingApproval() {
+        $journals = $this->repo->getPendingApprovedJournals();
+    }
+
+
+    public function approvedJournals() {
+        $journals = $this->repo->getApprovedJournals();
+        return view('journals.approvedJournals', compact('journals'));
     }
 
     /**

@@ -24,7 +24,8 @@ class User extends Authenticatable
         'email',
         'country',
         'password',
-        'avatar'
+        'avatar',
+        'uuid',
     ];
 
     public function activation()

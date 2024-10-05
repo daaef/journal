@@ -3,6 +3,8 @@ namespace App\Repositories\User;
 use App\Repositories\User\UserContract;
 use App\Models\User;
 use App\Notifications\CreateUserNotification;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class EloquentUserRepository implements UserContract {
 
@@ -22,7 +24,7 @@ class EloquentUserRepository implements UserContract {
             $user->username = $request->username;
             $user->email = $request->email;
             $user->country = $request->country;
-            $user->uuid = \Illuminate\Support\Str::uuid();
+            $user->uuid = Str::uuid();
             $user->password = bcrypt($request->password ?: 'password');
             $user->is_active = $request->active_status;
             $user->save();
@@ -44,12 +46,18 @@ class EloquentUserRepository implements UserContract {
         * @param object $request The request object containing the updated user data
         * @return \App\Models\User The updated User instance
         */
-        public function update($id, $request)
+        public function update($request, $uuid)
         {
-            $user = $this->findByUuid($id);
-            $user->name = $request->name;
+            $user = $this->findByUuid($uuid);
+            $user->fullname = $request->fullname;
+            $user->username = $request->username;
             $user->email = $request->email;
+            $user->country = $request->country;
+            $user->password = Hash::make($request->password);
             $user->save();
+
+            // Send notification
+            // $user->notify(new CreateUserNotification($user));
             return $user;
         }
 

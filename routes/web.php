@@ -28,18 +28,12 @@ Route::get('/journals', function () {
     return view('journals')->with('categories', Category::all());
 })->name('journals');
 
-Route::get('/submit-manuscript', function () {
-    return view('user.submit-manuscript');
-})->name('submit-manuscript');
+
 
 Route::group(['prefix' => 'user'], function () {
-    Route::get('/settings', function () {
-        return view('user.settings');
-    })->name('user.settings');
 
-    Route::get('/submissions', function () {
-        return view('user.submissions');
-    })->name('user.submissions');
+
+
 
 });
 
@@ -94,7 +88,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::post('/{id}/update', [CategoryController::class, 'update'])->name('categories.update');
         Route::get('/{id}/delete', [CategoryController::class, 'destroy'])->name('categories.destroy');
     });
-
 
     Route::group(['prefix' => 'sub-categories'], function () {
         Route::get('/', [SubCategoryController::class, 'index'])->name('subcategories.index');
@@ -157,11 +150,28 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 //Editor Routes
 Route::group(['prefix' => 'editor', 'middleware' => 'auth'], function () {
     Route::get('/', [EditorDashboardController::class, 'index'])->name('editor.dashboard');
+
+    Route::group(['prefix' => 'journals'], function () {
+        Route::get('/pending', [JournalController::class, 'pendingApproval'])->name('editor.journals.pendingApproval');
+        Route::get('/approved', [JournalController::class, 'create'])->name('editor.journals.approved');
+    });
+
 });
 
 Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/submit-manuscript', [JournalController::class, 'creatManuscript'])->name('submit-manuscript');
+    Route::post('/submit-manuscript', [JournalController::class, 'submitManuscript'])->name('submit-manuscript.post');
+
+    Route::get('settings/{uuid}', [UserController::class, 'edit'])->name('user.settings');
+    Route::post('settings/{uuid}', [UserController::class, 'update'])->name('user.settings.update');
+
+
+    Route::get('/submissions', function () {
+        return view('user.submissions');
+    })->name('user.submissions');
 
     // Journal Routes
     Route::group(['prefix' => 'journals'], function () {

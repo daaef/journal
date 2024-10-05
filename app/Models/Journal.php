@@ -11,6 +11,7 @@ class Journal extends Model
 
     protected $fillable = [
         'title',
+        'author',
         'slug',
         'uuid',
         'description',
@@ -36,11 +37,6 @@ class Journal extends Model
         'approved_by'
     ];
 
-    public function entries()
-    {
-        // return $this->hasMany(Entry::class);
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -60,5 +56,16 @@ class Journal extends Model
 
     public function comments() {
         return $this->hasMany(JournalComment::class);
+    }
+
+    protected function cast()
+    {
+        return [
+            'is_active' => 'boolean',
+            'meta_keywords' => 'json',
+            'created_by' => 'json',
+            'updated_by' => 'json',
+            'approved_by' => 'json',
+        ];
     }
 }

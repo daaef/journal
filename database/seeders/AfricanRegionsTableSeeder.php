@@ -1,55 +1,32 @@
 <?php
 
-use Illuminate\Support\Facades\Storage;
+namespace Database\Seeders;
 
-// Check if authenticationCode Function exists
-if (!function_exists('authenticationCode')) {
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use App\Models\Region;
+use App\Models\Country;
+
+class AfricanRegionsTableSeeder extends Seeder
+{
     /**
-     * Generate Random Code
-     *
-     * @param int $length
-     * @return string
+     * Run the database seeds.
      */
-    function authenticationCode($length = 6)
+    public function run(): void
     {
-        // Check if length is valid
-        if ($length < 1) {
-            $length = 6;
-        }
-
-        // Generate random code with specified length
-        $code = '';
-        for ($i = 0; $i < $length; $i++) {
-            $code .= random_int(0, 9);
-        }
-
-        return $code;
-    }
-}
-
-
-// African regions and their countries
-if (!function_exists('africanRegions')) {
-    /**
-     * African Regions and their countries
-     *
-     * @return array
-     */
-    function africanRegions()
-    {
-        return [
+        // Create a seeder data for names of african regions in alphabetical order and thier respective countries
+        $regions = [
             'Central Africa' => [
                 'Angola',
                 'Cameroon',
                 'Central African Republic',
                 'Chad',
                 'Congo',
-                'Democratic Republic of the Congo',
                 'Equatorial Guinea',
                 'Gabon',
-                'São Tomé and Príncipe'
+                'São Tomé and Príncipe',
             ],
-            'East Africa' => [
+            'Eastern Africa' => [
                 'Burundi',
                 'Comoros',
                 'Djibouti',
@@ -66,10 +43,8 @@ if (!function_exists('africanRegions')) {
                 'South Sudan',
                 'Tanzania',
                 'Uganda',
-                'Zambia',
-                'Zimbabwe'
             ],
-            'North Africa' => [
+            'Northern Africa' => [
                 'Algeria',
                 'Egypt',
                 'Libya',
@@ -82,9 +57,9 @@ if (!function_exists('africanRegions')) {
                 'Eswatini',
                 'Lesotho',
                 'Namibia',
-                'South Africa'
+                'South Africa',
             ],
-            'West Africa' => [
+            'Western Africa' => [
                 'Benin',
                 'Burkina Faso',
                 'Cape Verde',
@@ -100,17 +75,18 @@ if (!function_exists('africanRegions')) {
                 'Nigeria',
                 'Senegal',
                 'Sierra Leone',
-                'Togo'
-            ]
+                'Togo',
+            ],
         ];
+
+        foreach ($regions as $region => $countries) {
+            $region = Region::create(['name' => $region]);
+
+            foreach ($countries as $country) {
+                $countryIds = Country::whereIn('name', $countries)->pluck('id')->toArray();
+                $region->countries()->attach($countryIds);
+            }
+        }
+
     }
-}
-
-
-function journalLanguages() {
-    return [
-        'American English',
-        'British English',
-        'French'
-    ];
 }

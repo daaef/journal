@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('journals', function (Blueprint $table) {
             $table->id();
             $table->longText('title');
+            $table->longText('author');
             $table->string('slug')->unique();
             $table->longText('description');
             $table->string('cover_image')->nullable();
@@ -29,15 +30,15 @@ return new class extends Migration
             $table->longText('abstract')->nullable();
             $table->longText('institution')->nullable();
             $table->string('license')->nullable();
-
+            $table->string('country')->nullable();
 
             //approval levels
-            $table->enum('approval_level', ['level0', 'level1', 'level2', 'level3'])->default('level0');
+            $table->integer('approval_level')->default(0);
 
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
-            $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('category_id')->nullable();
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
 
             $table->unsignedBigInteger('sub_category_id')->nullable();
