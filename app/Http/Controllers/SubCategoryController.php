@@ -95,6 +95,11 @@ class SubCategoryController extends Controller
         return redirect()->route('subcategories.index')->with($notification);
     }
 
+    public function getSubCategoriesByID(Request $request){
+        $subcategories = $this->repo->findByCategory($request->category_id);
+        return response()->json($subcategories);
+    }
+
     /**
      * Remove the specified resource from storage.
      */

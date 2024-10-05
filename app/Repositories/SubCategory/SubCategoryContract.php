@@ -7,5 +7,6 @@ interface SubCategoryContract {
     public function findById($id);
     public function getAll();
     public function findByUUID($uuid);
+    public function findByCategory($category_id);
     public function delete($id);
 }

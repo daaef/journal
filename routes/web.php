@@ -24,11 +24,11 @@ Route::get('/login', function () {
 
 Route::get('/interests', [HomeController::class, 'interests'])->name('interests');
 
-Route::get('/journals', function () {
-    return view('journals')->with('categories', Category::all());
-})->name('journals');
+// Route::get('/journals', function () {
+//     return view('journals')->with('categories', Category::all());
+// })->name('journals');
 
-
+Route::match(['get', 'post'], '/journals/', [JournalController::class, 'searchJournal'])->name('journals');
 
 Route::group(['prefix' => 'user'], function () {
 
@@ -184,3 +184,5 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
         Route::delete('/{id}/delete', [JournalController::class, 'destroy'])->name('journals.destroy');
     });
 });
+
+Route::get('/load-subcategories', [SubCategoryController::class, 'getSubCategoriesByID'])->name('load-subcategories');

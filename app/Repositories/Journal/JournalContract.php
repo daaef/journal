@@ -11,4 +11,5 @@ interface JournalContract {
     public function delete($id);
     public function getPendingApprovedJournals();
     public function getApprovedJournals();
+    public function searchJournal($request);
 }

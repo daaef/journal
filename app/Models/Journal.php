@@ -34,7 +34,9 @@ class Journal extends Model
         'sub_sub_category_id',
         'created_by',
         'updated_by',
-        'approved_by'
+        'approved_by',
+        'likes',
+        'dislikes',
     ];
 
     public function user()

@@ -126,4 +126,40 @@ class EloquentJournalRepository implements JournalContract {
 
         return $journal;
     }
+
+
+    // search journal
+    public function searchJournal($request)
+    {
+        $query = Journal::query();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%$search%")
+                    ->orWhere('author', 'like', "%$search%")
+                    ->orWhere('country', 'like', "%$search%")
+                    ->orWhere('journal_language', 'like', "%$search%")
+                    ->orWhere('abstract', 'like', "%$search%");
+            });
+        }
+
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->has('sub_category_id')) {
+            $query->where('sub_category_id', $request->sub_category_id);
+        }
+
+        if ($request->has('sub_sub_category_id')) {
+            $query->where('sub_sub_category_id', $request->sub_sub_category_id);
+        }
+
+        if ($request->has('approval_status')) {
+            $query->where('approval_status', $request->approval_status);
+        }
+
+        return $query->paginate(10);
+    }
 }
