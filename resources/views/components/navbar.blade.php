@@ -68,7 +68,7 @@
                     </div>
                 </div>
                 <a class="py-2 hidden px-6 lg:inline-flex items-center gap-x-2 text-sm font-medium text-gray-900 hover:text-gray-400 focus:outline-none focus:text-gray-400"
-                   href="#">
+                   href="{{ route('auth.logout') }}">
                     Logout
                 </a>
             @else
