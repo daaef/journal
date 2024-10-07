@@ -1,6 +1,6 @@
 <x-layouts.layout>
     <x-slot:title>
-        Welcome to JAPR Homepage | Select your Interests
+        Welcome to JAPR | Select your Interests
     </x-slot>
     <div class="border-b border-gray-200 pb-5 sm:flex w-full sm:items-center sm:justify-between">
         <h3 class="text-lg font-bold leading-6 text-gray-900">Interests</h3>
@@ -50,7 +50,7 @@
         </div>
     </div>
     <a href="{{ route('home') }}" id="submit-interests"
-       class="mt-6 inline-block rounded-[8px] bg-secondary-900 hover:bg-primary-500 text-white font-bold py-2 px-4 rounded">
+        class="mt-6 inline-block rounded-[8px] bg-secondary-900 hover:bg-primary-500 text-white font-bold py-2 px-4 rounded">
         Submit Interests
     </a>
 </x-layouts.layout>

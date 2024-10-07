@@ -1,10 +1,6 @@
 <x-layouts.layout>
     <x-slot:title>
-        Custom Title
-    </x-slot>
-
-    <x-slot:title>
-        Welcome to your JAPR Settings Page
+        Welcome to JAPR : Settings
     </x-slot>
     <x-slot:breadcrumb>
         <div class="border-b border-gray-200 pb-5 sm:flex w-full sm:items-center sm:justify-between">
@@ -28,7 +24,7 @@
                 </p>
 
                 <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
-
+                    <input type="hidden" name="uuid" value="{{ $user->uuid }}">
                     <div>
                         <label for="fullname" class="block text-sm font-medium leading-6 text-gray-900">First
                             Name</label>

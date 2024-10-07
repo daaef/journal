@@ -53,7 +53,6 @@
 
             break;
         case 'warning':
-
             toastr.options.timeOut = 10000;
             toastr.warning("{{ Session::get('message') }}");
             var audio = new Audio('audio.mp3');

@@ -7,7 +7,8 @@
             <h3 class="text-lg font-bold leading-6 text-gray-900">Journals</h3>
             <div>
                 <div class="flex rounded-lg border min-w-full">
-                    <input type="text" id="hs-trailing-multiple-add-on" name="search" value="{{ old('search') ?: request()->search }}"
+                    <input type="text" id="hs-trailing-multiple-add-on" name="search"
+                        value="{{ old('search') ?: request()->search }}"
                         class="py-3 lg:w-[400px] px-4 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
                         placeholder="Search  for a keyword, title, publication date, ISSN, ISBN, DOI ">
                     <div class="inline-flex items-center min-w-[180px] rounded-e-md">
@@ -484,7 +485,7 @@
                 </div>
             </div>
             <div class="grid gap-4">
-                <x-journal :journals="$journals"/>
+                <x-journal :journals="$journals" />
                 {{-- <x-journal />
                 <x-journal />
                 <x-journal />

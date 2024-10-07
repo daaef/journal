@@ -60,6 +60,14 @@ class Journal extends Model
         return $this->hasMany(JournalComment::class);
     }
 
+    public function likedBy() {
+        return $this->belongsToMany(User::class, 'journal_likes', 'journal_id', 'user_id');
+    }
+
+    public function likes() {
+        return $this->hasMany(JournalLike::class);
+    }
+
     protected function cast()
     {
         return [

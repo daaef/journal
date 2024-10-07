@@ -11,6 +11,7 @@ use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SubSubCategoryController;
 use App\Http\Controllers\JournalController;
+use App\Http\Controllers\MyJournalCollectionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Models\Category;
@@ -23,12 +24,10 @@ Route::get('/login', function () {
 })->name('login');
 
 Route::get('/interests', [HomeController::class, 'interests'])->name('interests');
-
-// Route::get('/journals', function () {
-//     return view('journals')->with('categories', Category::all());
-// })->name('journals');
-
 Route::match(['get', 'post'], '/journals/', [JournalController::class, 'searchJournal'])->name('journals');
+Route::match(['get', 'post'], '/like-journal/', [JournalController::class, 'likeJournal'])->name('journals.like');
+Route::match(['get', 'post'], '/dislike-journal/', [JournalController::class, 'dislikeJournal'])->name('journals.dislike');
+Route::match(['get', 'post'], '/add-to-collection/', [MyJournalCollectionController::class, 'store'])->name('journals.add-to-collection');
 
 Route::group(['prefix' => 'user'], function () {
 
