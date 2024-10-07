@@ -3,9 +3,15 @@
         Welcome to JAPR | Select your Interests
     </x-slot>
     <div class="border-b border-gray-200 pb-5 sm:flex w-full sm:items-center sm:justify-between">
-        <h3 class="text-lg font-bold leading-6 text-gray-900">Interests</h3>
-        <div>
+        <div class="flex flex-col">
+            <h3 class="text-lg font-bold leading-6 text-primary-500">Interests</h3>
             <h4>Select 5 categories that interest you</h4>
+        </div>
+        <div>
+            <a href="#" class="flex font-medium text-sm text-secondary-900 gap-2 items-center">
+                Skip
+                <img class="h-4" src="{{ asset('images/skip.png') }}" alt="">
+            </a>
         </div>
     </div>
     <hr class="mb-8">
