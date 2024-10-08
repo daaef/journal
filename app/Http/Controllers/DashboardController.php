@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Journal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,6 +18,7 @@ class DashboardController extends Controller
     public function index()
     {
 //        dd(' User Dashboard');
-        return view('user.dashboard');
+        $journals = Journal::all();
+        return view('user.dashboard', compact('journals'));
     }
 }

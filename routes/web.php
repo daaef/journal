@@ -15,6 +15,7 @@ use App\Http\Controllers\MyJournalCollectionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Models\Category;
+use App\Models\Journal;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -169,7 +170,8 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
 
 
     Route::get('/submissions', function () {
-        return view('user.submissions');
+        $journals = Journal::all();
+        return view('user.submissions', compact('journals'));
     })->name('user.submissions');
 
     // Journal Routes
