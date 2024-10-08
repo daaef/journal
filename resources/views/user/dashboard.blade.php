@@ -11,4 +11,10 @@
     </div>
     <hr class="">
     </x-slot:breadcrumb>
+    <div class="min-h-[40vh] justify-center flex items-center">
+        <a class="flex flex-col items-center" href="{{ route('submit-manuscript') }}">
+            <img class="h-[100px] opacity-40" src="{{ asset('images/create-collection.png') }}" alt="">
+            <p class="text-primary-500 font-semibold">Click to Create Collection</p>
+        </a>
+    </div>
 </x-layouts.layout>
