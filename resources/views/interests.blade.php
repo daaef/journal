@@ -17,69 +17,78 @@
     <hr class="mb-8">
     <form id="interests-form" action="" method="POST">
         @csrf
-    <div class="mx-auto">
-        <div class="masonry grid grid-cols-3 gap-4 lg:grid-cols-5">
-            <label for="cat1">
-                <input type="checkbox" class="hidden checker" id="cat1">
-                <button class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                    <span class="text-lg">Technology</span>
-                </button>
-            </label>
-            <label for="cat2">
-                <input type="checkbox" class="hidden" id="cat2">
-                <button class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                    <span class="text-lg">Health</span>
-                </button>
-            </label>
-            <label for="cat3">
-                <input type="checkbox" class="hidden" id="cat3">
-                <button class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                    <span class="text-lg">Finance</span>
-                </button>
-            </label>
-            <label for="cat4">
-                <input type="checkbox" class="hidden" id="cat4">
-                <button class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                    <span class="text-lg">Travel</span>
-                </button>
-            </label>
-            <label for="cat5">
-                <input type="checkbox" class="hidden" id="cat5">
-                <button class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                    <span class="text-lg">Education</span>
-                </button>
-            </label>
-            <label for="cat6">
-                <input type="checkbox" class="hidden" id="cat6">
-                <button class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                    <span class="text-lg">Food</span>
-                </button>
-            </label>
-            <label for="cat7">
-                <input type="checkbox" class="hidden" id="cat7">
-                <button class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                    <span class="text-lg">Travel</span>
-                </button>
-            </label>
-            <label for="cat8">
-                <input type="checkbox" class="hidden" id="cat8">
-                <button class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                    <span class="text-lg">Education</span>
-                </button>
-            </label>
-            <label for="cat9">
-                <input type="checkbox" class="hidden" id="cat9">
-                <button class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                    <span class="text-lg">Food</span>
-                </button>
-            </label>
+        <div class="mx-auto">
+            <div class="masonry grid grid-cols-3 gap-4 lg:grid-cols-5">
+                <label for="cat1">
+                    <input type="checkbox" class="hidden checker" id="cat1" name="technology">
+                    <button
+                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
+                        <span class="text-lg">Technology</span>
+                    </button>
+                </label>
+                <label for="cat2">
+                    <input type="checkbox" class="hidden" id="cat2">
+                    <button
+                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
+                        <span class="text-lg">Health</span>
+                    </button>
+                </label>
+                <label for="cat3">
+                    <input type="checkbox" class="hidden" id="cat3">
+                    <button
+                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
+                        <span class="text-lg">Finance</span>
+                    </button>
+                </label>
+                <label for="cat4">
+                    <input type="checkbox" class="hidden" id="cat4">
+                    <button
+                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
+                        <span class="text-lg">Travel</span>
+                    </button>
+                </label>
+                <label for="cat5">
+                    <input type="checkbox" class="hidden" id="cat5">
+                    <button
+                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
+                        <span class="text-lg">Education</span>
+                    </button>
+                </label>
+                <label for="cat6">
+                    <input type="checkbox" class="hidden" id="cat6">
+                    <button
+                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
+                        <span class="text-lg">Food</span>
+                    </button>
+                </label>
+                <label for="cat7">
+                    <input type="checkbox" class="hidden" id="cat7">
+                    <button
+                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
+                        <span class="text-lg">Travel</span>
+                    </button>
+                </label>
+                <label for="cat8">
+                    <input type="checkbox" class="hidden" id="cat8">
+                    <button
+                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
+                        <span class="text-lg">Education</span>
+                    </button>
+                </label>
+                <label for="cat9">
+                    <input type="checkbox" class="hidden" id="cat9">
+                    <button
+                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
+                        <span class="text-lg">Food</span>
+                    </button>
+                </label>
+            </div>
         </div>
-    </div>
-    <button type="submit" id="submit-interests"
-       class="mt-6 inline-block rounded-[8px] bg-secondary-900 hover:bg-primary-500 text-white font-bold py-2 px-4 rounded">
-        Submit Interests
-    </button>
-</form>
+        <button type="submit" id="submit-interests"
+            class="mt-6 inline-block rounded-[8px] bg-secondary-900 hover:bg-primary-500 text-white font-bold py-2 px-4 rounded">
+            Submit Interests
+        </button>
+    </form>
 </x-layouts.layout>
 <script>
     // JavaScript to handle button toggle functionality with a limit of 5 selections
@@ -132,7 +141,8 @@
             toastr.error(`Please select no more than ${maxSelections} interests.`);
         } else {
             // Form is valid, you can submit it here
-            console.log('Form submitted with interests:', Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value));
+            console.log('Form submitted with interests:', Array.from(checkboxes).filter(cb => cb.checked).map(
+                cb => cb.value));
             // Uncomment the next line when you're ready to actually submit the form
             // form.submit();
         }
