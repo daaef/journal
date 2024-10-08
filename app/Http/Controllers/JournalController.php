@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Repositories\Category\CategoryContract;
+use App\Repositories\DislikeJournal\DislikeJournalContract;
 use App\Repositories\Journal\JournalContract;
+use App\Repositories\LikeJournal\LikeJournalContract;
 use App\Repositories\SubCategory\SubCategoryContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -15,12 +17,21 @@ class JournalController extends Controller
     protected $repo;
     protected $categoryRepo;
     protected $subCategoryRepo;
+    protected $likeJournalRepo;
+    protected $dislikeJournalRepo;
 
-    public function __construct(JournalContract $journalContract, CategoryContract $categoryContract, SubCategoryContract $subCategoryContract)
-    {
+    public function __construct(
+        JournalContract $journalContract,
+        CategoryContract $categoryContract,
+        SubCategoryContract $subCategoryContract,
+        LikeJournalContract $likeJournalContract,
+        DislikeJournalContract $dislikeJournalContract
+    ) {
         $this->repo = $journalContract;
         $this->categoryRepo = $categoryContract;
         $this->subCategoryRepo = $subCategoryContract;
+        $this->likeJournalRepo = $likeJournalContract;
+        $this->dislikeJournalRepo = $dislikeJournalContract;
     }
 
     /**
@@ -37,11 +48,97 @@ class JournalController extends Controller
         $journals = $this->repo->getAll();
         $categories = $this->categoryRepo->getAll();
         // dd($request->all());
-        if($request->search) {
+        if ($request->search) {
             $journals = $this->repo->searchJournal($request);
             // dd($journals);
         }
         return view('journals', compact('journals', 'categories'));
+    }
+
+    public function likeJournal(Request $request)
+    {
+        // dd($request->all(), 'likeJournal');
+        // validate user id
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
+
+        //check if user has already liked the journal
+        $check = $this->likeJournalRepo->checkIfUserHasLikedJournal($request->journal_id, $request->user_id);
+        // dd($check);
+        if ($check) {
+            $notification = array(
+                'message' => 'You have already liked this journal',
+                'alert-type' => 'info'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        $journal = $this->likeJournalRepo->likeJournal($request->journal_id, $request->user_id);
+        // dd($journal);
+        if ($journal) {
+            $notification = array(
+                'message' => 'Journal Liked successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->back()->with($notification);
+        }
+        $notification = array(
+            'message' => 'Error Liking journal',
+            'alert-type' => 'error'
+        );
+        return redirect()->back()->with($notification);
+    }
+
+    public function dislikeJournal(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'journal_id'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
+
+        //check if user has already liked the journal
+        $check = $this->dislikeJournalRepo->checkIfUserHasLikedJournal($request->journal_id, $request->user_id);
+
+        if ($check) {
+            $notification = array(
+                'message' => 'You have already disliked this journal',
+                'alert-type' => 'info'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        $journal = $this->likeJournalRepo->dislikeJournal($request->journal_id, $request->user_id);
+
+        if ($journal) {
+            $notification = array(
+                'message' => 'Journal disliked successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->back()->with($notification);
+        }
+        $notification = array(
+            'message' => 'Error disliking journal',
+            'alert-type' => 'error'
+        );
+        return redirect()->back()->with($notification);
+    }
+
+    public function addToCollection(Request $request)
+    {
+        dd($request->all(), 'addToCollection');
+        // $this->repo->likeJournal($request);
+        return redirect()->back();
     }
 
     /**
@@ -53,7 +150,8 @@ class JournalController extends Controller
     }
 
 
-    public function creatManuscript() {
+    public function creatManuscript()
+    {
         $regions = africanRegions();
         $languages = journalLanguages();
         $categories = $this->categoryRepo->getAll();
@@ -62,7 +160,8 @@ class JournalController extends Controller
     }
 
 
-    public function submitManuscript(Request $request) {
+    public function submitManuscript(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'title' => 'required',
@@ -75,13 +174,13 @@ class JournalController extends Controller
             'accept' => 'required'
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+        // if ($validator->fails()) {
+        //     return redirect()->back()->withErrors($validator)->withInput();
+        // }
 
         $journal = $this->repo->submitManuscript($request);
 
-        if($journal) {
+        if ($journal) {
             $notification = array(
                 'message' => 'Manuscript Submitted successfully',
                 'alert-type' => 'success'
@@ -159,12 +258,14 @@ class JournalController extends Controller
         return redirect()->route('journals.index')->with($notification);
     }
 
-    public function pendingApproval() {
+    public function pendingApproval()
+    {
         $journals = $this->repo->getPendingApprovedJournals();
     }
 
 
-    public function approvedJournals() {
+    public function approvedJournals()
+    {
         $journals = $this->repo->getApprovedJournals();
         return view('journals.approvedJournals', compact('journals'));
     }

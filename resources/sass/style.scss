@@ -68,3 +68,13 @@
         color: #FAFAFA;
     }
 }
+
+
+.checker {
+    & + .hello {
+        display: none;
+    }
+    &:checked + .hello {
+        display: block;
+    }
+}

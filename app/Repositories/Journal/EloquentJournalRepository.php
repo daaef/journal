@@ -162,4 +162,25 @@ class EloquentJournalRepository implements JournalContract {
 
         return $query->paginate(10);
     }
+
+    public function likeJournal($request) {
+        $journal = $this->findByUUID($request->uuid);
+        $journal->likes += 1;
+        $journal->save();
+        return $journal;
+    }
+
+    public function dislikeJournal($request) {
+        $journal = $this->findByUUID($request->uuid);
+        $journal->dislikes += 1;
+        $journal->save();
+        return $journal;
+    }
+
+    public function getJournalLikes($request) {
+        $journal = $this->findByUUID($request->uuid);
+        return $journal->likes;
+    }
+
+    
 }

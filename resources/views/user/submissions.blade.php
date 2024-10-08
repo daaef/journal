@@ -1,10 +1,6 @@
 <x-layouts.layout>
     <x-slot:title>
-        Custom Title
-    </x-slot>
-
-    <x-slot:title>
-        Welcome to your JAPR Submissions Page
+        Welcome to JAPR: My Submissions
     </x-slot>
     <x-slot:breadcrumb>
         <div class="border-b border-gray-200 pb-5 sm:flex w-full sm:items-center sm:justify-between">

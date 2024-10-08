@@ -12,4 +12,7 @@ interface JournalContract {
     public function getPendingApprovedJournals();
     public function getApprovedJournals();
     public function searchJournal($request);
+    public function likeJournal($uuid);
+    public function dislikeJournal($uuid);
+    public function getJournalLikes($uuid);
 }
