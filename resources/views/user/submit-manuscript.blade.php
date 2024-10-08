@@ -180,8 +180,9 @@
                                         required>
                                 </div>
                                 <div class="text-sm leading-6">
-                                    <label for="accept" class="text-gray-500">I acertain with JAPR's Review
-                                        Policy</label>
+                                    <label for="accept" class="text-gray-500">
+                                        I agree that I haven't publis
+                                    </label>
                                 </div>
                             </div>
                         </div>
