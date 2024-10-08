@@ -3,6 +3,22 @@
 </script>
 
 <x-layouts.layout>
+    <x-slot:title>
+        Custom Title
+    </x-slot>
+
+    <x-slot:title>
+        Welcome to your JAPR Submissions Page
+    </x-slot>
+    <x-slot:breadcrumb>
+        <div class="border-b border-gray-200 pb-5 sm:flex w-full sm:items-center sm:justify-between">
+            <h3 class="text-lg font-bold leading-6 text-gray-900">Submissions</h3>
+            <div>
+                <h4>{{ Str::words(auth()->user()->fullname, 1, '') }}'s Dashboard</h4>
+            </div>
+        </div>
+        <hr class="">
+    </x-slot:breadcrumb>
     <form action="" method="post" enctype="multipart/form-data">
         @csrf
         <div class="space-y-12">
@@ -13,14 +29,14 @@
                 <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
 
                     <div>
-                        <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title</label>
+                        <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Manuscript Title</label>
                         <div class="mt-2">
                             <input id="title" name="title" type="text" value="{{ old('title') }}" required
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
                     <div>
-                        <label for="author" class="block text-sm font-medium leading-6 text-gray-900">Author</label>
+                        <label for="author" class="block text-sm font-medium leading-6 text-gray-900">Author's Name(s)</label>
                         <div class="mt-2">
                             <input id="author" name="author" type="text"
                                 value="{{ old('author') ?: auth()->user()->fullname }}" required
@@ -152,7 +168,20 @@
                                 </div>
                                 <div class="text-sm leading-6">
                                     <label for="accept" class="text-gray-500">I agree with JAPR's Review
-                                        policy</label>
+                                        Policy</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 space-y-6">
+                            <div class="relative flex gap-x-3">
+                                <div class="flex h-6 items-center">
+                                    <input id="accept" name="accept" type="checkbox"
+                                        class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                        required>
+                                </div>
+                                <div class="text-sm leading-6">
+                                    <label for="accept" class="text-gray-500">I acertain with JAPR's Review
+                                        Policy</label>
                                 </div>
                             </div>
                         </div>

@@ -30,7 +30,7 @@
                             Dashboard
                         </a>
                         <a class="font-bold lg:hidden text-gray-900 hover:text-gray-400 focus:outline-none focus:text-gray-400 "
-                            href="{{ route('user.settings') }}">
+                            href="{{ route('user.settings', auth()->user()->uuid) }}">
                             Settings
                         </a>
                     @else
@@ -62,8 +62,8 @@
                         <a class="@if (Route::is('dashboard')) text-primary-500 font-bold @else text-gray-800 font-medium @endif flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm  hover:bg-gray-100 focus:outline-none focus:bg-gray-100" href="{{ route('dashboard') }}">
                             Dashboard
                         </a>
-                        <a class="@if (Route::is('settings')) text-primary-500 font-bold @else text-gray-800 font-medium @endif flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100" href="{{ route('user.settings') }}">
-                            Settings
+                        <a class="@if (Route::is('user.settings')) text-primary-500 font-bold @else text-gray-800 font-medium @endif flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100" href="{{ route('user.settings', auth()->user()->uuid) }}">
+                            Profile
                         </a>
                     </div>
                 </div>

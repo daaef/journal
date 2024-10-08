@@ -48,12 +48,78 @@
                         <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country /
                             Region</label>
                         <div class="mt-2">
-                            <select id="country" name="country" autocomplete="country-name"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
-                                <option>United States</option>
-                                <option>Canada</option>
-                                <option>Mexico</option>
-                            </select>
+                            <label for="country" class="form-label mb-8 h6"> Country</label>
+                            <div class="position-relative">
+                                <select name="country" id="country"  class="block w-full bg-[#F9FAFB] rounded-md border-0 px-3 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                                    <option value="">Select your country</option>
+                                    <optgroup label="Central Africa">
+                                        <option value="Cameroon" {{ $user->country == 'Cameroon' ? 'selected' : '' }}>Cameroon</option>
+                                        <option value="Central African Republic" {{ $user->country == 'Central African Republic' ? 'selected' : '' }}>Central African Republic</option>
+                                        <option value="Chad" {{ $user->country == 'Chad' ? 'selected' : '' }}>Chad</option>
+                                        <option value="Congo, Democratic Republic of the" {{ $user->country == 'Congo, Democratic Republic of the' ? 'selected' : '' }}>Congo, Democratic Republic of
+                                            the</option>
+                                        <option value="Congo, Republic of the" {{ $user->country == 'Congo, Republic of the' ? 'selected' : '' }}>Congo, Republic of the</option>
+                                        <option value="Equatorial Guinea" {{ $user->country == 'Equatorial Guinea' ? 'selected' : '' }}>Equatorial Guinea</option>
+                                        <option value="Gabon" {{ $user->country == 'Gabon' ? 'selected' : '' }}>Gabon</option>
+                                        <option value="Sao Tome and Principe" {{ $user->country == 'Sao Tome and Principe' ? 'selected' : '' }}>Sao Tome and Principe</option>
+                                    </optgroup>
+                                    <optgroup label="Eastern Africa">
+                                        <option value="Burundi" {{ $user->country == 'Burundi' ? 'selected' : '' }}>Burundi</option>
+                                        <option value="Comoros" {{ $user->country == 'Comoros' ? 'selected' : '' }}>Comoros</option>
+                                        <option value="Djibouti" {{ $user->country == 'Djibouti' ? 'selected' : '' }}>Djibouti</option>
+                                        <option value="Eritrea" {{ $user->country == 'Eritrea' ? 'selected' : '' }}>Eritrea</option>
+                                        <option value="Ethiopia" {{ $user->country == 'Ethiopia' ? 'selected' : '' }}>Ethiopia</option>
+                                        <option value="Kenya" {{ $user->country == 'Kenya' ? 'selected' : '' }}>Kenya</option>
+                                        <option value="Madagascar" {{ $user->country == 'Madagascar' ? 'selected' : '' }}>Madagascar</option>
+                                        <option value="Malawi" {{ $user->country == 'Malawi' ? 'selected' : '' }}>Malawi</option>
+                                        <option value="Mauritius" {{ $user->country == 'Mauritius' ? 'selected' : '' }}>Mauritius</option>
+                                        <option value="Mozambique" {{ $user->country == 'Mozambique' ? 'selected' : '' }}>Mozambique</option>
+                                        <option value="Rwanda" {{ $user->country == 'Rwanda' ? 'selected' : '' }}>Rwanda</option>
+                                        <option value="Seychelles" {{ $user->country == 'Seychelles' ? 'selected' : '' }}>Seychelles</option>
+                                        <option value="Somalia" {{ $user->country == 'Somalia' ? 'selected' : '' }}>Somalia</option>
+                                        <option value="South Sudan" {{ $user->country == 'South Sudan' ? 'selected' : '' }}>South Sudan</option>
+                                        <option value="Tanzania" {{ $user->country == 'Tanzania' ? 'selected' : '' }}>Tanzania</option>
+                                        <option value="Uganda" {{ $user->country == 'Uganda' ? 'selected' : '' }}>Uganda</option>
+                                        <option value="Zambia" {{ $user->country == 'Zambia' ? 'selected' : '' }}>Zambia</option>
+                                        <option value="Zimbabwe" {{ $user->country == 'Zimbabwe' ? 'selected' : '' }}>Zimbabwe</option>
+                                    </optgroup>
+                                    <optgroup label="Northern Africa">
+                                        <option value="Algeria" {{ $user->country == 'Algeria' ? 'selected' : '' }}>Algeria</option>
+                                        <option value="Egypt" {{ $user->country == 'Egypt' ? 'selected' : '' }}>Egypt</option>
+                                        <option value="Libya" {{ $user->country == 'Libya' ? 'selected' : '' }}>Libya</option>
+                                        <option value="Morocco" {{ $user->country == 'Morocco' ? 'selected' : '' }}>Morocco</option>
+                                        <option value="Sudan" {{ $user->country == 'Sudan' ? 'selected' : '' }}>Sudan</option>
+                                        <option value="Tunisia" {{ $user->country == 'Tunisia' ? 'selected' : '' }}>Tunisia</option>
+                                        <option value="Western Sahara" {{ $user->country == 'Western Sahara' ? 'selected' : '' }}>Western Sahara</option>
+                                    </optgroup>
+                                    <optgroup label="Southern Africa">
+                                        <option value="Angola" {{ $user->country == 'Angola' ? 'selected' : '' }}>Angola</option>
+                                        <option value="Botswana" {{ $user->country == 'Botswana' ? 'selected' : '' }}>Botswana</option>
+                                        <option value="Lesotho" {{ $user->country == 'Lesotho' ? 'selected' : '' }}>Lesotho</option>
+                                        <option value="Namibia" {{ $user->country == 'Namibia' ? 'selected' : '' }}>Namibia</option>
+                                        <option value="South Africa" {{ $user->country == 'South Africa' ? 'selected' : '' }}>South Africa</option>
+                                        <option value="Swaziland" {{ $user->country == 'Swaziland' ? 'selected' : '' }}>Swaziland</option>
+                                    </optgroup>
+                                    <optgroup label="Western Africa">
+                                        <option value="Benin" {{ $user->country == 'Benin' ? 'selected' : '' }}>Benin</option>
+                                        <option value="Burkina Faso" {{ $user->country == 'Burkina Faso' ? 'selected' : '' }}>Burkina Faso</option>
+                                        <option value="Cape Verde" {{ $user->country == 'Cape Verde' ? 'selected' : '' }}>Cape Verde</option>
+                                        <option value="Cote d'Ivoire" {{ $user->country == `Cote d'Ivoire` ? 'selected' : '' }}>Cote d'Ivoire</option>
+                                        <option value="Gambia" {{ $user->country == 'Gambia' ? 'selected' : '' }}>Gambia</option>
+                                        <option value="Ghana" {{ $user->country == 'Ghana' ? 'selected' : '' }}>Ghana</option>
+                                        <option value="Guinea" {{ $user->country == 'Guinea' ? 'selected' : '' }}>Guinea</option>
+                                        <option value="Guinea-Bissau" {{ $user->country == 'Guinea-Bissau' ? 'selected' : '' }}>Guinea-Bissau</option>
+                                        <option value="Liberia" {{ $user->country == 'Liberia' ? 'selected' : '' }}>Liberia</option>
+                                        <option value="Mali" {{ $user->country == 'Mali' ? 'selected' : '' }}>Mali</option>
+                                        <option value="Mauritania" {{ $user->country == 'Mauritania' ? 'selected' : '' }}>Mauritania</option>
+                                        <option value="Niger" {{ $user->country == 'Niger' ? 'selected' : '' }}>Niger</option>
+                                        <option value="Nigeria" {{ $user->country == 'Nigeria' ? 'selected' : '' }}>Nigeria</option>
+                                        <option value="Senegal" {{ $user->country == 'Senegal' ? 'selected' : '' }}>Senegal</option>
+                                        <option value="Sierra Leone" {{ $user->country == 'Sierra Leone' ? 'selected' : '' }}>Sierra Leone</option>
+                                        <option value="Togo" {{ $user->country == 'Togo' ? 'selected' : '' }}>Togo</option>
+                                    </optgroup>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div>

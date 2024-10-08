@@ -73,9 +73,76 @@
                         <div>
                             <label for="country" class="form-label mb-8 h6"> Country</label>
                             <div class="position-relative">
-                                <input type="text" name="country"
-                                    class="block w-full bg-[#F9FAFB] rounded-md border-0 px-3 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-                                    id="country" placeholder="Type your username">
+                                    <select name="country" id="country"
+                                    class="block w-full bg-[#F9FAFB] rounded-md border-0 px-3 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                                    <option value="">Select your country</option>
+                                    <optgroup label="Central Africa">
+                                        <option value="Cameroon">Cameroon</option>
+                                        <option value="Central African Republic">Central African Republic</option>
+                                        <option value="Chad">Chad</option>
+                                        <option value="Congo, Democratic Republic of the">Congo, Democratic Republic of
+                                            the</option>
+                                        <option value="Congo, Republic of the">Congo, Republic of the</option>
+                                        <option value="Equatorial Guinea">Equatorial Guinea</option>
+                                        <option value="Gabon">Gabon</option>
+                                        <option value="Sao Tome and Principe">Sao Tome and Principe</option>
+                                    </optgroup>
+                                    <optgroup label="Eastern Africa">
+                                        <option value="Burundi">Burundi</option>
+                                        <option value="Comoros">Comoros</option>
+                                        <option value="Djibouti">Djibouti</option>
+                                        <option value="Eritrea">Eritrea</option>
+                                        <option value="Ethiopia">Ethiopia</option>
+                                        <option value="Kenya">Kenya</option>
+                                        <option value="Madagascar">Madagascar</option>
+                                        <option value="Malawi">Malawi</option>
+                                        <option value="Mauritius">Mauritius</option>
+                                        <option value="Mozambique">Mozambique</option>
+                                        <option value="Rwanda">Rwanda</option>
+                                        <option value="Seychelles">Seychelles</option>
+                                        <option value="Somalia">Somalia</option>
+                                        <option value="South Sudan">South Sudan</option>
+                                        <option value="Tanzania">Tanzania</option>
+                                        <option value="Uganda">Uganda</option>
+                                        <option value="Zambia">Zambia</option>
+                                        <option value="Zimbabwe">Zimbabwe</option>
+                                    </optgroup>
+                                    <optgroup label="Northern Africa">
+                                        <option value="Algeria">Algeria</option>
+                                        <option value="Egypt">Egypt</option>
+                                        <option value="Libya">Libya</option>
+                                        <option value="Morocco">Morocco</option>
+                                        <option value="Sudan">Sudan</option>
+                                        <option value="Tunisia">Tunisia</option>
+                                        <option value="Western Sahara">Western Sahara</option>
+                                    </optgroup>
+                                    <optgroup label="Southern Africa">
+                                        <option value="Angola">Angola</option>
+                                        <option value="Botswana">Botswana</option>
+                                        <option value="Lesotho">Lesotho</option>
+                                        <option value="Namibia">Namibia</option>
+                                        <option value="South Africa">South Africa</option>
+                                        <option value="Swaziland">Swaziland</option>
+                                    </optgroup>
+                                    <optgroup label="Western Africa">
+                                        <option value="Benin">Benin</option>
+                                        <option value="Burkina Faso">Burkina Faso</option>
+                                        <option value="Cape Verde">Cape Verde</option>
+                                        <option value="Cote d'Ivoire">Cote d'Ivoire</option>
+                                        <option value="Gambia">Gambia</option>
+                                        <option value="Ghana">Ghana</option>
+                                        <option value="Guinea">Guinea</option>
+                                        <option value="Guinea-Bissau">Guinea-Bissau</option>
+                                        <option value="Liberia">Liberia</option>
+                                        <option value="Mali">Mali</option>
+                                        <option value="Mauritania">Mauritania</option>
+                                        <option value="Niger">Niger</option>
+                                        <option value="Nigeria">Nigeria</option>
+                                        <option value="Senegal">Senegal</option>
+                                        <option value="Sierra Leone">Sierra Leone</option>
+                                        <option value="Togo">Togo</option>
+                                    </optgroup>
+                                </select>
                             </div>
                         </div>
                         <div>
