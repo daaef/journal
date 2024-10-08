@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->json('interests');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('interest_id')->constrained('interests')->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->timestamps();
         });
     }
