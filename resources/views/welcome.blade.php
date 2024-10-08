@@ -2,7 +2,7 @@
     <x-slot:title>
         Welcome to JAPR Homepage
     </x-slot>
-    <div class="grid grid-cols-[300px_1fr] w-full">
+    <form class="grid grid-cols-[300px_1fr] w-full" action="{{ route('journals') }}" method="get">
         <div class="border-[1px] rounded-[15px] h-[560px] p-2 border-primary-900 rounded-r-none border-r-0">
             <div class="flex justify-between items-center">
                 <h3 class="pb-1 text-sm">Categories Filter</h3>
@@ -21,7 +21,7 @@
                                     <path d="m9 18 6-6-6-6" />
                                 </svg>
                             </span>
-                            <input type="checkbox" class="category-checkbox" id="category-{{ $category->id }}" />
+                            <input type="checkbox" name="category[]" value="{{ $category->id }}" class="category-checkbox" id="category-{{ $category->id }}" />
                             <label class="category-label" for="category-{{ $category->id }}">
                                 {{ $category->name }}
                             </label>
@@ -37,8 +37,8 @@
                                                     <path d="m9 18 6-6-6-6" />
                                                 </svg>
                                             </span>
-                                            <input type="checkbox" class="subcategory-checkbox"
-                                                id="subcategory-{{ $subCategory->id }}" />
+                                            <input type="checkbox" class="subcategory-checkbox" name="subcategory"
+                                                id="subcategory-{{ $subCategory->id }}" value="{{ $subCategory->id }}" />
                                             <label class="subcategory-label" for="subcategory-{{ $subCategory->id }}">
                                                 {{ $subCategory->name }}
                                             </label>
@@ -46,8 +46,8 @@
                                                 <ul class="subsubcategories">
                                                     @foreach ($subCategory->subSubCategories as $subSubCategory)
                                                         <li class="subsubcategory">
-                                                            <input type="checkbox" class="subsubcategory-checkbox"
-                                                                id="subsubcategory-{{ $subSubCategory->id }}" />
+                                                            <input type="checkbox" name="subsubcategory[]" class="subsubcategory-checkbox"
+                                                                id="subsubcategory-{{ $subSubCategory->id }}" value="{{ $subSubCategory->id }}" />
                                                             <label class="subsubcategory-label"
                                                                 for="subsubcategory-{{ $subSubCategory->id }}">
                                                                 {{ $subSubCategory->name }}
@@ -71,27 +71,27 @@
                 <h3 class="text-5xl font-bold from-white to-primary-500 bg-gradient-to-r bg-clip-text text-transparent">
                     Gateway to African Knowledge</h3>
                 <p class="text-white text-xl">Explore Journals, Literature, and Research Across the Continent</p>
-                <form class="flex rounded-[15px] shadow-sm relative" action="{{ route('journals') }}" method="get">
+                <div class="flex rounded-[15px] shadow-sm relative">
 
-                        <input type="text" id="search"
-                            name="search"
-                            class="py-3 px-4 block w-full border-gray-200 shadow-sm rounded-[15px] text-sm focus:z-10 focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none"
-                            placeholder="Search  for a keyword, title, publication date, ISSN, ISBN, DOI ">
-                        <button type="submit"
-                            class="w-[2.875rem] z-[1000] h-[2.875rem] absolute right-0 shrink-0 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-[15px] border border-transparent bg-primary-500 text-white hover:bg-primary-900 focus:outline-none focus:bg-primary-950 disabled:opacity-50 disabled:pointer-events-none">
-                            <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
-                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <path d="m21 21-4.3-4.3"></path>
-                            </svg>
-                        </button>
+                    <input type="text" id="search"
+                        name="search"
+                        class="py-3 px-4 block w-full border-gray-200 shadow-sm rounded-[15px] text-sm focus:z-10 focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50 disabled:pointer-events-none"
+                        placeholder="Search  for a keyword, title, publication date, ISSN, ISBN, DOI ">
+                    <button type="submit"
+                        class="w-[2.875rem] z-[1000] h-[2.875rem] absolute right-0 shrink-0 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-[15px] border border-transparent bg-primary-500 text-white hover:bg-primary-900 focus:outline-none focus:bg-primary-950 disabled:opacity-50 disabled:pointer-events-none">
+                        <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
+                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.3-4.3"></path>
+                        </svg>
+                    </button>
 
-                </form>
+                </div>
             </div>
             <img class="w-full h-[560px] object-fit-cover" src="{{ asset('/images/headerImg.png') }}" alt="">
         </div>
-    </div>
+    </form>
     <section id="most_viewed" class="py-[50px]">
         <div class="flex justify-between">
             <h3 class="font-bold text-primary-500">Most Viewed</h3>

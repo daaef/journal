@@ -47,7 +47,7 @@
                 <span class="text-primary-500 font-bold">Filter Results</span>
             </div>
             <nav class="hs-accordion-group " data-hs-accordion-always-open>
-                <form action="" class="w-full flex space-y-2.5 flex-col flex-wrap">
+                <form action="{{ route('journals') }}" class="w-full flex space-y-2.5 flex-col flex-wrap" method="get">
                     <ul class="space-y-1.5">
                         <li class="hs-accordion" id="account-accordion">
                             <button type="button"
@@ -81,7 +81,7 @@
                                                 <label
                                                     class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 "
                                                     for="cat-{{ $category->id }}">
-                                                    <input type="checkbox" id="cat-{{ $category->id }}">
+                                                    <input type="checkbox" id="cat-{{ $category->id }}" name="category[]" value="{{ $category->id }}">
                                                     <span class="inline-block">{{ $category->name }}</span>
                                                 </label>
                                             </li>
@@ -122,7 +122,7 @@
                                         <label
                                             class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 "
                                             for="lang-1">
-                                            <input type="checkbox" id="lang-1">
+                                            <input type="checkbox" id="lang-1" >
                                             <span class="inline-block">British English</span>
                                         </label>
                                     </li>
