@@ -101,10 +101,10 @@
             </div>
         </div>
         <div class="border p-8 rounded-[8px]">
-            <h4 class="text-3xl text-primary-500 font-bold">
+            <h4 class="text-3xl text-primary-500 font-bold mb-4">
                 {{ $journal->title }}
             </h4>
-            {{ $journal->abstract }}
+            {!! $journal->abstract !!}
         </div>
     </div>
 </x-layouts.layout>
