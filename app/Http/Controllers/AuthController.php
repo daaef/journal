@@ -207,6 +207,11 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/');
+        $notification = array(
+            'message' => 'Logged out successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('home')->with($notification);
+        // return redirect('/');
     }
 }

@@ -79,7 +79,7 @@ Route::group(['prefix' => 'auth'], function () {
 
 
 // Admin Routes
-Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
+Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::group(['prefix' => 'categories'], function () {
@@ -151,7 +151,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 });
 
 //Editor Routes
-Route::group(['prefix' => 'editor', 'middleware' => 'auth'], function () {
+Route::group(['prefix' => 'editor', 'middleware' => ['auth', 'editor']], function () {
     Route::get('/', [EditorDashboardController::class, 'index'])->name('editor.dashboard');
 
     Route::group(['prefix' => 'journals'], function () {
@@ -161,7 +161,7 @@ Route::group(['prefix' => 'editor', 'middleware' => 'auth'], function () {
 
 });
 
-Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
+Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'publisher']], function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 

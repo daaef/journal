@@ -135,13 +135,6 @@ class JournalController extends Controller
         return redirect()->back()->with($notification);
     }
 
-    public function addToCollection(Request $request)
-    {
-        dd($request->all(), 'addToCollection');
-        // $this->repo->likeJournal($request);
-        return redirect()->back();
-    }
-
     /**
      * Show the form for creating a new resource.
      */
