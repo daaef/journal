@@ -5,7 +5,7 @@
                 {{ $journal->title }}
             </h3>
             <p class="mt-2 text-gray-500 dark:text-neutral-400">
-                {{ $journal->description }}
+                {!! $journal->description !!}
             </p>
             <h4 class="font-semibold text-primary-500">Status</h4>
             <p class="text-gray-100 bg-blue-500 py-2 px-4 inline-block rounded-xl font-medium">{{ $journal->approval_status }}</p>

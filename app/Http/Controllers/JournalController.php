@@ -145,7 +145,7 @@ class JournalController extends Controller
 
     public function creatManuscript()
     {
-        $regions = africanRegions();
+        $regions = globalRegions();
         $languages = journalLanguages();
         $categories = $this->categoryRepo->getAll();
         $subcategories = $this->subCategoryRepo->getAll();
