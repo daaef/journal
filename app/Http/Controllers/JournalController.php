@@ -217,8 +217,7 @@ class JournalController extends Controller
     public function showJournal(string $slug)
     {
         $journal = $this->repo->findBySlug($slug);
-        dd($journal);
-        return view('', compact('journal'));
+        return view('view-abstract', compact('journal'));
     }
 
     /**

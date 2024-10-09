@@ -1,6 +1,6 @@
 @forelse ($submission as $journal)
     <div class="grid bg-white border border-t-4 border-t-blue-500 shadow-sm rounded-xl">
-        <div class="p-4 md:p-5">
+        <div class="p-4 md:p-5 space-y-1.5">
             <h3 class="text-lg font-bold text-gray-800">
                 {{ $journal->title }}
             </h3>
@@ -8,7 +8,7 @@
                 {{ $journal->description }}
             </p>
             <h4 class="font-semibold text-primary-500">Status</h4>
-            <p class="text-blue-500">{{ $journal->approval_status }}</p>
+            <p class="text-gray-100 bg-blue-500 py-2 px-4 inline-block rounded-xl font-medium">{{ $journal->approval_status }}</p>
         </div>
         <div class="p-4 border-t grid grid-cols-[auto_auto] justify-between items-center gap-4">
             <a href=""

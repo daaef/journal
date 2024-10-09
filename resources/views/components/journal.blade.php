@@ -1,6 +1,5 @@
 @forelse ($journals as $journal)
-    <div class="journal">
-
+    <div class="journal w-full">
         <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-[8px] p-4 md:p-5">
             <h3 class="font-semibold text-lg mb-2">{{ $journal->title }}</h3>
             <hr class="border-[#762A1E] mb-2">
@@ -50,7 +49,7 @@
                 <div class="flex gap-x-3">
                     <a href="{{ route('journals.view', $journal->slug) }}"
                         class="text-gray-100 bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600">View</a>
-                    <a href="{{ route('download-journal', $journal->uuid) }}" class="text-gray-100 bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600">
+                    <a href="{{ route('download-journal', $journal->uuid) }}" class="text-gray-100 flex items-center bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600">
                         <svg width="15" height="15" viewBox="0 0 25 25" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
