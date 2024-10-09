@@ -14,6 +14,7 @@
     <div class="min-h-[40vh] py-5">
         @if (count($journals) > 0)
             <div class="grid gap-4">
+                {{-- @dd($journals) --}}
                 <x-journal :journals="$journals"/>
             </div>
         @else

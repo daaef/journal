@@ -12,6 +12,12 @@ class EloquentMyJournalCollectionRepository implements MyJournalCollectionContra
         return $myJournalCollection;
     }
 
+    public function removeJournalFromMyCollection($request){
+        $myJournalCollection = MyJournalCollection::where('journal_id', $request->journal_id)->where('user_id', $request->user_id)->first();
+        $myJournalCollection->delete();
+        return $myJournalCollection;
+    }
+
     // Check of user has added journal to his collection
     public function checkJournalInMyCollection($request) {
         $myJournalCollection = MyJournalCollection::where('journal_id', $request->journal_id)->where('user_id', $request->user_id)->first();

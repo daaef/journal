@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\EditorDashboardController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\HomeController;
@@ -29,11 +30,9 @@ Route::match(['get', 'post'], '/journals/', [JournalController::class, 'searchJo
 Route::match(['get', 'post'], '/like-journal/', [JournalController::class, 'likeJournal'])->name('journals.like');
 Route::match(['get', 'post'], '/dislike-journal/', [JournalController::class, 'dislikeJournal'])->name('journals.dislike');
 Route::match(['get', 'post'], '/add-to-collection/', [MyJournalCollectionController::class, 'store'])->name('journals.add-to-collection');
+Route::match(['get', 'post'], '/remove-from-collection/', [MyJournalCollectionController::class, 'removeFromCollection'])->name('journals.remove-from-collection');
 
 Route::group(['prefix' => 'user'], function () {
-
-
-
 
 });
 
@@ -173,6 +172,8 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function () {
         $journals = Journal::all();
         return view('user.submissions', compact('journals'));
     })->name('user.submissions');
+
+    Route::get('/download-journal/{uuid}', [DownloadController::class, 'downloadJournal'])->name('download-journal');
 
     // Journal Routes
     Route::group(['prefix' => 'journals'], function () {

@@ -43,16 +43,24 @@ class User extends Authenticatable
         return $this->hasMany(JournalComment::class);
     }
 
-    public function likeJournals() {
+    public function likeJournals()
+    {
         return $this->hasMany(LikeJournal::class);
     }
 
-    public function dislikeJournals() {
+    public function dislikeJournals()
+    {
         return $this->hasMany(DislikeJournal::class);
     }
 
-    public function myJournalCollections() {
-        return $this->hasMany(MyJournalCollection::class);
+    // public function myJournalCollections()
+    // {
+    //     return $this->hasMany(MyJournalCollection::class);
+    // }
+
+    public function myJournalCollections()
+    {
+        return $this->belongsToMany(Journal::class, 'my_journal_collections', 'user_id', 'journal_id');
     }
 
     public function hasVerifiedEmail(): bool

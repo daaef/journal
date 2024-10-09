@@ -13,6 +13,7 @@
     </x-slot:breadcrumb>
     <div class="min-h-[40vh] py-5 grid grid-cols-2 items-start gap-5">
         @if (count($journals) > 0)
+        {{-- @dd($journals) --}}
             <x-submission :submission="$journals"/>
         @else
             <a class="flex flex-col items-center" href="{{ route('submit-manuscript') }}">

@@ -50,8 +50,18 @@ class MyJournalCollectionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function removeFromCollection(Request $request)
     {
-        //
+        $result = $this->repo->removeJournalFromMyCollection($request);
+
+        if ($result) {
+            $notification = array(
+                'message' => 'Journal added to your collection successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->back()->with($notification);
+        } else {
+            return response()->json(['status' => false, 'message' => $result['message']]);
+        }
     }
 }

@@ -96,6 +96,8 @@ class AuthController extends Controller
                     'message' => 'Your account is not activated. Please check your email for activation link.',
                     'alert-type' => 'error'
                 );
+
+                Auth::logout();
                 return back()->with($notification)->withInput();
             }
 

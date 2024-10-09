@@ -10,28 +10,28 @@
                         <span class="text-secondary-900 w-[45%]">Author(s):</span>
                         <span class="w-[50%]">{{ $journal->author }}</span>
                     </h5>
-                    <h5 class="flex w-full justify-between">
+                    {{-- <h5 class="flex w-full justify-between">
                         <span class="text-secondary-900 w-[45%]">Publication Year:</span>
                         <span class="w-[50%]">2003</span>
-                    </h5>
+                    </h5> --}}
                     <h5 class="flex w-full justify-between">
                         <span class="text-secondary-900 w-[45%]">Publication Title:</span>
-                        <span class="w-[50%]">{{ $journal->author }}</span>
+                        <span class="w-[50%]">{{ Str::limit($journal->title, 50) }}</span>
                     </h5>
                     <h5 class="flex w-full justify-between">
                         <span class="text-secondary-900 w-[45%]">Resource Type:</span>
                         <span class="w-[50%]">{{ $journal->journal_format }}</span>
                     </h5>
                     <h5 class="flex w-full justify-between">
-                        <span class="text-secondary-900 w-[45%]">Publisher:</span>
-                        <span class="w-[50%]">Aminu Musa</span>
+                        <span class="text-secondary-900 w-[45%]">Published by:</span>
+                        <span class="w-[50%]">{{ $journal->created_by ?: 'Admin' }}</span>
                     </h5>
                 </div>
                 <div class="w-[2px] h-full bg-secondary-900"></div>
                 <div class="py-3 space-y-3] w-full pl-5">
                     <h5 class="flex w-full justify-between">
                         <span class="text-secondary-900 w-[45%]">Last Updated:</span>
-                        <span class="w-[50%]">1st June, 2023</span>
+                        <span class="w-[50%]">{{ $journal->updated_at->format('d F Y') }}</span>
                     </h5>
                     <h5 class="flex w-full justify-between">
                         <span class="text-secondary-900 w-[45%]">License:</span>
@@ -50,14 +50,14 @@
                 <div class="flex gap-x-3">
                     <a href=""
                         class="text-gray-100 bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600">View</a>
-                    <button class="text-gray-100 bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600">
+                    <a href="{{ route('download-journal', $journal->uuid) }}" class="text-gray-100 bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600">
                         <svg width="15" height="15" viewBox="0 0 25 25" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M10.5469 0H14.4531C15.1025 0 15.625 0.522461 15.625 1.17188V9.375H19.9072C20.7764 9.375 21.2109 10.4248 20.5957 11.04L13.1689 18.4717C12.8027 18.8379 12.2021 18.8379 11.8359 18.4717L4.39941 11.04C3.78418 10.4248 4.21875 9.375 5.08789 9.375H9.375V1.17188C9.375 0.522461 9.89746 0 10.5469 0ZM25 18.3594V23.8281C25 24.4775 24.4775 25 23.8281 25H1.17188C0.522461 25 0 24.4775 0 23.8281V18.3594C0 17.71 0.522461 17.1875 1.17188 17.1875H8.33496L10.7275 19.5801C11.709 20.5615 13.291 20.5615 14.2725 19.5801L16.665 17.1875H23.8281C24.4775 17.1875 25 17.71 25 18.3594ZM18.9453 22.6562C18.9453 22.1191 18.5059 21.6797 17.9688 21.6797C17.4316 21.6797 16.9922 22.1191 16.9922 22.6562C16.9922 23.1934 17.4316 23.6328 17.9688 23.6328C18.5059 23.6328 18.9453 23.1934 18.9453 22.6562ZM22.0703 22.6562C22.0703 22.1191 21.6309 21.6797 21.0938 21.6797C20.5566 21.6797 20.1172 22.1191 20.1172 22.6562C20.1172 23.1934 20.5566 23.6328 21.0938 23.6328C21.6309 23.6328 22.0703 23.1934 22.0703 22.6562Z"
                                 class="fill-gray-100" />
                         </svg>
-                    </button>
+                    </a>
                 </div>
                 <div class="flex gap-x-3">
                     <form action="{{ route('journals.dislike') }}" method="post">
@@ -90,14 +90,29 @@
                             </svg>
                         </button>
                     </form>
-                    <form action="{{ route('journals.add-to-collection') }}" method="post">
-                        @csrf
-                        <input type="hidden" name="user_id" value="{{ auth()->user() ? auth()->user()->id : null }}">
-                        <input type="hidden" name="journal_id" value="{{ $journal->id }}" />
-                        <button name="add_to_collection" value="add_to_collection"
-                            class="text-gray-100 bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600">Add
-                            to Collection</button>
-                    </form>
+
+                    {{-- checkn if pivot_user_id exist --}}
+                    @if (checkJournalInMyCollection($journal->id, auth()->user()->id))
+                        <form action="{{ route('journals.remove-from-collection') }}" method="post">
+                            @csrf
+                            <input type="hidden" name="user_id"
+                                value="{{ auth()->user() ? auth()->user()->id : null }}">
+                            <input type="hidden" name="journal_id" value="{{ $journal->id }}" />
+                            <button name="remove_from_collection" value="remove_from_collection"
+                                class="text-gray-100 bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600">Remove
+                                from my Collection</button>
+                        </form>
+                    @else
+                        <form action="{{ route('journals.add-to-collection') }}" method="post">
+                            @csrf
+                            <input type="hidden" name="user_id"
+                                value="{{ auth()->user() ? auth()->user()->id : null }}">
+                            <input type="hidden" name="journal_id" value="{{ $journal->id }}" />
+                            <button name="add_to_collection" value="add_to_collection"
+                                class="text-gray-100 bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600">Add
+                                to my Collection</button>
+                        </form>
+                    @endif
                 </div>
             </div>
         </div>
@@ -105,4 +120,3 @@
 @empty
     <p>No published journals at the moment</p>
 @endforelse
-

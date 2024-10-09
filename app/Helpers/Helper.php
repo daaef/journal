@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use App\Models\Journal;
 
 // Check if authenticationCode Function exists
 if (!function_exists('authenticationCode')) {
@@ -113,4 +115,20 @@ function journalLanguages() {
         'British English',
         'French'
     ];
+}
+
+
+function checkJournalInMyCollection($journal_id, $user_id) {
+    $journalExists = DB::table('my_journal_collections')->where('journal_id', $journal_id)->where('user_id', $user_id)->exists();
+    return $journalExists;
+}
+
+function downloadJournal($journal_id) {
+    $journal = Journal::where('uuid',$journal_id)->first();
+
+    if ($journal) {
+        $path = $journal->journal_url;
+        $name = $journal->title . $journal->journal_format;
+        return response()->download(storage_path('app/public/' . $path), $name);
+    }
 }
