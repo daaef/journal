@@ -11,9 +11,9 @@
         </div>
         <hr class="">
     </x-slot:breadcrumb>
-    <div class="min-h-[40vh] py-5">
+    <div class="min-h-[40vh] py-5 flex items-center justify-center gap-5">
         @if (count($journals) > 0)
-            <div class="grid gap-4">
+            <div class="grid w-full gap-2">
                 {{-- @dd($journals) --}}
                 <x-journal :journals="$journals"/>
             </div>

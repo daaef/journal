@@ -167,9 +167,9 @@ class JournalController extends Controller
             'accept' => 'required'
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+//        if ($validator->fails()) {
+//            return redirect()->back()->withErrors($validator)->withInput();
+//        }
 
         $journal = $this->repo->submitManuscript($request);
 
@@ -217,8 +217,7 @@ class JournalController extends Controller
     public function showJournal(string $slug)
     {
         $journal = $this->repo->findBySlug($slug);
-        dd($journal);
-        return view('', compact('journal'));
+        return view('view-abstract', compact('journal'));
     }
 
     /**
