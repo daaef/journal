@@ -182,5 +182,8 @@ class EloquentJournalRepository implements JournalContract {
         return $journal->likes;
     }
 
-    
+    public function findBySlug($slug) {
+        return Journal::where('slug', $slug)->first();
+    }
+
 }

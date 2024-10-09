@@ -26,15 +26,17 @@ Route::get('/login', function () {
 })->name('login');
 
 Route::get('/interests', [HomeController::class, 'interests'])->name('interests');
-Route::match(['get', 'post'], '/journals/', [JournalController::class, 'searchJournal'])->name('journals');
-Route::match(['get', 'post'], '/like-journal/', [JournalController::class, 'likeJournal'])->name('journals.like');
-Route::match(['get', 'post'], '/dislike-journal/', [JournalController::class, 'dislikeJournal'])->name('journals.dislike');
-Route::match(['get', 'post'], '/add-to-collection/', [MyJournalCollectionController::class, 'store'])->name('journals.add-to-collection');
-Route::match(['get', 'post'], '/remove-from-collection/', [MyJournalCollectionController::class, 'removeFromCollection'])->name('journals.remove-from-collection');
-
-Route::group(['prefix' => 'user'], function () {
-
+Route::prefix('journals')->group(function () {
+    Route::match(['get', 'post'], '/', [JournalController::class, 'searchJournal'])->name('journals');
+    Route::get('/view/{slug}', [JournalController::class, 'showJournal'])->name('journals.view');
+    Route::match(['get', 'post'], '/like-journal/', [JournalController::class, 'likeJournal'])->name('journals.like');
+    Route::match(['get', 'post'], '/dislike-journal/', [JournalController::class, 'dislikeJournal'])->name('journals.dislike');
+    Route::match(['get', 'post'], '/add-to-collection/', [MyJournalCollectionController::class, 'store'])->name('journals.add-to-collection');
+    Route::match(['get', 'post'], '/remove-from-collection/', [MyJournalCollectionController::class, 'removeFromCollection'])->name('journals.remove-from-collection');
 });
+
+
+Route::group(['prefix' => 'user'], function () {});
 
 Route::group(['prefix' => 'auth'], function () {
     Route::get('/login', [AuthController::class, 'getLogin'])->name('auth.login.get');
@@ -109,9 +111,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
     });
 
     // Manage Roles and permissions
-    Route::group(['prefix' => 'settings'], function() {
+    Route::group(['prefix' => 'settings'], function () {
         // Manage Roles
-        Route::group(['prefix' => 'roles'], function() {
+        Route::group(['prefix' => 'roles'], function () {
             Route::get('/', [RoleController::class, 'index'])->name('roles.index');
             Route::get('/create', [RoleController::class, 'create'])->name('roles.create');
             Route::post('/store', [RoleController::class, 'store'])->name('roles.store');
@@ -122,7 +124,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
         });
 
         // Manage Permissions
-        Route::group(['prefix' => 'permissions'], function() {
+        Route::group(['prefix' => 'permissions'], function () {
             Route::get('/', [RoleController::class, 'index'])->name('permissions.index');
             Route::get('/create', [RoleController::class, 'create'])->name('permissions.create');
             Route::post('/store', [RoleController::class, 'store'])->name('permissions.store');
@@ -133,7 +135,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
         });
 
         // Manage users
-        Route::group(['prefix' => 'users'], function() {
+        Route::group(['prefix' => 'users'], function () {
             Route::get('/', [UserController::class, 'index'])->name('users.index');
             Route::get('/create', [UserController::class, 'create'])->name('users.create');
             Route::post('/store', [UserController::class, 'store'])->name('users.store');
@@ -142,7 +144,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
             Route::post('/{id}/update', [UserController::class, 'update'])->name('users.update');
             Route::delete('/{id}/delete', [UserController::class, 'destroy'])->name('users.destroy');
         });
-
     });
 });
 
@@ -154,7 +155,6 @@ Route::group(['prefix' => 'editor', 'middleware' => ['auth', 'editor']], functio
         Route::get('/pending', [JournalController::class, 'pendingApproval'])->name('editor.journals.pendingApproval');
         Route::get('/approved', [JournalController::class, 'create'])->name('editor.journals.approved');
     });
-
 });
 
 Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'publisher']], function () {

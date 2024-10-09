@@ -48,10 +48,9 @@ class JournalController extends Controller
     {
         $journals = $this->repo->getAll();
         $categories = $this->categoryRepo->getAll();
-        // dd($request->all());
+
         if ($request->search) {
             $journals = $this->repo->searchJournal($request);
-            // dd($journals);
         }
         return view('journals', compact('journals', 'categories'));
     }
@@ -210,6 +209,16 @@ class JournalController extends Controller
             'alert-type' => 'success'
         );
         return redirect()->route('journals.index')->with($notification);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function showJournal(string $slug)
+    {
+        $journal = $this->repo->findBySlug($slug);
+        dd($journal);
+        return view('', compact('journal'));
     }
 
     /**

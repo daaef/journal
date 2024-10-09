@@ -48,7 +48,7 @@
             </div>
             <div class="flex justify-between mt-4">
                 <div class="flex gap-x-3">
-                    <a href=""
+                    <a href="{{ route('journals.view', $journal->slug) }}"
                         class="text-gray-100 bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600">View</a>
                     <a href="{{ route('download-journal', $journal->uuid) }}" class="text-gray-100 bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600">
                         <svg width="15" height="15" viewBox="0 0 25 25" fill="none"
