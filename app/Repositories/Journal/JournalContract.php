@@ -12,7 +12,10 @@ interface JournalContract {
     public function findByUUID($uuid);
     public function delete($id);
     public function getPendingApprovedJournals();
+    public function approveJournal($uuid);
+    public function getJournalsInProgress();
     public function getApprovedJournals();
+    public function getRejectedJournals();
     public function searchJournal($request);
     public function likeJournal($uuid);
     public function dislikeJournal($uuid);

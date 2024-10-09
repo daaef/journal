@@ -91,7 +91,7 @@
                     </form>
 
                     {{-- checkn if pivot_user_id exist --}}
-                    @if (checkJournalInMyCollection($journal->id, auth()->user()->id))
+                    @if (auth()->user() && checkJournalInMyCollection($journal->id, auth()->user()->id))
                         <form action="{{ route('journals.remove-from-collection') }}" method="post">
                             @csrf
                             <input type="hidden" name="user_id"
