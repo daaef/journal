@@ -11,10 +11,14 @@
         </div>
         <hr class="">
     </x-slot:breadcrumb>
-    <div class="min-h-[40vh] justify-center flex items-center">
-        <a class="flex flex-col items-center" href="{{ route('submit-manuscript') }}">
-            <img class="h-[100px] opacity-40" src="{{ asset('images/submit-manuscript.png') }}" alt="">
-            <p class="text-primary-500 font-semibold">Click to Submit Manuscript</p>
-        </a>
+    <div class="min-h-[40vh] py-5 grid grid-cols-2 items-start gap-5">
+        @if (count($journals) > 0)
+            <x-submission :submission="$journals"/>
+        @else
+            <a class="flex flex-col items-center" href="{{ route('submit-manuscript') }}">
+                <img class="h-[100px] opacity-40" src="{{ asset('images/submit-manuscript.png') }}" alt="">
+                <p class="text-primary-500 font-semibold">Click to Submit Manuscript</p>
+            </a>
+        @endif
     </div>
 </x-layouts.layout>

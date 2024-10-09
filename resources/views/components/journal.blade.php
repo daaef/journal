@@ -65,7 +65,7 @@
                         <input type="hidden" name="user_id" value="{{ auth()->user() ? auth()->user()->id : null }}">
                         <input type="hidden" name="journal_id" value="{{ $journal->id }}" />
                         <button
-                            class="text-gray-100 bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600"
+                            class="text-gray-100 h-full bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600"
                             name="dislike" value="dislike">
                             <svg width="15" height="15" viewBox="0 0 25 25" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -80,7 +80,7 @@
                         <input type="hidden" name="user_id" value="{{ auth()->user() ? auth()->user()->id : null }}">
                         <input type="hidden" name="journal_id" value="{{ $journal->id }}" />
                         <button
-                            class="text-gray-100 bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600"
+                            class="text-gray-100 bg-primary-500 h-full rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600"
                             name="like" value="like">
                             <svg width="15" height="15" viewBox="0 0 25 25" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">

@@ -39,8 +39,9 @@ class JournalController extends Controller
      */
     public function index()
     {
+        $categories = $this->categoryRepo->getAll();
         $journals = $this->repo->getAll();
-        return view('journals.index', compact('journals'));
+        return view('journals', compact('journals', 'categories'));
     }
 
     public function searchJournal(Request $request)
