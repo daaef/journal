@@ -168,9 +168,9 @@ class JournalController extends Controller
             'accept' => 'required'
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+//        if ($validator->fails()) {
+//            return redirect()->back()->withErrors($validator)->withInput();
+//        }
 
         $journal = $this->repo->submitManuscript($request);
 
