@@ -31,13 +31,13 @@ if (!function_exists('authenticationCode')) {
 
 
 // African regions and their countries
-if (!function_exists('africanRegions')) {
+if (!function_exists('globalRegions')) {
     /**
-     * African Regions and their countries
+     * Global Regions and their countries
      *
      * @return array
      */
-    function africanRegions()
+    function globalRegions()
     {
         return [
             'Central Africa' => [
@@ -103,6 +103,141 @@ if (!function_exists('africanRegions')) {
                 'Senegal',
                 'Sierra Leone',
                 'Togo'
+            ],
+            'North America' => [
+                'Canada',
+                'Mexico',
+                'United States'
+            ],
+            'South America' => [
+                'Argentina',
+                'Bolivia',
+                'Brazil',
+                'Chile',
+                'Colombia',
+                'Ecuador',
+                'Guyana',
+                'Paraguay',
+                'Peru',
+                'Suriname',
+                'Venezuela'
+            ],
+            'Europe' => [
+                'Albania',
+                'Andorra',
+                'Armenia',
+                'Austria',
+                'Azerbaijan',
+                'Belarus',
+                'Belgium',
+                'Bosnia and Herzegovina',
+                'Bulgaria',
+                'Croatia',
+                'Cyprus',
+                'Czech Republic',
+                'Denmark',
+                'Estonia',
+                'Finland',
+                'France',
+                'Georgia',
+                'Germany',
+                'Greece',
+                'Hungary',
+                'Iceland',
+                'Ireland',
+                'Italy',
+                'Kazakhstan',
+                'Kosovo',
+                'Latvia',
+                'Liechtenstein',
+                'Lithuania',
+                'Luxembourg',
+                'Malta',
+                'Moldova',
+                'Monaco',
+                'Montenegro',
+                'Netherlands',
+                'North Macedonia',
+                'Norway',
+                'Poland',
+                'Portugal',
+                'Romania',
+                'Russia',
+                'San Marino',
+                'Serbia',
+                'Slovakia',
+                'Slovenia',
+                'Spain',
+                'Sweden',
+                'Switzerland',
+                'Turkey',
+                'Ukraine',
+                'United Kingdom'
+            ],
+            'Asia' => [
+                'Afghanistan',
+                'Bahrain',
+                'Bangladesh',
+                'Bhutan',
+                'Brunei',
+                'Cambodia',
+                'China',
+                'Cyprus',
+                'East Timor',
+                'Georgia',
+                'India',
+                'Indonesia',
+                'Iran',
+                'Iraq',
+                'Israel',
+                'Japan',
+                'Jordan',
+                'Kazakhstan',
+                'Kuwait',
+                'Kyrgyzstan',
+                'Laos',
+                'Lebanon',
+                'Malaysia',
+                'Maldives',
+                'Mongolia',
+                'Myanmar',
+                'Nepal',
+                'North Korea',
+                'Oman',
+                'Pakistan',
+                'Palestine',
+                'Philippines',
+                'Qatar',
+                'Saudi Arabia',
+                'Singapore',
+                'South Korea',
+                'Sri Lanka',
+                'Syria',
+                'Taiwan',
+                'Tajikistan',
+                'Thailand',
+                'Turkey',
+                'Turkmenistan',
+                'United Arab Emirates',
+                'Uzbekistan',
+                'Vietnam',
+                'Yemen'
+            ],
+            'Australia and Oceania' => [
+                'Australia',
+                'Fiji',
+                'Kiribati',
+                'Marshall Islands',
+                'Micronesia',
+                'Nauru',
+                'New Zealand',
+                'Palau',
+                'Papua New Guinea',
+                'Samoa',
+                'Solomon Islands',
+                'Tonga',
+                'Tuvalu',
+                'Vanuatu'
             ]
         ];
     }
