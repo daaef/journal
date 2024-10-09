@@ -15,8 +15,6 @@ use App\Http\Controllers\JournalController;
 use App\Http\Controllers\MyJournalCollectionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
-use App\Models\Category;
-use App\Models\Journal;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -25,22 +23,16 @@ Route::get('/login', function () {
     return redirect()->route('auth.login.get');
 })->name('login');
 
-Route::get('/view-journal', function () {
-    return view('view-abstract');
-})->name('view-abstract');
-
 Route::get('/interests', [HomeController::class, 'interests'])->name('interests');
 Route::prefix('journals')->group(function () {
     Route::match(['get', 'post'], '/', [JournalController::class, 'searchJournal'])->name('journals');
     Route::get('/view/{slug}', [JournalController::class, 'showJournal'])->name('journals.view');
-    Route::match(['get', 'post'], '/like-journal/', [JournalController::class, 'likeJournal'])->name('journals.like');
-    Route::match(['get', 'post'], '/dislike-journal/', [JournalController::class, 'dislikeJournal'])->name('journals.dislike');
-    Route::match(['get', 'post'], '/add-to-collection/', [MyJournalCollectionController::class, 'store'])->name('journals.add-to-collection');
-    Route::match(['get', 'post'], '/remove-from-collection/', [MyJournalCollectionController::class, 'removeFromCollection'])->name('journals.remove-from-collection');
+    Route::match(['get', 'post'], '/like-journal/', [JournalController::class, 'likeJournal'])->name('journals.like')->middleware('auth');
+    Route::match(['get', 'post'], '/dislike-journal/', [JournalController::class, 'dislikeJournal'])->name('journals.dislike')->middleware('auth');
+    Route::match(['get', 'post'], '/add-to-collection/', [MyJournalCollectionController::class, 'store'])->name('journals.add-to-collection')->middleware('auth');
+    Route::match(['get', 'post'], '/remove-from-collection/', [MyJournalCollectionController::class, 'removeFromCollection'])->name('journals.remove-from-collection')->middleware('auth');
 });
 
-
-Route::group(['prefix' => 'user'], function () {});
 
 Route::group(['prefix' => 'auth'], function () {
     Route::get('/login', [AuthController::class, 'getLogin'])->name('auth.login.get');
@@ -156,27 +148,21 @@ Route::group(['prefix' => 'editor', 'middleware' => ['auth', 'editor']], functio
     Route::get('/', [EditorDashboardController::class, 'index'])->name('editor.dashboard');
 
     Route::group(['prefix' => 'journals'], function () {
+        Route::get('/preview/{uuid}/{slug}', [JournalController::class, 'previewJournal'])->name('editor.journals.preview');
         Route::get('/pending', [JournalController::class, 'pendingApproval'])->name('editor.journals.pendingApproval');
-        Route::get('/approved', [JournalController::class, 'create'])->name('editor.journals.approved');
+        Route::get('/approved', [JournalController::class, 'approvedJournals'])->name('editor.journals.approved');
+        Route::post('/approve-journal', [JournalController::class, 'approveJournal'])->name('editor.journals.approveJournal');
     });
 });
 
 Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'publisher']], function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-
     Route::get('/submit-manuscript', [JournalController::class, 'creatManuscript'])->name('submit-manuscript');
     Route::post('/submit-manuscript', [JournalController::class, 'submitManuscript'])->name('submit-manuscript.post');
-
-    Route::get('settings/{uuid}', [UserController::class, 'edit'])->name('user.settings');
-    Route::post('settings/{uuid}', [UserController::class, 'update'])->name('user.settings.update');
-
-
-    Route::get('/submissions', function () {
-        $journals = Journal::all();
-        return view('user.submissions', compact('journals'));
-    })->name('user.submissions');
-
+    Route::get('/settings/{uuid}', [UserController::class, 'edit'])->name('user.settings');
+    Route::post('/settings/{uuid}', [UserController::class, 'update'])->name('user.settings.update');
+    Route::get('/submissions', [JournalController::class, 'userSubmissions'])->name('user.submissions');
     Route::get('/download-journal/{uuid}', [DownloadController::class, 'downloadJournal'])->name('download-journal');
 
     // Journal Routes

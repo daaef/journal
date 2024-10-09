@@ -39,6 +39,10 @@ class EloquentJournalRepository implements JournalContract {
         return Journal::where('uuid', $uuid)->first();
     }
 
+    public function getUserSubmissions($user_id) {
+        return Journal::where('user_id', $user_id)->get();
+    }
+
     public function delete($id){
         $journal = $this->findByUUID($id);
         return $journal->delete();
@@ -49,8 +53,16 @@ class EloquentJournalRepository implements JournalContract {
         return Journal::where('approval_status', 'pending')->get();
     }
 
+    public function getJournalsInProgress() {
+        return Journal::where('approval_status', 'in-progress')->get();
+    }
+
     public function getApprovedJournals(){
         return Journal::where('approval_status', 'approved')->get();
+    }
+
+    public function getRejectedJournals(){
+        return Journal::where('approval_status', 'declined')->get();
     }
 
     /**
@@ -123,7 +135,6 @@ class EloquentJournalRepository implements JournalContract {
 //        $journal->approved_by = $request->approved_by;
 
         $journal->save();
-
         return $journal;
     }
 
@@ -184,6 +195,14 @@ class EloquentJournalRepository implements JournalContract {
 
     public function findBySlug($slug) {
         return Journal::where('slug', $slug)->first();
+    }
+
+    public function approveJournal($uuid) {
+        $journal = $this->findByUUID($uuid);
+        $journal->approval_status = 'approved';
+        $journal->approved_by = auth()->user()->fullname;
+        $journal->save();
+        return $journal;
     }
 
 }

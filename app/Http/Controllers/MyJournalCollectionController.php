@@ -27,7 +27,7 @@ class MyJournalCollectionController extends Controller
 
         if($journalExists){
             $notification = array(
-                'message' => 'Journal already exists in your collection',
+                'message' => 'Journal already exists in your collection.',
                 'alert-type' => 'info'
             );
             return redirect()->back()->with($notification);
@@ -37,7 +37,7 @@ class MyJournalCollectionController extends Controller
 
         if ($result) {
             $notification = array(
-                'message' => 'Journal added to your collection successfully',
+                'message' => 'Journal added to your collection.',
                 'alert-type' => 'success'
             );
             return redirect()->back()->with($notification);
@@ -56,7 +56,7 @@ class MyJournalCollectionController extends Controller
 
         if ($result) {
             $notification = array(
-                'message' => 'Journal added to your collection successfully',
+                'message' => 'Journal removed from your collection.',
                 'alert-type' => 'success'
             );
             return redirect()->back()->with($notification);

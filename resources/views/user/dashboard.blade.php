@@ -18,7 +18,7 @@
                 <x-journal :journals="$journals"/>
             </div>
         @else
-            <a class="flex flex-col items-center" href="{{ route('submit-manuscript') }}">
+            <a class="flex flex-col items-center" href="{{ route('journals') }}">
                 <img class="h-[100px] opacity-40" src="{{ asset('images/create-collection.png') }}" alt="">
                 <p class="text-primary-500 font-semibold">Click to Create Collection</p>
             </a>

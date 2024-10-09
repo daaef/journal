@@ -8,9 +8,9 @@
             <div>
                 <div class="flex rounded-lg border min-w-full">
                     <input type="text" id="hs-trailing-multiple-add-on" name="search"
-                           value="{{ old('search') ?: request()->search }}"
-                           class="py-3 lg:w-[400px] px-4 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                           placeholder="Search  for a keyword, title, publication date, ISSN, ISBN, DOI ">
+                        value="{{ old('search') ?: request()->search }}"
+                        class="py-3 lg:w-[400px] px-4 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+                        placeholder="Search  for a keyword, title, publication date, ISSN, ISBN, DOI ">
                     <div class="inline-flex items-center min-w-[180px] rounded-e-md">
                         <select
                             data-hs-select='{
@@ -47,41 +47,41 @@
                 <span class="text-primary-500 font-bold">Filter Results</span>
             </div>
             <nav class="hs-accordion-group " data-hs-accordion-always-open>
-                <form action="{{ route('journals') }}" class="w-full flex space-y-2.5 flex-col flex-wrap" method="get">
+                <form action="{{ route('journals') }}" class="w-full flex space-y-2.5 flex-col flex-wrap"
+                    method="get">
                     <ul class="space-y-1.5">
                         <li class="hs-accordion" id="account-accordion">
                             <button type="button"
-                                    class="hs-accordion-toggle hs-accordion-active:text-secondary-900 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 uppercase"
-                                    aria-expanded="true" aria-controls="account-accordion">
+                                class="hs-accordion-toggle hs-accordion-active:text-secondary-900 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-secondary-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 uppercase"
+                                aria-expanded="true" aria-controls="account-accordion">
                                 Subjects
 
-                                <svg
-                                    class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500 "
+                                <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500 "
                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
-                                    <path d="m18 15-6-6-6 6"/>
+                                    <path d="m18 15-6-6-6 6" />
                                 </svg>
 
-                                <svg
-                                    class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 "
+                                <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 "
                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
-                                    <path d="m6 9 6 6 6-6"/>
+                                    <path d="m6 9 6 6 6-6" />
                                 </svg>
                             </button>
                             @if ('$categories')
                                 <div id="account-accordion"
-                                     class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                                     role="region" aria-labelledby="account-accordion">
+                                    class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+                                    role="region" aria-labelledby="account-accordion">
                                     <ul class="pt-2 ps-2 max-h-[200px] overflow-y-auto">
                                         @foreach ($categories as $category)
                                             <li>
                                                 <label
                                                     class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 "
                                                     for="cat-{{ $category->id }}">
-                                                    <input type="checkbox" id="cat-{{ $category->id }}" name="category[]" value="{{ $category->id }}">
+                                                    <input type="checkbox" id="cat-{{ $category->id }}"
+                                                        name="category[]" value="{{ $category->id }}">
                                                     <span class="inline-block">{{ $category->name }}</span>
                                                 </label>
                                             </li>
@@ -93,36 +93,34 @@
 
                         <li class="hs-accordion" id="projects-accordion">
                             <button type="button"
-                                    class="hs-accordion-toggle hs-accordion-active:text-primary-900 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-primary-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 uppercase"
-                                    aria-expanded="true" aria-controls="projects-accordion">
+                                class="hs-accordion-toggle hs-accordion-active:text-primary-900 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-primary-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 uppercase"
+                                aria-expanded="true" aria-controls="projects-accordion">
                                 Languages
 
-                                <svg
-                                    class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500 "
+                                <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 group-hover:text-gray-500 "
                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
-                                    <path d="m18 15-6-6-6 6"/>
+                                    <path d="m18 15-6-6-6 6" />
                                 </svg>
 
-                                <svg
-                                    class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 "
+                                <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 "
                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
-                                    <path d="m6 9 6 6 6-6"/>
+                                    <path d="m6 9 6 6 6-6" />
                                 </svg>
                             </button>
 
                             <div id="projects-accordion"
-                                 class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                                 role="region" aria-labelledby="projects-accordion">
+                                class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+                                role="region" aria-labelledby="projects-accordion">
                                 <ul class="pt-2 ps-2">
                                     <li>
                                         <label
                                             class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 "
                                             for="lang-1">
-                                            <input type="checkbox" id="lang-1" >
+                                            <input type="checkbox" id="lang-1">
                                             <span class="inline-block">British English</span>
                                         </label>
                                     </li>
@@ -148,30 +146,28 @@
 
                         <li class="hs-accordion" id="projects-accordion">
                             <button type="button"
-                                    class="hs-accordion-toggle hs-accordion-active:text-primary-900 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-primary-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 uppercase"
-                                    aria-expanded="true" aria-controls="projects-accordion">
+                                class="hs-accordion-toggle hs-accordion-active:text-primary-900 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-primary-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 uppercase"
+                                aria-expanded="true" aria-controls="projects-accordion">
                                 Licenses
 
-                                <svg
-                                    class="hs-accordion-active:block hs-accordion-active:text-primary-900  ms-auto hidden size-4 text-primary-800"
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="m18 15-6-6-6 6"/>
+                                <svg class="hs-accordion-active:block hs-accordion-active:text-primary-900  ms-auto hidden size-4 text-primary-800"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m18 15-6-6-6 6" />
                                 </svg>
 
-                                <svg
-                                    class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 "
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="m6 9 6 6 6-6"/>
+                                <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 "
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m6 9 6 6 6-6" />
                                 </svg>
                             </button>
 
                             <div id="projects-accordion"
-                                 class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                                 role="region" aria-labelledby="projects-accordion">
+                                class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+                                role="region" aria-labelledby="projects-accordion">
                                 <ul class="pt-2 ps-2">
                                     <li>
                                         <label
@@ -203,30 +199,28 @@
 
                         <li class="hs-accordion" id="projects-accordion">
                             <button type="button"
-                                    class="hs-accordion-toggle hs-accordion-active:text-primary-900 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-primary-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 uppercase"
-                                    aria-expanded="true" aria-controls="projects-accordion">
+                                class="hs-accordion-toggle hs-accordion-active:text-primary-900 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-primary-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 uppercase"
+                                aria-expanded="true" aria-controls="projects-accordion">
                                 Publisher
 
-                                <svg
-                                    class="hs-accordion-active:block hs-accordion-active:text-primary-900  ms-auto hidden size-4 text-primary-800"
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="m18 15-6-6-6 6"/>
+                                <svg class="hs-accordion-active:block hs-accordion-active:text-primary-900  ms-auto hidden size-4 text-primary-800"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m18 15-6-6-6 6" />
                                 </svg>
 
-                                <svg
-                                    class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 "
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="m6 9 6 6 6-6"/>
+                                <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 "
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m6 9 6 6 6-6" />
                                 </svg>
                             </button>
 
                             <div id="projects-accordion"
-                                 class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                                 role="region" aria-labelledby="projects-accordion">
+                                class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+                                role="region" aria-labelledby="projects-accordion">
                                 <ul class="pt-2 ps-2">
                                     <li>
                                         <label
@@ -258,30 +252,28 @@
 
                         <li class="hs-accordion" id="projects-accordion">
                             <button type="button"
-                                    class="hs-accordion-toggle hs-accordion-active:text-primary-900 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-primary-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 uppercase"
-                                    aria-expanded="true" aria-controls="projects-accordion">
+                                class="hs-accordion-toggle hs-accordion-active:text-primary-900 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-primary-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 uppercase"
+                                aria-expanded="true" aria-controls="projects-accordion">
                                 Publisher By Country
 
-                                <svg
-                                    class="hs-accordion-active:block hs-accordion-active:text-primary-900  ms-auto hidden size-4 text-primary-800"
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="m18 15-6-6-6 6"/>
+                                <svg class="hs-accordion-active:block hs-accordion-active:text-primary-900  ms-auto hidden size-4 text-primary-800"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m18 15-6-6-6 6" />
                                 </svg>
 
-                                <svg
-                                    class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 "
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="m6 9 6 6 6-6"/>
+                                <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 "
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m6 9 6 6 6-6" />
                                 </svg>
                             </button>
 
                             <div id="projects-accordion"
-                                 class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                                 role="region" aria-labelledby="projects-accordion">
+                                class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+                                role="region" aria-labelledby="projects-accordion">
                                 <ul class="pt-2 ps-2">
                                     <li>
                                         <label
@@ -313,30 +305,28 @@
 
                         <li class="hs-accordion" id="projects-accordion">
                             <button type="button"
-                                    class="hs-accordion-toggle hs-accordion-active:text-primary-900 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-primary-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 uppercase"
-                                    aria-expanded="true" aria-controls="projects-accordion">
+                                class="hs-accordion-toggle hs-accordion-active:text-primary-900 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-primary-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 uppercase"
+                                aria-expanded="true" aria-controls="projects-accordion">
                                 Peer Review Type
 
-                                <svg
-                                    class="hs-accordion-active:block hs-accordion-active:text-primary-900  ms-auto hidden size-4 text-primary-800"
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="m18 15-6-6-6 6"/>
+                                <svg class="hs-accordion-active:block hs-accordion-active:text-primary-900  ms-auto hidden size-4 text-primary-800"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m18 15-6-6-6 6" />
                                 </svg>
 
-                                <svg
-                                    class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 "
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="m6 9 6 6 6-6"/>
+                                <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 "
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m6 9 6 6 6-6" />
                                 </svg>
                             </button>
 
                             <div id="projects-accordion"
-                                 class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                                 role="region" aria-labelledby="projects-accordion">
+                                class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+                                role="region" aria-labelledby="projects-accordion">
                                 <ul class="pt-2 ps-2">
                                     <li>
                                         <label
@@ -368,30 +358,28 @@
 
                         <li class="hs-accordion" id="projects-accordion">
                             <button type="button"
-                                    class="hs-accordion-toggle hs-accordion-active:text-primary-900 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-primary-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 uppercase"
-                                    aria-expanded="true" aria-controls="projects-accordion">
+                                class="hs-accordion-toggle hs-accordion-active:text-primary-900 hs-accordion-active:hover:bg-transparent w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-primary-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 uppercase"
+                                aria-expanded="true" aria-controls="projects-accordion">
                                 Date added
 
-                                <svg
-                                    class="hs-accordion-active:block hs-accordion-active:text-primary-900  ms-auto hidden size-4 text-primary-800"
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="m18 15-6-6-6 6"/>
+                                <svg class="hs-accordion-active:block hs-accordion-active:text-primary-900  ms-auto hidden size-4 text-primary-800"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m18 15-6-6-6 6" />
                                 </svg>
 
-                                <svg
-                                    class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 "
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="m6 9 6 6 6-6"/>
+                                <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 group-hover:text-gray-500 "
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m6 9 6 6 6-6" />
                                 </svg>
                             </button>
 
                             <div id="projects-accordion"
-                                 class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                                 role="region" aria-labelledby="projects-accordion">
+                                class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+                                role="region" aria-labelledby="projects-accordion">
                                 <ul class="pt-2 ps-2">
                                     <li>
                                         <label
@@ -467,18 +455,18 @@
                 <div class="flex gap-x-4">
                     <a href="#" class="flex gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                             stroke-linejoin="round" class="lucide lucide-chevrons-left">
-                            <path d="m11 17-5-5 5-5"/>
-                            <path d="m18 17-5-5 5-5"/>
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="lucide lucide-chevrons-left">
+                            <path d="m11 17-5-5 5-5" />
+                            <path d="m18 17-5-5 5-5" />
                         </svg>
                         First
                     </a>
                     <a href="#" class="flex gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                             stroke-linejoin="round" class="lucide lucide-chevron-left">
-                            <path d="m15 18-6-6 6-6"/>
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="lucide lucide-chevron-left">
+                            <path d="m15 18-6-6 6-6" />
                         </svg>
                         Previous
                     </a>
@@ -487,29 +475,24 @@
                     <a href="#" class="flex gap-1">
                         Next
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                             stroke-linejoin="round" class="lucide lucide-chevron-right">
-                            <path d="m9 18 6-6-6-6"/>
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="lucide lucide-chevron-right">
+                            <path d="m9 18 6-6-6-6" />
                         </svg>
                     </a>
                     <a href="#" class="flex gap-1">
                         Last
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                             stroke-linejoin="round" class="lucide lucide-chevrons-right">
-                            <path d="m6 17 5-5-5-5"/>
-                            <path d="m13 17 5-5-5-5"/>
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="lucide lucide-chevrons-right">
+                            <path d="m6 17 5-5-5-5" />
+                            <path d="m13 17 5-5-5-5" />
                         </svg>
                     </a>
                 </div>
             </div>
             <div class="grid gap-4">
-                <x-journal :journals="$journals"/>
-                {{-- <x-journal />
-                <x-journal />
-                <x-journal />
-                <x-journal />
-                <x-journal /> --}}
+                <x-journal :journals="$journals" />
             </div>
         </div>
     </div>

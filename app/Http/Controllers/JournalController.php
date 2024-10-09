@@ -211,6 +211,12 @@ class JournalController extends Controller
         return redirect()->route('journals.index')->with($notification);
     }
 
+    public function userSubmissions()
+    {
+        $journals = $this->repo->getUserSubmissions(auth()->user()->id);
+        return view('user.submissions', compact('journals'));
+    }
+
     /**
      * Display the specified resource.
      */
@@ -263,13 +269,40 @@ class JournalController extends Controller
     public function pendingApproval()
     {
         $journals = $this->repo->getPendingApprovedJournals();
+        return view('dashboard.editor.journals.showPendingApproval', compact('journals'));
+    }
+
+    public function previewJournal(string $uuid)
+    {
+        $journal = $this->repo->findByUuid($uuid);
+        return view('dashboard.editor.journals.journalPreview', compact('journal'));
+    }
+
+    public function approveJournal(Request $request)
+    {
+        $uuid = $request->journal_uuid;
+
+        $journal = $this->repo->approveJournal($uuid);
+
+        if ($journal) {
+            $notification = array(
+                'message' => 'Journal Approved successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->back()->with($notification);
+        }
+        $notification = array(
+            'message' => 'Error Approving Journal',
+            'alert-type' => 'error'
+        );
+        return redirect()->back()->with($notification);
     }
 
 
     public function approvedJournals()
     {
         $journals = $this->repo->getApprovedJournals();
-        return view('journals.approvedJournals', compact('journals'));
+        return view('dashboard.editor.journals.showApprovedJournals', compact('journals'));
     }
 
 
