@@ -25,6 +25,10 @@ Route::get('/login', function () {
     return redirect()->route('auth.login.get');
 })->name('login');
 
+Route::get('/view-journal', function () {
+    return view('view-abstract');
+})->name('view-abstract');
+
 Route::get('/interests', [HomeController::class, 'interests'])->name('interests');
 Route::match(['get', 'post'], '/journals/', [JournalController::class, 'searchJournal'])->name('journals');
 Route::match(['get', 'post'], '/like-journal/', [JournalController::class, 'likeJournal'])->name('journals.like');
