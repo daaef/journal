@@ -150,6 +150,7 @@
                                     </label>
                                     <p class="pl-1">or drag and drop</p>
                                 </div>
+                                <span id="file-name" class="text-sm font-medium hidden inline-block text-gray-100 py-2 px-4 bg-primary-600 rounded-md"></span>
                                 <p class="text-xs leading-5 text-gray-600">PDF up to 10MB</p>
                             </div>
                         </div>
@@ -203,5 +204,27 @@
                 Submit
             </button>
         </div>
-    </form>
+    </form><script>
+        const fileInput = document.getElementById('file-upload');
+        const fileNameSpan = document.getElementById('file-name');
+
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if (file) {
+                fileNameSpan.textContent = `Uploading: ${file.name}`;
+                fileNameSpan.classList.remove('hidden');
+            } else {
+                fileNameSpan.textContent = '';
+                fileNameSpan.classList.add('hidden');
+            }
+        });
+    </script>
+        <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>
+        <script>
+            ClassicEditor
+                .create(document.querySelector('#abstract'))
+                .catch(error => {
+                    console.error(error);
+                });
+        </script>
 </x-layouts.layout>
