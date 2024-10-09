@@ -6,6 +6,7 @@ interface JournalContract {
     public function update($request, $id);
     public function destroy($id);
     public function findById($id);
+    public function findBySlug($slug);
     public function getAll();
     public function findByUUID($uuid);
     public function delete($id);
