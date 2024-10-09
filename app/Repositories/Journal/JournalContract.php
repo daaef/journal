@@ -4,6 +4,7 @@ interface JournalContract {
     public function create($request);
     public function submitManuscript($request);
     public function update($request, $id);
+    public function getUserSubmissions($user_id);
     public function destroy($id);
     public function findById($id);
     public function findBySlug($slug);

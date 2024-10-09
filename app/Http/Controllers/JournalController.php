@@ -211,6 +211,12 @@ class JournalController extends Controller
         return redirect()->route('journals.index')->with($notification);
     }
 
+    public function userSubmissions()
+    {
+        $journals = $this->repo->getUserSubmissions(auth()->user()->id);
+        return view('user.submissions', compact('journals'));
+    }
+
     /**
      * Display the specified resource.
      */

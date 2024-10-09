@@ -168,10 +168,12 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'publisher']], f
     Route::post('settings/{uuid}', [UserController::class, 'update'])->name('user.settings.update');
 
 
-    Route::get('/submissions', function () {
-        $journals = Journal::all();
-        return view('user.submissions', compact('journals'));
-    })->name('user.submissions');
+    // Route::get('/submissions', function () {
+    //     $journals = Journal::all();
+    //     return view('user.submissions', compact('journals'));
+    // })->name('user.submissions');
+
+    Route::get('/submissions', [JournalController::class, 'userSubmissions'])->name('user.submissions');
 
     Route::get('/download-journal/{uuid}', [DownloadController::class, 'downloadJournal'])->name('download-journal');
 

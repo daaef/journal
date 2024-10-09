@@ -11,12 +11,16 @@
             <p class="text-blue-500">{{ $journal->approval_status }}</p>
         </div>
         <div class="p-4 border-t grid grid-cols-[auto_auto] justify-between items-center gap-4">
-            <a href=""
+            <a href="{{ route('journals.view', $journal->slug) }}"
                 class="text-gray-100 bg-primary-500 text-center rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600">View
             </a>
             <p class="text-gray-500 text-xs">Last modified {{ $journal->updated_at->format('d F Y') }}</p>
         </div>
     </div>
 @empty
-    <p>No published journals at the moment</p>
+    <p class="mt-2 text-gray-500 dark:text-neutral-400">No published journals at the moment</p>
+    <a class="flex flex-col items-center" href="{{ route('submit-manuscript') }}">
+        <img class="h-[100px] opacity-40" src="{{ asset('images/submit-manuscript.png') }}" alt="">
+        <p class="text-primary-500 font-semibold">Click to Submit Manuscript</p>
+    </a>
 @endforelse

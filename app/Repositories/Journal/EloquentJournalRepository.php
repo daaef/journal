@@ -39,6 +39,10 @@ class EloquentJournalRepository implements JournalContract {
         return Journal::where('uuid', $uuid)->first();
     }
 
+    public function getUserSubmissions($user_id) {
+        return Journal::where('user_id', $user_id)->get();
+    }
+
     public function delete($id){
         $journal = $this->findByUUID($id);
         return $journal->delete();
