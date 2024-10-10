@@ -57,6 +57,15 @@ class JournalController extends Controller
 
     public function likeJournal(Request $request)
     {
+        if (!auth()->check()) {
+            $notification = array(
+                'message' => 'You need to login to download the journal.',
+                'alert-type' => 'warning'
+            );
+
+            // User is not authenticated, redirect to login page
+            return redirect()->route('login')->with($notification);
+        }
         // dd($request->all(), 'likeJournal');
         // validate user id
         // Validate request
@@ -97,7 +106,16 @@ class JournalController extends Controller
 
     public function dislikeJournal(Request $request)
     {
+        if (!auth()->check()) {
+            $notification = array(
+                'message' => 'You need to login to download the journal.',
+                'alert-type' => 'error'
+            );
 
+            // User is not authenticated, redirect to login page
+            return redirect()->route('login')->with($notification);
+        }
+        
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'journal_id'
@@ -222,6 +240,7 @@ class JournalController extends Controller
      */
     public function showJournal(string $slug)
     {
+
         $journal = $this->repo->findBySlug($slug);
         return view('view-abstract', compact('journal'));
     }

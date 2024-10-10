@@ -21,6 +21,15 @@ class MyJournalCollectionController extends Controller
      */
     public function store(Request $request)
     {
+        if (!auth()->check()) {
+            $notification = array(
+                'message' => 'You need to login to download the journal.',
+                'alert-type' => 'error'
+            );
+
+            // User is not authenticated, redirect to login page
+            return redirect()->route('login')->with($notification);
+        }
         // dd($request->all());
         //
         $journalExists = $this->repo->checkJournalInMyCollection($request);
