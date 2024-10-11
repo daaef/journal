@@ -74,7 +74,6 @@
                                 <a href="{{ route('editor.journals.approved') }}" class="sidebar-submenu__link">
                                     Approved </a>
                             </li>
-
                         </ul>
                         <!-- Submenu End -->
                     </li>
