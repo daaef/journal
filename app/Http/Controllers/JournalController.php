@@ -41,7 +41,9 @@ class JournalController extends Controller
     {
         $categories = $this->categoryRepo->getAll();
         $journals = $this->repo->getAll();
-        return view('journals', compact('journals', 'categories'));
+        $regions = globalRegions();
+        $languages = journalLanguages();
+        return view('journals', compact('journals', 'regions', 'categories', 'languages'));
     }
 
     public function searchJournal(Request $request)
@@ -115,7 +117,7 @@ class JournalController extends Controller
             // User is not authenticated, redirect to login page
             return redirect()->route('login')->with($notification);
         }
-        
+
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'journal_id'
@@ -167,7 +169,7 @@ class JournalController extends Controller
         $languages = journalLanguages();
         $categories = $this->categoryRepo->getAll();
         $subcategories = $this->subCategoryRepo->getAll();
-        return view('user.submit-manuscript', compact('regions', 'languages', 'categories'));
+        return view('user.submit-manuscript', compact('regions', 'languages', 'categories', 'subcategories'));
     }
 
 

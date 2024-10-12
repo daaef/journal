@@ -1,4 +1,4 @@
-@forelse ($journals as $journal)
+@forelse ($journals->take($limit ?? 1000) as $journal)
     <div class="journal w-full">
         <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-[8px] p-4 md:p-5">
             <h3 class="font-semibold text-lg mb-2">{{ $journal->title }}</h3>
