@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('journals', function (Blueprint $table) {
             $table->id();
             $table->longText('title');
-            $table->longText('author');
-            $table->string('slug')->unique();
+            $table->json('author');
+            $table->longText('slug')->unique();
             $table->longText('description');
             $table->string('cover_image')->nullable();
             $table->boolean('is_active')->default(true);
             $table->string('uuid')->unique();
             $table->string('journal_format')->nullable();
             $table->string('journal_language')->nullable();
-            $table->string('journal_url')->nullable();
+            $table->longText('journal_url')->nullable();
             $table->enum('approval_status', ['pending', 'in-progress', 'approved', 'declined'])->default('pending');
             $table->string('meta_title')->nullable();
             $table->json('meta_keywords')->nullable();
@@ -32,8 +32,8 @@ return new class extends Migration
             $table->string('license')->nullable();
             $table->string('country')->nullable();
 
-            $table->integer('likes')->default(0);
-            $table->integer('dislikes')->default(0);
+            // $table->integer('likes')->default(0);
+            // $table->integer('dislikes')->default(0);
             //approval levels
             $table->integer('approval_level')->default(0);
 
