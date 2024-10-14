@@ -45,6 +45,22 @@
                                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
+                    <div>
+                        <label for="institution" class="block text-sm font-medium leading-6 text-gray-900">Institution</label>
+                        <div class="mt-2">
+                            <input id="institution" name="institution" type="text"
+                                   value="{{ old('institution')}}" required
+                                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="keywords" class="block text-sm font-medium leading-6 text-gray-900">Keywords</label>
+                        <div class="mt-2">
+                            <input id="keywords" name="meta_keywords" type="text"
+                                   value="{{ old('keywords') }}" required
+                                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        </div>
+                    </div>
                     <div class="w-full">
                         <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country /
                             Region</label>
@@ -139,6 +155,102 @@
                     </div>
                 </div>
             </div>
+            <div>
+                <label for="keywords" class="block text-sm font-medium leading-6 text-gray-900">Licensing</label>
+                <div class="border-b border-gray-900/10 pb-2"></div>
+                <div class="mt-2">
+                    <div class="relative flex gap-x-3">
+                        <div class="flex h-6 items-center">
+                            <input id="cc-by" name="license" type="checkbox"
+                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                   required>
+                        </div>
+                        <div class="text-sm leading-6">
+                            <label for="cc-by" class="text-gray-500">CC BY</label>
+                        </div>
+                    </div>
+                    <div class="relative flex gap-x-3">
+                        <div class="flex h-6 items-center">
+                            <input id="cc-by-sa" name="license" type="checkbox"
+                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                   required>
+                        </div>
+                        <div class="text-sm leading-6">
+                            <label for="cc-by-sa" class="text-gray-500">CC BY-SA</label>
+                        </div>
+                    </div>
+                    <div class="relative flex gap-x-3">
+                        <div class="flex h-6 items-center">
+                            <input id="cc-by-nd" name="license" type="checkbox"
+                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                   required>
+                        </div>
+                        <div class="text-sm leading-6">
+                            <label for="cc-by-nd" class="text-gray-500">CC BY-ND</label>
+                        </div>
+                    </div>
+                    <div class="relative flex gap-x-3">
+                        <div class="flex h-6 items-center">
+                            <input id="cc-by-nc" name="license" type="checkbox"
+                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                   required>
+                        </div>
+                        <div class="text-sm leading-6">
+                            <label for="cc-by-nc" class="text-gray-500">CC BY-NC</label>
+                        </div>
+                    </div>
+                    <div class="relative flex gap-x-3">
+                        <div class="flex h-6 items-center">
+                            <input id="cc-by-nc-sa" name="license" type="checkbox"
+                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                   required>
+                        </div>
+                        <div class="text-sm leading-6">
+                            <label for="cc-by-nc-sa" class="text-gray-500">CC BY-NC-SA</label>
+                        </div>
+                    </div>
+                    <div class="relative flex gap-x-3">
+                        <div class="flex h-6 items-center">
+                            <input id="cc-by-nc-nd" name="license" type="checkbox"
+                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                   required>
+                        </div>
+                        <div class="text-sm leading-6">
+                            <label for="cc-by-nc-nd" class="text-gray-500">CC BY-NC-ND</label>
+                        </div>
+                    </div>
+                    <div class="relative flex gap-x-3">
+                        <div class="flex h-6 items-center">
+                            <input id="cc0" name="license" type="checkbox"
+                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                   required>
+                        </div>
+                        <div class="text-sm leading-6">
+                            <label for="cc0" class="text-gray-500">CC0</label>
+                        </div>
+                    </div>
+                    <div class="relative flex gap-x-3">
+                        <div class="flex h-6 items-center">
+                            <input id="pub_domain" name="license" type="checkbox"
+                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                   required>
+                        </div>
+                        <div class="text-sm leading-6">
+                            <label for="pub_domain" class="text-gray-500">Public domain</label>
+                        </div>
+                    </div>
+                    <div class="relative flex gap-x-3">
+                        <div class="flex h-6 items-center">
+                            <input id="own_license" name="license" type="checkbox"
+                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                   required>
+                        </div>
+                        <div class="text-sm leading-6">
+                            <label for="own_license" class="text-gray-500">Publisher's own license</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="border-b border-gray-900/10 pb-12">
                 <div class="mt-10 space-y-10">
                     <fieldset>
@@ -158,12 +270,12 @@
                         <div class="mt-6 space-y-6">
                             <div class="relative flex gap-x-3">
                                 <div class="flex h-6 items-center">
-                                    <input id="accept" name="accept" type="checkbox"
+                                    <input id="agree" name="agree" type="checkbox"
                                            class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
                                            required>
                                 </div>
                                 <div class="text-sm leading-6">
-                                    <label for="accept" class="text-gray-500">
+                                    <label for="agree" class="text-gray-500">
                                         I agree that I haven't published this article anywhere else
                                     </label>
                                 </div>
