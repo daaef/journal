@@ -23,6 +23,14 @@ Route::get('/login', function () {
     return redirect()->route('auth.login.get');
 })->name('login');
 
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
+
+Route::get('/about', function () {
+    return view('about')->with('journals', \App\Models\Journal::all());
+})->name('about');
+
 Route::get('/interests', [HomeController::class, 'interests'])->name('interests');
 Route::prefix('journals')->group(function () {
     Route::match(['get', 'post'], '/', [JournalController::class, 'searchJournal'])->name('journals');
