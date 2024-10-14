@@ -25,7 +25,7 @@ class EloquentRegistrationRepository implements RegistrationContract {
         $user->save();
 
         // Assign Role
-        $user->assignRole('Author');
+        $user->assignRole('Publisher');
         $code = authenticationCode(6);
 
         // Create Activation Record

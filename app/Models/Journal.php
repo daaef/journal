@@ -76,6 +76,7 @@ class Journal extends Model
             'created_by' => 'json',
             'updated_by' => 'json',
             'approved_by' => 'json',
+            'author' => 'json',
         ];
     }
 }
