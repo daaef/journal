@@ -44,7 +44,7 @@
                         <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country /
                             Region</label>
                         <div class="mt-2">
-                            <label for="country" class="form-label mb-8 h6"> Country</label>
+                            {{-- <label for="country" class="form-label mb-8 h6"> Country</label> --}}
                             <div class="position-relative">
                                 <select name="country" id="country"  class="block w-full bg-[#F9FAFB] rounded-md border-0 px-3 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
                                     <option value="">Select your country</option>
