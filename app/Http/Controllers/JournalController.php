@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Repositories\Category\CategoryContract;
 use App\Repositories\DislikeJournal\DislikeJournalContract;
 use App\Repositories\Journal\JournalContract;
@@ -169,7 +170,8 @@ class JournalController extends Controller
         $languages = journalLanguages();
         $categories = $this->categoryRepo->getAll();
         $subcategories = $this->subCategoryRepo->getAll();
-        return view('user.submit-manuscript', compact('regions', 'languages', 'categories', 'subcategories'));
+        $users = User::all();
+        return view('user.submit-manuscript', compact('regions', 'languages', 'categories', 'subcategories', 'users'));
     }
 
 
