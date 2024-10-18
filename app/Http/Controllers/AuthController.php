@@ -101,16 +101,7 @@ class AuthController extends Controller
                 return back()->with($notification)->withInput();
             }
 
-            // Check if user has interest
-            if ($user->userInterests->isEmpty()) {
-                // dd('No interest');
-                $notification = array(
-                    'message' => 'Please select your interests to continue.',
-                    'alert-type' => 'info'
-                );
-                Auth::logout();
-                return redirect()->route('interests')->with($notification);
-            }
+
 
             $user->last_login_at = now();
             $user->save();
@@ -119,7 +110,7 @@ class AuthController extends Controller
             $clientIP = request()->ip();
             $userAgent = request()->userAgent();
             // dd($userAgent);
-            $user->notify(new LoginNotification($user, $clientIP, $userAgent));
+            // $user->notify(new LoginNotification($user, $clientIP, $userAgent));
 
             //If user is an admin
             if ($user->hasRole('Admin')) {
@@ -136,8 +127,17 @@ class AuthController extends Controller
                 return redirect()->route('dashboard');
             }
 
-            //If user is an author
+            //If user is a publisher
             if ($user->hasRole('Publisher')) {
+                // Check if user has interest
+                if ($user->userInterests->isEmpty()) {
+                    // dd('No interest');
+                    $notification = array(
+                        'message' => 'Please select your interests to continue.',
+                        'alert-type' => 'info'
+                    );
+                    return redirect()->route('interests')->with($notification);
+                }
                 return redirect()->route('dashboard');
             }
 
