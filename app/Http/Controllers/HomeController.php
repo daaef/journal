@@ -21,9 +21,5 @@ class HomeController extends Controller
         return view('welcome', compact('categories'));
     }
 
-    public function interests()
-    {
-        $categories = $this->categoryRepo->getAll();
-        return view('interests', compact('categories'));
-    }
+    
 }

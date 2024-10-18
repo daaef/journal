@@ -9,6 +9,16 @@ class UserInterest extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'interests',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 
     protected $cast = [
         'interests' => 'json',

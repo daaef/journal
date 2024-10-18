@@ -15,6 +15,7 @@ use App\Http\Controllers\JournalController;
 use App\Http\Controllers\MyJournalCollectionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserInterestController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -31,7 +32,7 @@ Route::get('/about', function () {
     return view('about')->with('journals', \App\Models\Journal::all());
 })->name('about');
 
-Route::get('/interests', [HomeController::class, 'interests'])->name('interests');
+
 Route::prefix('journals')->group(function () {
     Route::match(['get', 'post'], '/', [JournalController::class, 'searchJournal'])->name('journals');
     Route::get('/view/{slug}', [JournalController::class, 'showJournal'])->name('journals.view');
@@ -173,6 +174,9 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'publisher']], f
     Route::get('/submissions', [JournalController::class, 'userSubmissions'])->name('user.submissions');
     Route::get('/download-journal/{uuid}', [DownloadController::class, 'downloadJournal'])->name('download-journal');
 
+
+
+
     // Journal Routes
     Route::group(['prefix' => 'journals'], function () {
         Route::get('/', [JournalController::class, 'index'])->name('journals.index');
@@ -186,3 +190,5 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'publisher']], f
 });
 
 Route::get('/load-subcategories', [SubCategoryController::class, 'getSubCategoriesByID'])->name('load-subcategories');
+Route::get('/interests', [UserInterestController::class, 'interests'])->name('interests');
+Route::post('/interests', [UserInterestController::class, 'store'])->name('interests.store');

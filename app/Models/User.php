@@ -53,10 +53,10 @@ class User extends Authenticatable
         return $this->hasMany(DislikeJournal::class);
     }
 
-    // public function myJournalCollections()
-    // {
-    //     return $this->hasMany(MyJournalCollection::class);
-    // }
+    public function userInterests()
+    {
+        return $this->hasMany(UserInterest::class);
+    }
 
     public function myJournalCollections()
     {

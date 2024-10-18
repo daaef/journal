@@ -3,15 +3,27 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Repositories\Category\CategoryContract;
 
 class UserInterestController extends Controller
 {
+
+    protected CategoryContract $categoryRepo;
+
+    public function __construct(CategoryContract $categoryContract)
+    {
+        $this->categoryRepo = $categoryContract;
+    }
+
+
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function interests()
     {
-        //
+        $categories = $this->categoryRepo->getAll();
+        return view('interests', compact('categories'));
     }
 
     /**
@@ -27,7 +39,18 @@ class UserInterestController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request->all());
+        // validate the request
+        $request->validate([
+            'categories' => 'required|array',
+            'categories.*' => 'exists:categories,id',
+        ]);
+
+        //get the authenticated user
+        $user = auth()->user();
+        // attach the categories to the user
+        $user->userInterests()->attach($request->categories);
+        return redirect()->route('dashboard')->with('success', 'Interests updated successfully');
     }
 
     /**

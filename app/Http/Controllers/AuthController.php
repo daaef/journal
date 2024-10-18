@@ -101,6 +101,17 @@ class AuthController extends Controller
                 return back()->with($notification)->withInput();
             }
 
+            // Check if user has interest
+            if ($user->userInterests->isEmpty()) {
+                // dd('No interest');
+                $notification = array(
+                    'message' => 'Please select your interests to continue.',
+                    'alert-type' => 'info'
+                );
+                Auth::logout();
+                return redirect()->route('interests')->with($notification);
+            }
+
             $user->last_login_at = now();
             $user->save();
 

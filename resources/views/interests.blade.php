@@ -15,7 +15,7 @@
         </div>
     </div>
     <hr class="mb-8">
-    <form id="interests-form" action="" method="POST">
+    <form id="interests-form" action="{{ route('interests.store') }}" method="POST">
         @csrf
         <div class="mx-auto">
             <div class="masonry grid grid-cols-3 gap-4 lg:grid-cols-5">
@@ -86,7 +86,7 @@
         </div>
         <button type="submit" id="submit-interests"
             class="mt-6 inline-block rounded-[8px] bg-secondary-900 hover:bg-primary-500 text-white font-bold py-2 px-4 rounded">
-            Submit Interests
+            Save  Interests
         </button>
     </form>
 </x-layouts.layout>
@@ -144,7 +144,7 @@
             console.log('Form submitted with interests:', Array.from(checkboxes).filter(cb => cb.checked).map(
                 cb => cb.value));
             // Uncomment the next line when you're ready to actually submit the form
-            // form.submit();
+            form.submit();
         }
     });
 
