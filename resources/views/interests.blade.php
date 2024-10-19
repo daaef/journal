@@ -24,7 +24,7 @@
                 @if($categories)
                     @foreach($categories as $category)
                         <label for="category-{{ $category->id }}">
-                            <input type="checkbox" class="hidden checker" id="category-{{ $category->id }}" name="{{ $category->slug }}">
+                            <input type="checkbox" class="hidden checker" id="category-{{ $category->id }}" name="{{ $category->uuid }}">
                             <button
                                 class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
                                 <span class="font-medium text-sm">{{ $category->name }}</span>
@@ -92,7 +92,7 @@
         } else {
             // Form is valid, you can submit it here
             console.log('Form submitted with interests:', Array.from(checkboxes).filter(cb => cb.checked).map(
-                cb => cb.slug));
+                cb => cb.uuid));
             // Uncomment the next line when you're ready to actually submit the form
             form.submit();
         }
