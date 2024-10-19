@@ -36,46 +36,15 @@
                                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
-                   {{-- <div>
-                        <label for="author" class="block text-sm font-medium leading-6 text-gray-900">Author's
-                            Name(s)</label>
+                   <div>
+                        <label for="author" class="block text-sm font-medium leading-6 text-gray-900">Authors (Seperate with commas)</label>
                         <div class="mt-2">
                             <input id="author" name="author" type="text"
                                    value="{{ old('author') ?: auth()->user()->fullname }}" required
                                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
-                    </div>--}}
-                    <!-- Select -->
-                    @if('user')
-                        <div class="">
-                            <label class="font-medium" for="hs-tags-input">Author(s) Name</label>
-                            <select multiple="" data-hs-select='{
-                          "placeholder": "Select an author...",
-                          "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-white border border-gray-200 rounded-lg overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300",
-                          "optionClasses": "py-2 px-4 w-full text-sm text-gray-800 cursor-pointer hover:bg-gray-100 rounded-lg focus:outline-none focus:bg-gray-100 hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
-                          "mode": "tags",
-                          "wrapperClasses": "relative ps-0.5 pe-9 min-h-[46px] flex items-center flex-wrap text-nowrap w-full border border-gray-200 rounded-lg text-start text-sm focus:border-blue-500 focus:ring-blue-500",
-                          "tagsItemTemplate": "<div class=\"flex flex-nowrap items-center relative z-10 bg-white border border-gray-200 rounded-full p-1 m-1 \"><div class=\"size-6 me-1\" data-icon></div><div class=\"whitespace-nowrap text-gray-800 \" data-title></div><div class=\"inline-flex shrink-0 justify-center items-center size-5 ms-2 rounded-full text-gray-800 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm cursor-pointer\" data-remove><svg class=\"shrink-0 size-3\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/></svg></div></div>",
-                          "tagsInputId": "hs-tags-input",
-                          "tagsInputClasses": "py-3 px-2 rounded-lg order-1 text-sm h-[30px] outline-none",
-                          "optionTemplate": "<div class=\"flex items-center\"><div class=\"size-8 me-2\" <div><div class=\"text-sm font-semibold text-gray-800 \" data-title></div></div><div class=\"ms-auto\"><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-4 text-blue-600\" xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" viewBox=\"0 0 16 16\"><path d=\"M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z\"/></svg></span></div></div>",
-                          "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-gray-500 \" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
-                        }' name="author" class="hidden">
-                                <option value="">Start typing</option>
-                                @if('user')
-                                    @foreach($users as $user)
-                                        <option
-                                            value="{{  old('author') ?: $user->uuid }}"
-                                            {{ $user->uuid === auth()->user()->uuid ? 'selected' : '' }}
-                                        >
-                                            {{ $user->fullname }}
-                                        </option>
-                                    @endforeach
-                                @endif
-                            </select>
-                        </div>
-                    @endif
-                    <!-- End Select -->
+                    </div>
+
                     <div>
                         <label for="institution"
                                class="block text-sm font-medium leading-6 text-gray-900">Institution</label>
@@ -124,7 +93,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="w-full">
+                    <div class="col-span-full">
                         <label for="category_id"
                                class="block text-sm font-medium leading-6 text-gray-900">Category</label>
                         <div class="mt-2">
@@ -139,7 +108,7 @@
                             </select>
                         </div>
                     </div>
-                    <div id="subcategories">
+                    {{-- <div id="subcategories">
                         <label for="subcategory_id" class="block text-sm font-medium leading-6 text-gray-900">Sub
                             Category</label>
                         <div class="mt-2">
@@ -148,7 +117,7 @@
                                 <option value="" disabled selected>Select a Sub-Category</option>
                             </select>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col-span-full">
                         <label for="abstract" class="block text-sm font-medium leading-6 text-gray-900">Abstract</label>
                         <div class="mt-2">

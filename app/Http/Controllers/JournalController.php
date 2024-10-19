@@ -177,7 +177,7 @@ class JournalController extends Controller
 
     public function submitManuscript(Request $request)
     {
-
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'author' => 'required',
@@ -188,6 +188,8 @@ class JournalController extends Controller
             'file' => 'required|mimes:pdf|max:10000',
             'accept' => 'required'
         ]);
+
+
 
 //        if ($validator->fails()) {
 //            return redirect()->back()->withErrors($validator)->withInput();

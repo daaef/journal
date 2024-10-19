@@ -5,6 +5,7 @@
             <hr class="border-[#762A1E] mb-2">
             <div class="grid grid-cols-[1fr_2px_1fr]">
                 <div class="py-3 space-y-3]">
+                    
                     <h5 class="flex w-full justify-between">
                         <span class="text-secondary-900 w-[45%]">Author(s):</span>
                         <span class="w-[50%]">{{ $journal->author }}</span>
