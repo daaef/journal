@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('user_interests', function (Blueprint $table) {
             $table->id();
             $table->json('interests');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
+            $table->unsignedBigInteger('user_id');
+            // $table->unsignedBigInteger('category_id');
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            // $table->foreign('category_id')->references('id')->on('categories')->cascadeOnDelete();
             $table->timestamps();
         });
     }

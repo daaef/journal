@@ -1,5 +1,5 @@
 <script src="https://unpkg.com/htmx.org@2.0.2"
-        integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous">
+    integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous">
 </script>
 
 <x-layouts.layout>
@@ -33,62 +33,34 @@
                             Title</label>
                         <div class="mt-2">
                             <input id="title" name="title" type="text" value="{{ old('title') }}" required
-                                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
-                   {{-- <div>
-                        <label for="author" class="block text-sm font-medium leading-6 text-gray-900">Author's
-                            Name(s)</label>
+                    <div>
+                        <label for="author" class="block text-sm font-medium leading-6 text-gray-900">Authors
+                            (Seperate with commas)</label>
                         <div class="mt-2">
                             <input id="author" name="author" type="text"
-                                   value="{{ old('author') ?: auth()->user()->fullname }}" required
-                                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                value="{{ old('author') ?: auth()->user()->fullname }}" required
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
-                    </div>--}}
-                    <!-- Select -->
-                    @if($users)
-                        <div class="">
-                            <label class="font-medium" for="hs-tags-input">Author(s) Name</label>
-                            <select multiple="" data-hs-select='{
-                          "placeholder": "Select an author...",
-                          "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-white border border-gray-200 rounded-lg overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300",
-                          "optionClasses": "py-2 px-4 w-full text-sm text-gray-800 cursor-pointer hover:bg-gray-100 rounded-lg focus:outline-none focus:bg-gray-100 hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50",
-                          "mode": "tags",
-                          "wrapperClasses": "relative ps-0.5 pe-9 min-h-[46px] flex items-center flex-wrap text-nowrap w-full border border-gray-200 rounded-lg text-start text-sm focus:border-blue-500 focus:ring-blue-500",
-                          "tagsItemTemplate": "<div class=\"flex flex-nowrap items-center relative z-10 bg-white border border-gray-200 rounded-full p-1 m-1 \"><div class=\"size-6 me-1\" data-icon></div><div class=\"whitespace-nowrap text-gray-800 \" data-title></div><div class=\"inline-flex shrink-0 justify-center items-center size-5 ms-2 rounded-full text-gray-800 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm cursor-pointer\" data-remove><svg class=\"shrink-0 size-3\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/></svg></div></div>",
-                          "tagsInputId": "hs-tags-input",
-                          "tagsInputClasses": "py-3 px-2 rounded-lg order-1 text-sm h-[30px] outline-none",
-                          "optionTemplate": "<div class=\"flex items-center\"><div class=\"size-8 me-2\" <div><div class=\"text-sm font-semibold text-gray-800 \" data-title></div></div><div class=\"ms-auto\"><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-4 text-blue-600\" xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" viewBox=\"0 0 16 16\"><path d=\"M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z\"/></svg></span></div></div>",
-                          "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-gray-500 \" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
-                        }' name="author" class="hidden">
-                                <option value="">Start typing</option>
-                                    @foreach($users as $user)
-                                        <option
-                                            value="{{  old('author') ?: $user->uuid }}"
-                                            {{ $user->uuid === auth()->user()->uuid ? 'selected' : '' }}
-                                        >
-                                            {{ $user->fullname }}
-                                        </option>
-                                    @endforeach
-                            </select>
-                        </div>
-                    @endif
-                    <!-- End Select -->
+                    </div>
+
                     <div>
                         <label for="institution"
-                               class="block text-sm font-medium leading-6 text-gray-900">Institution</label>
+                            class="block text-sm font-medium leading-6 text-gray-900">Institution</label>
                         <div class="mt-2">
-                            <input id="institution" name="institution" type="text"
-                                   value="{{ old('institution')}}" required
-                                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            <input id="institution" name="institution" type="text" value="{{ old('institution') }}"
+                                required
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
                     <div>
                         <label for="keywords" class="block text-sm font-medium leading-6 text-gray-900">Keywords</label>
                         <div class="mt-2">
-                            <input id="keywords" name="meta_keywords" type="text"
-                                   value="{{ old('keywords') }}" required
-                                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            <input id="keywords" name="meta_keywords" type="text" value="{{ old('keywords') }}"
+                                required
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
                     <div class="w-full">
@@ -96,7 +68,7 @@
                             Region</label>
                         <div class="mt-2">
                             <select name="country" id="country"
-                                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
                                 <option value="" disabled selected>Select Country</option>
                                 @foreach ($regions as $region => $countries)
                                     <optgroup label="{{ $region }}">
@@ -111,10 +83,10 @@
 
                     <div class="w-full">
                         <label for="journal_language"
-                               class="block text-sm font-medium leading-6 text-gray-900">Language</label>
+                            class="block text-sm font-medium leading-6 text-gray-900">Language</label>
                         <div class="mt-2">
                             <select id="journal_language" name="journal_language" autocomplete="language-name"
-                                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
                                 <option value="" disabled selected>Select Language</option>
                                 @foreach ($languages as $language)
                                     <option value="{{ $language }}">{{ $language }}</option>
@@ -122,14 +94,14 @@
                             </select>
                         </div>
                     </div>
-                    <div class="w-full">
+                    <div class="col-span-full">
                         <label for="category_id"
-                               class="block text-sm font-medium leading-6 text-gray-900">Category</label>
+                            class="block text-sm font-medium leading-6 text-gray-900">Category</label>
                         <div class="mt-2">
                             <select id="category_id" name="category_id" required
-                                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-                                    hx-get="/load-subcategories" hx-target="#subcategories"
-                                    hx-params="category_id=${select.value}" hx-trigger="change">
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                                hx-get="/load-subcategories" hx-target="#subcategories"
+                                hx-params="category_id=${select.value}" hx-trigger="change">
                                 <option value="" disabled selected>Select Category</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -137,7 +109,7 @@
                             </select>
                         </div>
                     </div>
-                    <div id="subcategories">
+                    {{-- <div id="subcategories">
                         <label for="subcategory_id" class="block text-sm font-medium leading-6 text-gray-900">Sub
                             Category</label>
                         <div class="mt-2">
@@ -146,39 +118,39 @@
                                 <option value="" disabled selected>Select a Sub-Category</option>
                             </select>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col-span-full">
                         <label for="abstract" class="block text-sm font-medium leading-6 text-gray-900">Abstract</label>
                         <div class="mt-2">
                             <textarea id="abstract" name="abstract" rows="3" value="{{ old('abstract') }}"
-                                      class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                                 {{ old('abstract') }}
                             </textarea>
                         </div>
                     </div>
                     <div class="col-span-full">
                         <label for="cover-photo"
-                               class="block text-sm font-medium leading-6 text-gray-900">Manuscript</label>
+                            class="block text-sm font-medium leading-6 text-gray-900">Manuscript</label>
                         <div
                             class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                             <div class="text-center">
                                 <svg class="mx-auto h-12 w-12 text-gray-300" xmlns="http://www.w3.org/2000/svg"
-                                     width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                     stroke-linejoin="round">
+                                    width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
                                     <path
-                                        d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>
+                                        d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20" />
                                 </svg>
                                 <div class="mt-4 flex text-sm leading-6 text-gray-600">
                                     <label for="file-upload"
-                                           class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
+                                        class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
                                         <span>Upload Manuscript</span>
                                         <input id="file-upload" name="manuscripts" type="file" class="sr-only">
                                     </label>
                                     <p class="pl-1">or drag and drop</p>
                                 </div>
                                 <span id="file-name"
-                                      class="text-sm font-medium hidden inline-block text-gray-100 py-2 px-4 bg-primary-600 rounded-md"></span>
+                                    class="text-sm font-medium hidden inline-block text-gray-100 py-2 px-4 bg-primary-600 rounded-md"></span>
                                 <p class="text-xs leading-5 text-gray-600">PDF up to 10MB</p>
                             </div>
                         </div>
@@ -192,8 +164,7 @@
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
                             <input id="cc-by" name="license" type="checkbox"
-                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
-                                   >
+                                class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
                             <label for="cc-by" class="text-gray-500">CC BY</label>
@@ -202,8 +173,7 @@
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
                             <input id="cc-by-sa" name="license" type="checkbox"
-                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
-                                   >
+                                class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
                             <label for="cc-by-sa" class="text-gray-500">CC BY-SA</label>
@@ -212,8 +182,7 @@
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
                             <input id="cc-by-nd" name="license" type="checkbox"
-                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
-                                   >
+                                class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
                             <label for="cc-by-nd" class="text-gray-500">CC BY-ND</label>
@@ -222,8 +191,7 @@
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
                             <input id="cc-by-nc" name="license" type="checkbox"
-                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
-                                   >
+                                class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
                             <label for="cc-by-nc" class="text-gray-500">CC BY-NC</label>
@@ -232,8 +200,7 @@
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
                             <input id="cc-by-nc-sa" name="license" type="checkbox"
-                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
-                                   >
+                                class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
                             <label for="cc-by-nc-sa" class="text-gray-500">CC BY-NC-SA</label>
@@ -242,8 +209,7 @@
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
                             <input id="cc-by-nc-nd" name="license" type="checkbox"
-                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
-                                   >
+                                class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
                             <label for="cc-by-nc-nd" class="text-gray-500">CC BY-NC-ND</label>
@@ -252,8 +218,7 @@
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
                             <input id="cc0" name="license" type="checkbox"
-                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
-                                   >
+                                class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
                             <label for="cc0" class="text-gray-500">CC0</label>
@@ -262,8 +227,7 @@
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
                             <input id="pub_domain" name="license" type="checkbox"
-                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
-                                   >
+                                class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
                             <label for="pub_domain" class="text-gray-500">Public domain</label>
@@ -272,8 +236,7 @@
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
                             <input id="own_license" name="license" type="checkbox"
-                                   class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
-                                   >
+                                class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
                             <label for="own_license" class="text-gray-500">Publisher's own license</label>
@@ -288,8 +251,8 @@
                             <div class="relative flex gap-x-3">
                                 <div class="flex h-6 items-center">
                                     <input id="accept" name="accept" type="checkbox"
-                                           class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
-                                           required>
+                                        class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                        required>
                                 </div>
                                 <div class="text-sm leading-6">
                                     <label for="accept" class="text-gray-500">I agree with JAPR's Review
@@ -301,8 +264,8 @@
                             <div class="relative flex gap-x-3">
                                 <div class="flex h-6 items-center">
                                     <input id="agree" name="agree" type="checkbox"
-                                           class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
-                                           required>
+                                        class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                        required>
                                 </div>
                                 <div class="text-sm leading-6">
                                     <label for="agree" class="text-gray-500">
@@ -318,13 +281,13 @@
 
         <div class="mt-6 flex items-center justify-end gap-x-6">
             <a href="{{ url()->previous() }}"
-               class="rounded-md px-3 py-2 text-sm hover:bg-red-500 font-semibold bg-red-600 leading-6 text-gray-200">Cancel</a>
+                class="rounded-md px-3 py-2 text-sm hover:bg-red-500 font-semibold bg-red-600 leading-6 text-gray-200">Cancel</a>
             <button type="submit" name="submit" value="draft"
-                    class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                 Save Draft
             </button>
             <button type="submit" name="submit" value="submit"
-                    class="rounded-md bg-green-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+                class="rounded-md bg-green-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
                 Submit
             </button>
         </div>

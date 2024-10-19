@@ -12,6 +12,7 @@ class UserInterest extends Model
     protected $fillable = [
         'user_id',
         'interests',
+        'category_id'
     ];
 
     public function user()
