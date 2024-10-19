@@ -6,7 +6,7 @@
         <div class="border-b border-gray-200 pb-5 sm:flex w-full sm:items-center sm:justify-between">
             <h3 class="text-lg font-bold leading-6 text-gray-900">Journals</h3>
             <div>
-                <div class="flex rounded-lg border min-w-full">
+                <form class="flex rounded-lg border min-w-full" action="{{ route('journals') }}" method="get">
                     <input type="text" id="hs-trailing-multiple-add-on" name="search"
                         value="{{ old('search') ?: request()->search }}"
                         class="py-3 lg:w-[400px] px-4 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
@@ -33,10 +33,11 @@
                         </select>
                     </div>
                     <button
+                        type="submit"
                         class="px-4 inline-flex items-center min-w-fit rounded-e-md border border-s-0 bg-primary-500 text-white">
                         Search
                     </button>
-                </div>
+                </form>
             </div>
         </div>
     </x-slot:breadcrumb>

@@ -2,86 +2,36 @@
     <x-slot:title>
         Welcome to JAPR | Select your Interests
     </x-slot>
-    <div class="border-b border-gray-200 pb-5 sm:flex w-full sm:items-center sm:justify-between">
-        <div class="flex flex-col">
-            <h3 class="text-lg font-bold leading-6 text-primary-500">Interests</h3>
-            <h4>Select 5 categories that interest you</h4>
+    <x-slot:breadcrumb>
+        <div class="border-b border-gray-200 pb-5 sm:flex w-full sm:items-center sm:justify-between">
+            <div class="flex flex-col">
+                <h3 class="text-lg font-bold leading-6 text-primary-500">Interests</h3>
+                <h4>Select 5 categories that interest you</h4>
+            </div>
+            <div>
+                <a href="#" class="flex font-medium text-sm text-secondary-900 gap-2 items-center">
+                    Skip
+                    <img class="h-4" src="{{ asset('images/skip.png') }}" alt="">
+                </a>
+            </div>
         </div>
-        <div>
-            <a href="#" class="flex font-medium text-sm text-secondary-900 gap-2 items-center">
-                Skip
-                <img class="h-4" src="{{ asset('images/skip.png') }}" alt="">
-            </a>
-        </div>
-    </div>
-    <hr class="mb-8">
+        <hr class="mb-8">
+    </x-slot:breadcrumb>
     <form id="interests-form" action="{{ route('interests.store') }}" method="POST">
         @csrf
         <div class="mx-auto">
             <div class="masonry grid grid-cols-3 gap-4 lg:grid-cols-5">
-                <label for="cat1">
-                    <input type="checkbox" class="hidden checker" id="cat1" name="technology">
-                    <button
-                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                        <span class="text-lg">Technology</span>
-                    </button>
-                </label>
-                <label for="cat2">
-                    <input type="checkbox" class="hidden" id="cat2">
-                    <button
-                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                        <span class="text-lg">Health</span>
-                    </button>
-                </label>
-                <label for="cat3">
-                    <input type="checkbox" class="hidden" id="cat3">
-                    <button
-                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                        <span class="text-lg">Finance</span>
-                    </button>
-                </label>
-                <label for="cat4">
-                    <input type="checkbox" class="hidden" id="cat4">
-                    <button
-                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                        <span class="text-lg">Travel</span>
-                    </button>
-                </label>
-                <label for="cat5">
-                    <input type="checkbox" class="hidden" id="cat5">
-                    <button
-                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                        <span class="text-lg">Education</span>
-                    </button>
-                </label>
-                <label for="cat6">
-                    <input type="checkbox" class="hidden" id="cat6">
-                    <button
-                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                        <span class="text-lg">Food</span>
-                    </button>
-                </label>
-                <label for="cat7">
-                    <input type="checkbox" class="hidden" id="cat7">
-                    <button
-                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                        <span class="text-lg">Travel</span>
-                    </button>
-                </label>
-                <label for="cat8">
-                    <input type="checkbox" class="hidden" id="cat8">
-                    <button
-                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                        <span class="text-lg">Education</span>
-                    </button>
-                </label>
-                <label for="cat9">
-                    <input type="checkbox" class="hidden" id="cat9">
-                    <button
-                        class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
-                        <span class="text-lg">Food</span>
-                    </button>
-                </label>
+                @if($categories)
+                    @foreach($categories as $category)
+                        <label for="category-{{ $category->id }}">
+                            <input type="checkbox" class="hidden checker" id="category-{{ $category->id }}" name="{{ $category->uuid }}">
+                            <button
+                                class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
+                                <span class="font-medium text-sm">{{ $category->name }}</span>
+                            </button>
+                        </label>
+                    @endforeach
+                @endif
             </div>
         </div>
         <button type="submit" id="submit-interests"
@@ -142,7 +92,7 @@
         } else {
             // Form is valid, you can submit it here
             console.log('Form submitted with interests:', Array.from(checkboxes).filter(cb => cb.checked).map(
-                cb => cb.value));
+                cb => cb.uuid));
             // Uncomment the next line when you're ready to actually submit the form
             form.submit();
         }
