@@ -32,7 +32,7 @@ class EloquentJournalRepository implements JournalContract {
     }
 
     public function getAll() {
-        return Journal::all();
+        return Journal::where('approval_status', 'approved')->get();
     }
 
     public function findByUUID($uuid) {

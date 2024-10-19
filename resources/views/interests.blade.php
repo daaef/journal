@@ -24,7 +24,7 @@
                 @if($categories)
                     @foreach($categories as $category)
                         <label for="category-{{ $category->id }}">
-                            <input type="checkbox" class="hidden checker" id="category-{{ $category->id }}" name="{{ $category->uuid }}">
+                            <input type="checkbox" class="hidden checker" id="category-{{ $category->id }}" name="interests[]" value="{{ $category->uuid }}">
                             <button
                                 class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
                                 <span class="font-medium text-sm">{{ $category->name }}</span>
@@ -74,7 +74,7 @@
                 checkbox.checked = true;
             } else {
                 toastr.options.timeOut = 10000;
-                toastr.info("You can only select 5 interests");
+                toastr.warning("You can only select 5 interests");
             }
 
             updateButtonStyles();

@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Repositories\Category\CategoryContract;
+use App\Repositories\UserInterest\UserInterestContract;
 
 class UserInterestController extends Controller
 {
 
+    protected $repo;
     protected CategoryContract $categoryRepo;
 
-    public function __construct(CategoryContract $categoryContract)
+    public function __construct(UserInterestContract $userInterestContract, CategoryContract $categoryContract)
     {
+        $this->repo = $userInterestContract;
         $this->categoryRepo = $categoryContract;
     }
 
@@ -26,62 +29,29 @@ class UserInterestController extends Controller
         return view('interests', compact('categories'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         // validate the request
         $request->validate([
-            'categories' => 'required|array',
-            'categories.*' => 'exists:categories,id',
+            'interests' => 'required|array'
         ]);
 
-        //get the authenticated user
-        $user = auth()->user();
-        // attach the categories to the user
-        $user->userInterests()->attach($request->categories);
+        $interests = $this->repo->create($request);
+
+        if (!$interests) {
+            $notification = array(
+                'message' => 'Failed to save interests',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
         return redirect()->route('dashboard')->with('success', 'Interests updated successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }
