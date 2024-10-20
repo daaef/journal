@@ -37,6 +37,8 @@ class RoleAndPermissionSeeder extends Seeder
         $authorRole = Role::create(['name' => 'Author', 'is_active' => true, 'uuid' => Str::uuid()]);
         $contributorRole = Role::create(['name' => 'Contributor', 'is_active' => true, 'uuid' => Str::uuid()]);
         $publisherRole = Role::create(['name' => 'Publisher', 'is_active' => true, 'uuid' => Str::uuid()]);
+        $reviewerRole = Role::create(['name' => 'Reviewer', 'is_active' => true, 'uuid' => Str::uuid()]);
+
         Role::create(['name' => 'Chief Editor', 'is_active' => true, 'uuid' => Str::uuid()]);
         Role::create(['name' => 'Managing Editor', 'is_active' => true, 'uuid' => Str::uuid()]);
         Role::create(['name' => 'Associate Editor', 'is_active' => true, 'uuid' => Str::uuid()]);
@@ -70,6 +72,12 @@ class RoleAndPermissionSeeder extends Seeder
         ]);
 
         $publisherRole->givePermissionTo([
+            'create-posts',
+            'edit-posts',
+            'delete-posts',
+        ]);
+
+        $reviewerRole->givePermissionTo([
             'create-posts',
             'edit-posts',
             'delete-posts',

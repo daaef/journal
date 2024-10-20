@@ -127,6 +127,10 @@ class AuthController extends Controller
                 return redirect()->route('dashboard');
             }
 
+            if ($user->hasRole('Reviewer')) {
+                return redirect()->route('reviewer.dashboard');
+            }
+
             //If user is a publisher
             if ($user->hasRole('Publisher')) {
                 // Check if user has interest

@@ -35,8 +35,9 @@ class Journal extends Model
         'created_by',
         'updated_by',
         'approved_by',
-        'likes',
-        'dislikes',
+        'approval_comments',
+        // 'likes',
+        // 'dislikes',
     ];
 
     public function user()
@@ -76,6 +77,7 @@ class Journal extends Model
             'created_by' => 'json',
             'updated_by' => 'json',
             'approved_by' => 'json',
+            'approval_comments' => 'json',
             'author' => 'json',
         ];
     }
