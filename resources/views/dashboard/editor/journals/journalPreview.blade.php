@@ -67,7 +67,7 @@
                             <object class="pdf"
                                 data=
 "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20210101201653/PDF.pdf"
-                                width="800" height="500">
+                                width="100%" height="800">
                             </object>
                         </div>
 
@@ -93,19 +93,18 @@
                     <div class="mb-20 flex-between flex-wrap gap-8">
                         <h5 class="mb-0">Reviewers</h5>
                     </div>
-                    <form action="">
+                    <form action="{{ route('editor.journals.reviewers.save', $journal->uuid) }}" method="post">
+                        @csrf
                         <div class="col">
                             <label for="reviewer" class="h5 mb-8 fw-semibold font-heading">Select Reviewers
                             </label>
                             <div class="position-relative">
                                 <select name="reviewer[]" id="reviewer" class="form-select py-9 placeholder-13 text-15">
                                     <option value="1" disabled selected>Select a reviewer</option>
-                                    <option value="2">Computer Science </option>
-                                    <option value="2">Business </option>
-                                    <option value="2">Management </option>
-                                    <option value="2">Humanities </option>
-                                    <option value="2">Data Science</option>
-                                    <option value="2">Artificial Intelligence</option>
+                                    @foreach ($reviewers as $reviewer)
+                                        <option value="{{ $reviewer->id }}">{{ $reviewer->fullname }}</option>
+
+                                    @endforeach
                                 </select>
                             </div>
                         </div>

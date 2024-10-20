@@ -8,6 +8,7 @@ use App\Repositories\DislikeJournal\DislikeJournalContract;
 use App\Repositories\Journal\JournalContract;
 use App\Repositories\LikeJournal\LikeJournalContract;
 use App\Repositories\SubCategory\SubCategoryContract;
+use App\Repositories\User\UserContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -20,19 +21,22 @@ class JournalController extends Controller
     protected $subCategoryRepo;
     protected $likeJournalRepo;
     protected $dislikeJournalRepo;
+    protected $userRepo;
 
     public function __construct(
         JournalContract $journalContract,
         CategoryContract $categoryContract,
         SubCategoryContract $subCategoryContract,
         LikeJournalContract $likeJournalContract,
-        DislikeJournalContract $dislikeJournalContract
+        DislikeJournalContract $dislikeJournalContract,
+        UserContract $userContract
     ) {
         $this->repo = $journalContract;
         $this->categoryRepo = $categoryContract;
         $this->subCategoryRepo = $subCategoryContract;
         $this->likeJournalRepo = $likeJournalContract;
         $this->dislikeJournalRepo = $dislikeJournalContract;
+        $this->userRepo = $userContract;
     }
 
     /**
@@ -300,7 +304,16 @@ class JournalController extends Controller
     public function previewJournal(string $uuid)
     {
         $journal = $this->repo->findByUuid($uuid);
-        return view('dashboard.editor.journals.journalPreview', compact('journal'));
+        $reviewers = $this->userRepo->getReviewers();
+        // dd($reviewers);
+        return view('dashboard.editor.journals.journalPreview', compact('journal', 'reviewers'));
+    }
+
+    public function SaveJournalReviewers(Request $request, string $uuid)
+    {
+
+        dd($uuid, $request->all());
+        $journal = $this->repo->findByUuid($uuid);
     }
 
     public function approveJournal(Request $request)

@@ -53,6 +53,7 @@ return new class extends Migration
             $table->json('updated_by')->nullable();
             $table->json('approved_by')->nullable();
             $table->json('approval_comments')->nullable();
+            $table->json('reveiwers')->nullable();
             $table->timestamps();
         });
     }

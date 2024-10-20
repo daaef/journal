@@ -15,6 +15,7 @@ return [
     App\Providers\PermissionServiceProvider::class,
     App\Providers\RegionServiceProvider::class,
     App\Providers\RegistrationServiceProvider::class,
+    App\Providers\ReviewerServiceProvider::class,
     App\Providers\RoleServiceProvider::class,
     App\Providers\SubCategoryServiceProvider::class,
     App\Providers\SubSubCategoryServiceProvider::class,

@@ -7,4 +7,5 @@ interface UserContract {
     public function findById($id);
     public function findByUuid($uuid);
     public function deleteById($id);
+    public function getReviewers();
 }

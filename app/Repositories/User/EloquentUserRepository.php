@@ -111,4 +111,12 @@ class EloquentUserRepository implements UserContract {
         {
             return User::destroy($id);
         }
+
+
+    public function getReviewers()
+    {
+        return User::whereHas('roles', function ($query) {
+            $query->where('name', 'Reviewer');
+        })->get();
+    }
 }

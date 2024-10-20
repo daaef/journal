@@ -161,6 +161,9 @@ Route::group(['prefix' => 'editor', 'middleware' => ['auth', 'editor']], functio
         Route::get('/pending', [JournalController::class, 'pendingApproval'])->name('editor.journals.pendingApproval');
         Route::get('/approved', [JournalController::class, 'approvedJournals'])->name('editor.journals.approved');
         Route::post('/approve-journal', [JournalController::class, 'approveJournal'])->name('editor.journals.approveJournal');
+
+        // Manage  Journal Reveiwers
+        Route::post('/reviewers/{journal_uuid}', [JournalController::class, 'SaveJournalReviewers'])->name('editor.journals.reviewers.save');
     });
 });
 
