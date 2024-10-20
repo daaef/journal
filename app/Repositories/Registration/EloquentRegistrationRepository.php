@@ -20,6 +20,7 @@ class EloquentRegistrationRepository implements RegistrationContract {
         $user->username = $request->username;
         $user->email = $request->email;
         $user->country = $request->country;
+        $user->institution = $request->institution;
         $user->password = Hash::make($request->password);
         $user->uuid = Str::uuid();
         $user->save();

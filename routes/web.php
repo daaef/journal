@@ -16,6 +16,9 @@ use App\Http\Controllers\MyJournalCollectionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserInterestController;
+use App\Models\Category;
+use App\Models\Journal;
+use App\Models\UserInterest;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -29,8 +32,10 @@ Route::get('/contact', function () {
 })->name('contact');
 
 Route::get('/about', function () {
-    return view('about')->with('journals', \App\Models\Journal::all());
+    return view('about')->with('journals', Journal::all());
 })->name('about');
+
+Route::get('/user-interests', [UserController::class, 'interests'])->name('user.interests');
 
 
 Route::prefix('journals')->group(function () {
@@ -48,7 +53,6 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('/login', [AuthController::class, 'postLogin'])->name('auth.login.post');
 
     Route::match(['get', 'post'], '/forgot-password', [AuthController::class, 'forgotPassword'])->name('auth.forgot-password');
-    Route::get('/forgot-password-sent', [AuthController::class, 'forgotPasswordSent'])->name('auth.forgot-password-success.get');
 
     Route::match(['get', 'post'], '/reset-password', [AuthController::class, 'resetPassword'])->name('auth.reset-password');
     Route::get('/success_reset_request', function () {

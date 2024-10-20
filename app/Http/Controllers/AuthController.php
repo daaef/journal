@@ -174,7 +174,7 @@ class AuthController extends Controller
                 'message' => 'Password reset link has been sent to your email.',
                 'alert-type' => 'success'
             );
-            return redirect()->route('auth.forgot-password-success.get')->with($notification);
+            return redirect()->route('auth.success_reset_request.get')->with($notification);
         }
 
         return view('auth.forgot');
