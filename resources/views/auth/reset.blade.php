@@ -12,9 +12,12 @@
 
                 <div class="mt-6">
                     <div>
-                        <form action="" method="post" class="space-y-6">
+                        <form action="{{ route('auth.reset-password') }}" method="post" class="space-y-6">
 
                             @csrf
+
+                            <input type="hidden" name="token" value="{{ request('token') }}">
+                            <input type="hidden" name="email" value="{{ request('email') }}">
 
                             <div>
                                 <label for="password"

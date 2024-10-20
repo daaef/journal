@@ -42,7 +42,7 @@ export default {
             center: true,
         },
         fontFamily: {
-            sans: ['Montserrat', 'serif'],
+            sans: ['Montserrat', 'sans-serif'],
         },
     },
     plugins: [

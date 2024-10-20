@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/calendar.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/jquery-jvectormap-2.0.5.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" rel="stylesheet">
-    @vite(['resources/js/app.js', 'resources/sass/main.scss'])
+    @vite(['resources/js/app.js', 'resources/sass/main.scss', 'resources/sass/style.scss'])
 </head>
 
 <body>

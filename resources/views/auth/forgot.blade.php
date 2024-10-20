@@ -8,11 +8,19 @@
                 <div>
                     <img class="h-20 w-auto" src="{{ asset('images/japr-logo.png') }}" alt="Your Company">
                     <h2 class="mt-8 text-2xl font-bold leading-9 tracking-tight text-gray-900">Forgot your password?</h2>
+                    <p class="mt-2 text-sm text-gray-600">
+                        No worries, we'll send you a reset link.
+                    </p>
                 </div>
 
                 <div class="mt-6">
+                    @if (session('status'))
+                        <div class="mb-4 font-medium text-sm text-green-600">
+                            {{ session('status') }}
+                        </div>
+                    @endif
                     <div>
-                        <form action="" method="post" class="space-y-6">
+                        <form action="{{ route('auth.forgot-password') }}" method="post" class="space-y-6">
 
                             @csrf
                             <div>

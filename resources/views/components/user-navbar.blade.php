@@ -18,6 +18,14 @@
            aria-controls="tabs-with-underline-3" role="tab">
             Profile
         </a>
+        @if(Route::is('user.interests'))
+            <a href="{{ route('user.interests', auth()->user()->uuid) }}"
+               class="@if (Route::is('user.interests')) font-semibold border-primary-500 text-primary-500 @else text-gray-500 border-transparent @endif py-4 px-1 inline-flex items-center gap-x-2 border-b-2 text-sm whitespace-nowrap hover:text-primary-600 focus:outline-none focus:text-primary-600 disabled:opacity-50 disabled:pointer-events-none"
+               id="tabs-with-underline-item-3" aria-selected="false" data-hs-tab="#tabs-with-underline-3"
+               aria-controls="tabs-with-underline-3" role="tab">
+                Interests
+            </a>
+         @endif
     </nav>
     <nav class="flex gap-x-6">
         @if(Route::is('dashboard'))
