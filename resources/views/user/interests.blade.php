@@ -1,12 +1,12 @@
 <x-layouts.layout>
     <x-slot:title>
-        Welcome to JAPR | Select your Interests
+        Welcome to JAPR | Update your Interests
     </x-slot>
     <x-slot:breadcrumb>
         <div class="border-b border-gray-200 pb-5 sm:flex w-full sm:items-center sm:justify-between">
             <div class="flex flex-col">
                 <h3 class="text-lg font-bold leading-6 text-primary-500">Interests</h3>
-                <h4>Select 5 categories that interest you</h4>
+                <h4>Update Your Interests (Only 5 can be selected)</h4>
             </div>
             <div>
                 <a href="{{ route('dashboard') }}" class="flex font-medium text-sm text-secondary-900 gap-2 items-center">
@@ -15,16 +15,16 @@
                 </a>
             </div>
         </div>
-        <hr class="mb-8">
+        <hr>
     </x-slot:breadcrumb>
-    <form id="interests-form" action="{{ route('interests.store') }}" method="POST">
+    <form id="interests-form" class="mt-8" action="{{ route('interests.store') }}" method="POST">
         @csrf
         <div class="mx-auto">
             <div class="masonry grid grid-cols-3 gap-4 lg:grid-cols-5">
                 @if($categories)
                     @foreach($categories as $category)
                         <label for="category-{{ $category->id }}">
-                            <input type="checkbox" class="hidden checker" id="category-{{ $category->id }}" name="interests[]" value="{{ $category->uuid }}">
+                            <input type="checkbox" class="hidden checker" id="category-{{ $category->id }}" name="interests[]" value="{{ $category->uuid }}" @if(in_array($category->uuid, $interests)) checked @endif>
                             <button
                                 class="masonry-item w-full p-4 rounded-lg shadow hover:shadow-md transition duration-200 bg-gray-300">
                                 <span class="font-medium text-sm">{{ $category->name }}</span>

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\UserInterest;
 use App\Repositories\Role\RoleContract;
 use App\Repositories\User\UserContract;
 use Illuminate\Http\Request;
@@ -90,8 +92,35 @@ class UserController extends Controller
     public function edit(string $uuid)
     {
         $user = $this->repo->findByUUID($uuid);
-        // dd($user);
-        return view('user.settings', compact('user'));
+        $userInterests = UserInterest::where('user_id', auth()->user()->id)->first();
+        $interests = '';
+
+        if ($userInterests && is_string($userInterests->interests)) {
+            $decodedInterests = json_decode($userInterests->interests, true);
+            if (is_array($decodedInterests)) {
+                $interestsArray = Category::whereIn('uuid', $decodedInterests)->pluck('name')->toArray();
+                $interests = implode(", ", $interestsArray);
+            }
+        }
+
+        return view('user.settings', compact('user', 'interests'));
+    }
+
+    public function interests()
+    {
+        $userInterests = UserInterest::where('user_id', auth()->user()->id)->first();
+        $interests = [];
+
+        if ($userInterests && is_string($userInterests->interests)) {
+            $decodedInterests = json_decode($userInterests->interests, true);
+            if (is_array($decodedInterests)) {
+                $interests = $decodedInterests;
+            }
+        }
+
+        $categories = Category::all();
+
+        return view('user.interests', compact('categories', 'interests'));
     }
 
     /**

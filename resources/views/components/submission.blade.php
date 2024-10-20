@@ -7,8 +7,7 @@
             <p class="mt-2 text-gray-500 dark:text-neutral-400">
                 {!! $journal->description !!}
             </p>
-            <h4 class="font-semibold text-primary-500">Status</h4>
-            <p class="text-gray-100 bg-blue-500 py-2 px-4 inline-block rounded-xl font-medium">{{ $journal->approval_status }}</p>
+            <p class="mt-1 text-sm leading-6 text-gray-600">Status: <span class="inline-flex ml-4 items-center gap-x-1.5 py-1 px-1.5 rounded-full text-xs font-medium bg-blue-500 text-gray-200">{{ $journal->approval_status }}</span>
         </div>
         <div class="p-4 border-t grid grid-cols-[auto_auto] justify-between items-center gap-4">
             <a href="{{ route('journals.view', $journal->slug) }}"

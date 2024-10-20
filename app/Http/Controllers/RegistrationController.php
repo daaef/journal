@@ -42,6 +42,7 @@ class RegistrationController extends Controller
             'username' => 'required|unique:users',
             'email' => 'required|unique:users',
             'country' => 'required',
+            'institution' => 'required',
             'password' => 'required',
             'confirm_password' => 'required|same:password',
         ]);
@@ -52,6 +53,7 @@ class RegistrationController extends Controller
 
         try {
             $user = $this->repo->create($request);
+
             if($user) {
                 $notification = array(
                     'message' => 'Successfully Registered',

@@ -64,10 +64,14 @@
                         </div>
                         <div class="mb-24 pb-24 border-bottom border-gray-100">
                             <h5 class="mb-12 fw-bold">Uploaded</h5>
-                            <object class="pdf"
+                            <object class="pdf w-full"
                                 data=
 "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20210101201653/PDF.pdf"
+<<<<<<< HEAD
                                 width="100%" height="800">
+=======
+                                 height="500">
+>>>>>>> d7efa21d92dc234451c5b02b01c3033ada7d659a
                             </object>
                         </div>
 
@@ -99,7 +103,7 @@
                             <label for="reviewer" class="h5 mb-8 fw-semibold font-heading">Select Reviewers
                             </label>
                             <div class="position-relative">
-                                <select name="reviewer[]" id="reviewer" class="form-select py-9 placeholder-13 text-15">
+                                <select name="reviewer[]" id="reviewerSelect" class="form-select py-9 placeholder-13 text-15">
                                     <option value="1" disabled selected>Select a reviewer</option>
                                     @foreach ($reviewers as $reviewer)
                                         <option value="{{ $reviewer->id }}">{{ $reviewer->fullname }}</option>
@@ -107,6 +111,8 @@
                                     @endforeach
                                 </select>
                             </div>
+                        </div>
+                        <div id="selectedReviewers" class="mt-4 gap-2 grid">
                         </div>
                         <div class="col">
                             <button type="submit" class="btn btn-main rounded-pill py-11 w-100  mt-16">Save Reviewer(s)</button>
@@ -143,3 +149,45 @@
         </div>
     </div>
 </x-layouts.editor_layout>
+<script>
+    function addReviewer(reviewerId, reviewerName, selectedReviewerid) {
+        const selectedReviewersDiv = document.getElementById('selectedReviewers');
+        const activeDiv = document.getElementById(`reviewer-${reviewerId}`)
+        // Check if the reviewer is already selected
+        if (activeDiv) {
+            selectedReviewersDiv.removeChild(activeDiv);
+            return; // Don't add if already exists
+        }
+
+        const reviewerDiv = document.createElement('div');
+        reviewerDiv.classList.add('flex', 'items-center', 'gap-4', 'mb-2', 'p-4', 'border', 'rounded-md', 'justify-between');
+        reviewerDiv.id = `reviewer-${reviewerId}`;
+
+        const reviewerNameSpan = document.createElement('span');
+        reviewerNameSpan.textContent = reviewerName;
+
+        const reviewerCheckbox = document.createElement('input');
+        reviewerCheckbox.type = "hidden";
+        reviewerCheckbox.name = "reviewer[]";
+        reviewerCheckbox.value = selectedReviewerid;
+
+        const removeButton = document.createElement('i');
+        removeButton.classList.add('ph', 'ph-x', 'cursor-pointer');
+        removeButton.addEventListener('click', () => {
+            selectedReviewersDiv.removeChild(reviewerDiv);
+        });
+
+        reviewerDiv.appendChild(reviewerNameSpan);
+        reviewerDiv.appendChild(removeButton);
+        reviewerDiv.appendChild(reviewerCheckbox);
+        selectedReviewersDiv.appendChild(reviewerDiv);
+    }
+
+    const reviewerSelect = document.getElementById('reviewerSelect');
+    reviewerSelect.addEventListener('change', () => {
+        const selectedReviewerId = reviewerSelect.value;
+        const selectedReviewerName = reviewerSelect.options[reviewerSelect.selectedIndex].text;
+        const selectedReviewerid = reviewerSelect.options[reviewerSelect.selectedIndex].value;
+        addReviewer(selectedReviewerId, selectedReviewerName, selectedReviewerid);
+    });
+</script>
