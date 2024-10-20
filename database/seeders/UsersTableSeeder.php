@@ -73,5 +73,20 @@ class UsersTableSeeder extends Seeder
         $publisher->save();
         $publisher->assignRole('Publisher');
 
+        // Seed Reviewer user
+        $publisher = new \App\Models\User();
+        $publisher->fullname = 'Reviewer User';
+        $publisher->username = 'reviewer';
+        $publisher->email = 'reviewer@example.com';
+        $publisher->country = 'Nigeria';
+        $publisher->password = bcrypt('password');
+        $publisher->uuid = \Illuminate\Support\Str::uuid();
+        $publisher->avatar = 'https://via.placeholder.com/150';
+        $publisher->email_verified_at = now();
+        $publisher->is_first_login = true;
+        $publisher->is_active = true;
+        $publisher->save();
+        $publisher->assignRole('Reviewer');
+
     }
 }
