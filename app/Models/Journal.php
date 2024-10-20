@@ -69,6 +69,21 @@ class Journal extends Model
         return $this->hasMany(JournalLike::class);
     }
 
+    public function reviewers()
+    {
+        return $this->hasMany(Reviewer::class);
+    }
+
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function approvals()
+    {
+        return $this->hasMany(Approval::class);
+    }
+
     protected function cast()
     {
         return [

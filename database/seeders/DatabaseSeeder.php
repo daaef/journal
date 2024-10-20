@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             AfricanRegionsTableSeeder::class,
             JournalsTableSeeder::class,
+            ReviewersTableSeeder::class,
         ]);
     }
 }

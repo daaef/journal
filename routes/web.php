@@ -168,6 +168,10 @@ Route::group(['prefix' => 'editor', 'middleware' => ['auth', 'editor']], functio
 
         // Manage  Journal Reveiwers
         Route::post('/reviewers/{journal_uuid}', [JournalController::class, 'SaveJournalReviewers'])->name('editor.journals.reviewers.save');
+
+        // Accept or decline Journal
+        Route::match(['get', 'post'], '/accept-journal', [JournalController::class, 'acceptJournal'])->name('reviewer.accept');
+        Route::match(['get', 'post'], '/decline-journal', [JournalController::class, 'declineJournal'])->name('reviewer.decline');
     });
 });
 

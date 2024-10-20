@@ -69,6 +69,16 @@ class User extends Authenticatable
         return $this->email_verified_at !== null;
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Reviewer::class, 'user_id');
+    }
+
+    public function reviewerComments()
+    {
+        // return $this->hasMany(ReviewerComment::class, 'user_id');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

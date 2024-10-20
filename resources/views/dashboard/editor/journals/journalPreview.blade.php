@@ -63,15 +63,11 @@
                             <p class="text-gray-300 text-15">{{ $journal->abstract }}</p>
                         </div>
                         <div class="mb-24 pb-24 border-bottom border-gray-100">
-                            <h5 class="mb-12 fw-bold">Uploaded</h5>
+                            <h5 class="mb-12 fw-bold">Menuscript</h5>
                             <object class="pdf w-full"
                                 data=
 "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20210101201653/PDF.pdf"
-<<<<<<< HEAD
-                                width="100%" height="800">
-=======
-                                 height="500">
->>>>>>> d7efa21d92dc234451c5b02b01c3033ada7d659a
+                                height="800">
                             </object>
                         </div>
 
@@ -95,7 +91,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="mb-20 flex-between flex-wrap gap-8">
-                        <h5 class="mb-0">Reviewers</h5>
+                        <h5 class="mb-0">Add Reviewers</h5>
                     </div>
                     <form action="{{ route('editor.journals.reviewers.save', $journal->uuid) }}" method="post">
                         @csrf
@@ -103,11 +99,10 @@
                             <label for="reviewer" class="h5 mb-8 fw-semibold font-heading">Select Reviewers
                             </label>
                             <div class="position-relative">
-                                <select name="reviewer[]" id="reviewerSelect" class="form-select py-9 placeholder-13 text-15">
+                                <select id="reviewerSelect" class="form-select py-9 placeholder-13 text-15">
                                     <option value="1" disabled selected>Select a reviewer</option>
                                     @foreach ($reviewers as $reviewer)
-                                        <option value="{{ $reviewer->id }}">{{ $reviewer->fullname }}</option>
-
+                                        <option value="{{ $reviewer->uuid }}">{{ $reviewer->fullname }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -115,9 +110,35 @@
                         <div id="selectedReviewers" class="mt-4 gap-2 grid">
                         </div>
                         <div class="col">
-                            <button type="submit" class="btn btn-main rounded-pill py-11 w-100  mt-16">Save Reviewer(s)</button>
+                            <button type="submit" class="btn btn-main rounded-pill py-11 w-100  mt-16">Save
+                                Reviewer(s)</button>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            <div class="card mt-24">
+                <div class="card-body">
+                    <div class="mb-20 flex-between flex-wrap gap-8">
+                        <h5 class="mb-0">Reviewers</h5>
+                    </div>
+                    <ul class="list-inside">
+                        @forelse ($assignedReviewers as $assignedReviewer)
+                            {{-- <li class="text-gray-600 mb-4"></li> --}}
+                            <li class="flex-align gap-6 text-gray-300 text-15 mb-12">
+                                <span class="flex-shrink-0 text-22 d-flex text-main-600"><i class="ph ph-eye"></i>
+                                </span>
+                                {{ $assignedReviewer->fullname }}
+                            </li>
+                        @empty
+                            <li class="flex-align gap-6 text-gray-300 text-15 mb-12">
+                                <span class="flex-shrink-0 text-22 d-flex text-main-600"><i class="ph ph-eye-closed"></i>
+                                </span>
+                                No reviewers assigned
+                            </li>
+
+                        @endforelse
+                    </ul>
                 </div>
             </div>
 
@@ -160,7 +181,8 @@
         }
 
         const reviewerDiv = document.createElement('div');
-        reviewerDiv.classList.add('flex', 'items-center', 'gap-4', 'mb-2', 'p-4', 'border', 'rounded-md', 'justify-between');
+        reviewerDiv.classList.add('flex', 'items-center', 'gap-4', 'mb-2', 'p-4', 'border', 'rounded-md',
+            'justify-between');
         reviewerDiv.id = `reviewer-${reviewerId}`;
 
         const reviewerNameSpan = document.createElement('span');
@@ -168,7 +190,7 @@
 
         const reviewerCheckbox = document.createElement('input');
         reviewerCheckbox.type = "hidden";
-        reviewerCheckbox.name = "reviewer[]";
+        reviewerCheckbox.name = "reviewers[]";
         reviewerCheckbox.value = selectedReviewerid;
 
         const removeButton = document.createElement('i');

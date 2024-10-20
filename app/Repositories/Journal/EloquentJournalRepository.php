@@ -205,4 +205,7 @@ class EloquentJournalRepository implements JournalContract {
         return $journal;
     }
 
+
+    
+
 }

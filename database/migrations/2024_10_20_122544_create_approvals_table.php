@@ -11,21 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reviewers', function (Blueprint $table) {
+        Schema::create('approvals', function (Blueprint $table) {
             $table->id();
-            $table->string('fullname');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->unsignedBigInteger('journal_id');
             $table->foreign('journal_id')->references('id')->on('journals')->onDelete('cascade');
 
-            $table->longText('review')->nullable();
-            $table->longText('comment')->nullable();
-            $table->integer('rating')->nullable();
-
-            $table->boolean('is_accepted')->default(false);
-            $table->string('token')->nullable();
+            $table->enum('approval_status', ['pending', 'in-progress', 'approved', 'declined'])->default('pending');
+            $table->text('approval_comment')->nullable();
             $table->timestamps();
         });
     }
@@ -35,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reviewers');
+        Schema::dropIfExists('approvals');
     }
 };

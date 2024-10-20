@@ -7,6 +7,7 @@ use App\Repositories\Category\CategoryContract;
 use App\Repositories\DislikeJournal\DislikeJournalContract;
 use App\Repositories\Journal\JournalContract;
 use App\Repositories\LikeJournal\LikeJournalContract;
+use App\Repositories\Reviewer\ReviewerContract;
 use App\Repositories\SubCategory\SubCategoryContract;
 use App\Repositories\User\UserContract;
 use Illuminate\Http\Request;
@@ -22,6 +23,7 @@ class JournalController extends Controller
     protected $likeJournalRepo;
     protected $dislikeJournalRepo;
     protected $userRepo;
+    protected $reviewerRepo;
 
     public function __construct(
         JournalContract $journalContract,
@@ -29,7 +31,8 @@ class JournalController extends Controller
         SubCategoryContract $subCategoryContract,
         LikeJournalContract $likeJournalContract,
         DislikeJournalContract $dislikeJournalContract,
-        UserContract $userContract
+        UserContract $userContract,
+        ReviewerContract $reviewerContract
     ) {
         $this->repo = $journalContract;
         $this->categoryRepo = $categoryContract;
@@ -37,6 +40,7 @@ class JournalController extends Controller
         $this->likeJournalRepo = $likeJournalContract;
         $this->dislikeJournalRepo = $dislikeJournalContract;
         $this->userRepo = $userContract;
+        $this->reviewerRepo = $reviewerContract;
     }
 
     /**
@@ -306,14 +310,22 @@ class JournalController extends Controller
         $journal = $this->repo->findByUuid($uuid);
         $reviewers = $this->userRepo->getReviewers();
         // dd($reviewers);
-        return view('dashboard.editor.journals.journalPreview', compact('journal', 'reviewers'));
+        $assignedReviewers = $journal->reviewers()->with('reviewer')->get();
+        // dd($assignedReviewers);
+        return view('dashboard.editor.journals.journalPreview', compact('journal', 'reviewers', 'assignedReviewers'));
     }
 
     public function SaveJournalReviewers(Request $request, string $uuid)
     {
 
-        dd($uuid, $request->all());
-        $journal = $this->repo->findByUuid($uuid);
+        $journal = $this->reviewerRepo->SaveJournalReviewers($request, $uuid);
+        if ($journal) {
+            $notification = array(
+                'message' => 'Reviewers saved successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->back()->with($notification);
+        }
     }
 
     public function approveJournal(Request $request)
