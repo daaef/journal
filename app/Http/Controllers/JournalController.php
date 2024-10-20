@@ -311,8 +311,8 @@ class JournalController extends Controller
         $reviewers = $this->userRepo->getReviewers();
         // dd($reviewers);
         $assignedReviewers = $journal->reviewers()->with('reviewer')->get();
-        // dd($assignedReviewers);
-        return view('dashboard.editor.journals.journalPreview', compact('journal', 'reviewers', 'assignedReviewers'));
+        $comments = $journal->comments()->with('user')->get();
+        return view('dashboard.editor.journals.journalPreview', compact('journal', 'reviewers', 'assignedReviewers', 'comments'));
     }
 
     public function SaveJournalReviewers(Request $request, string $uuid)

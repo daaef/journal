@@ -65,7 +65,8 @@
                         <div class="mb-24 pb-24 border-bottom border-gray-100">
                             <h5 class="mb-12 fw-bold">Menuscript</h5>
                             <object class="pdf w-full"
-                                data="{{ storage_path('app/public/' . $journal->journal_url)}}"
+                                data=
+"https://media.geeksforgeeks.org/wp-content/cdn-uploads/20210101201653/PDF.pdf"
                                 height="800">
                             </object>
                         </div>
@@ -87,62 +88,59 @@
 
         <div class="col-md-3">
             <!-- Community Groups card Start -->
-            @if (auth()->user()->hasRole('Editor'))
-                <div class="card">
-                    <div class="card-body">
-                        <div class="mb-20 flex-between flex-wrap gap-8">
-                            <h5 class="mb-0">Add Reviewers</h5>
-                        </div>
-                        <form action="{{ route('editor.journals.reviewers.save', $journal->uuid) }}" method="post">
-                            @csrf
-                            <div class="col">
-                                <label for="reviewer" class="h6 mb-8 fw-semibold font-heading">Select Reviewers
-                                </label>
-                                <div class="position-relative">
-                                    <select id="reviewerSelect" class="form-select py-9 placeholder-13 text-15">
-                                        <option value="1" disabled selected>Select a reviewer</option>
-                                        @foreach ($reviewers as $reviewer)
-                                            <option value="{{ $reviewer->uuid }}">{{ $reviewer->fullname }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div id="selectedReviewers" class="mt-4 gap-2 grid">
-                            </div>
-                            <div class="col">
-                                <button type="submit" class="btn btn-main rounded-pill py-11 w-100  mt-16">Save
-                                    Reviewer(s)</button>
-                            </div>
-                        </form>
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-20 flex-between flex-wrap gap-8">
+                        <h5 class="mb-0">Add Reviewers</h5>
                     </div>
-                </div>
-
-
-                <div class="card {{ auth()->user()->hasRole('Reviewer') ? ' ' : 'mt-24' }}">
-                    <div class="card-body">
-                        <div class="mb-20 flex-between flex-wrap gap-8">
-                            <h5 class="mb-0">Reviewers</h5>
+                    <form action="{{ route('editor.journals.reviewers.save', $journal->uuid) }}" method="post">
+                        @csrf
+                        <div class="col">
+                            <label for="reviewer" class="h5 mb-8 fw-semibold font-heading">Select Reviewers
+                            </label>
+                            <div class="position-relative">
+                                <select id="reviewerSelect" class="form-select py-9 placeholder-13 text-15">
+                                    <option value="1" disabled selected>Select a reviewer</option>
+                                    @foreach ($reviewers as $reviewer)
+                                        <option value="{{ $reviewer->uuid }}">{{ $reviewer->fullname }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                        <ul class="list-inside">
-                            @forelse ($assignedReviewers as $assignedReviewer)
-                                {{-- <li class="text-gray-600 mb-4"></li> --}}
-                                <li class="flex-align gap-6 text-gray-300 text-15 mb-12">
-                                    <span class="flex-shrink-0 text-22 d-flex text-main-600"><i class="ph ph-eye"></i>
-                                    </span>
-                                    {{ $assignedReviewer->fullname }}
-                                </li>
-                            @empty
-                                <li class="flex-align gap-6 text-gray-300 text-15 mb-12">
-                                    <span class="flex-shrink-0 text-22 d-flex text-main-600"><i
-                                            class="ph ph-eye-closed"></i>
-                                    </span>
-                                    No reviewers assigned
-                                </li>
-                            @endforelse
-                        </ul>
-                    </div>
+                        <div id="selectedReviewers" class="mt-4 gap-2 grid">
+                        </div>
+                        <div class="col">
+                            <button type="submit" class="btn btn-main rounded-pill py-11 w-100  mt-16">Save
+                                Reviewer(s)</button>
+                        </div>
+                    </form>
                 </div>
-            @endif
+            </div>
+
+            <div class="card mt-24">
+                <div class="card-body">
+                    <div class="mb-20 flex-between flex-wrap gap-8">
+                        <h5 class="mb-0">Reviewers</h5>
+                    </div>
+                    <ul class="list-inside">
+                        @forelse ($assignedReviewers as $assignedReviewer)
+                            {{-- <li class="text-gray-600 mb-4"></li> --}}
+                            <li class="flex-align gap-6 text-gray-300 text-15 mb-12">
+                                <span class="flex-shrink-0 text-22 d-flex text-main-600"><i class="ph ph-eye"></i>
+                                </span>
+                                {{ $assignedReviewer->fullname }}
+                            </li>
+                        @empty
+                            <li class="flex-align gap-6 text-gray-300 text-15 mb-12">
+                                <span class="flex-shrink-0 text-22 d-flex text-main-600"><i
+                                        class="ph ph-eye-closed"></i>
+                                </span>
+                                No reviewers assigned
+                            </li>
+                        @endforelse
+                    </ul>
+                </div>
+            </div>
 
             <div class="card mt-24">
                 <div class="card-body">
@@ -152,13 +150,15 @@
                     <ul class="list-inside">
                         @forelse ($comments as $comment)
                             <li class="flex-align gap-6 text-gray-300 text-15 mb-12">
-                                <span class="flex-shrink-0 text-22 d-flex text-main-600"><i class="ph ph-notepad"></i>
+                                <span class="flex-shrink-0 text-22 d-flex text-main-600"><i
+                                        class="ph ph-notepad"></i>
                                 </span>
                                 {{ $comment->comment }}
                             </li>
                         @empty
                             <li class="flex-align gap-6 text-gray-300 text-15 mb-12">
-                                <span class="flex-shrink-0 text-22 d-flex text-main-600"><i class="ph ph-pen"></i>
+                                <span class="flex-shrink-0 text-22 d-flex text-main-600"><i
+                                        class="ph ph-pen"></i>
                                 </span>
                                 No comments yet
                             </li>
@@ -166,28 +166,6 @@
                     </ul>
                 </div>
             </div>
-
-            @if (auth()->user()->hasRole('Reviewer'))
-                <div class="card mt-24">
-                    <div class="card-body">
-                        {{-- <div class="mb-20 flex-between flex-wrap gap-8">
-                            <h5 class="mb-0">Add Comments</h5>
-                        </div> --}}
-                        <div class="col-sm-12">
-                            <label for="courseTitle" class="h6 mb-8 fw-semibold font-heading">Add Comments<span class="text-13 text-gray-400 fw-medium">(Required)</span> </label>
-                            <div class="position-relative">
-                                <textarea type="text" class="text-counter placeholder-13 form-control py-11 pe-76" maxlength="1000" id="courseTitle" rows="10"> </textarea>
-                                <div class="text-gray-400 position-absolute inset-inline-end-0 top-50 translate-middle-y me-16">
-                                    <span id="current">0</span>
-                                    <span id="maximum">/ 1000</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            @endif
-
             <!-- Community Groups card End -->
             <div class="card mt-24">
                 <div class="card-body">

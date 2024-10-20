@@ -13,6 +13,8 @@ use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SubSubCategoryController;
 use App\Http\Controllers\JournalController;
 use App\Http\Controllers\MyJournalCollectionController;
+use App\Http\Controllers\ReviewerController;
+use App\Http\Controllers\ReviewerDashboardController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserInterestController;
@@ -172,6 +174,24 @@ Route::group(['prefix' => 'editor', 'middleware' => ['auth', 'editor']], functio
         // Accept or decline Journal
         Route::match(['get', 'post'], '/accept-journal', [JournalController::class, 'acceptJournal'])->name('reviewer.accept');
         Route::match(['get', 'post'], '/decline-journal', [JournalController::class, 'declineJournal'])->name('reviewer.decline');
+    });
+});
+
+Route::group(['prefix' => 'reviewer', 'middleware' => ['auth', 'reviewer']], function () {
+    Route::get('/', [ReviewerDashboardController::class, 'index'])->name('reviewer.dashboard');
+
+    Route::group(['prefix' => 'journals'], function () {
+        Route::get('/review/{uuid}/{slug}', [JournalController::class, 'previewJournal'])->name('reviewer.journals.review');
+        Route::get('/pending', [JournalController::class, 'pendingApproval'])->name('editor.journals.pendingApproval');
+        Route::get('/approved', [JournalController::class, 'approvedJournals'])->name('editor.journals.approved');
+        Route::post('/approve-journal', [JournalController::class, 'approveJournal'])->name('editor.journals.approveJournal');
+
+    //     // Manage  Journal Reveiwers
+    //     Route::post('/reviewers/{journal_uuid}', [JournalController::class, 'SaveJournalReviewers'])->name('editor.journals.reviewers.save');
+
+    //     // Accept or decline Journal
+    //     Route::match(['get', 'post'], '/accept-journal', [JournalController::class, 'acceptJournal'])->name('reviewer.accept');
+    //     Route::match(['get', 'post'], '/decline-journal', [JournalController::class, 'declineJournal'])->name('reviewer.decline');
     });
 });
 
