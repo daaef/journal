@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('journals', function (Blueprint $table) {
             $table->id();
             $table->longText('title');
-            $table->json('author');
+            $table->longText('author');
             $table->longText('slug')->unique();
             $table->longText('description');
             $table->string('cover_image')->nullable();
