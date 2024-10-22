@@ -22,6 +22,7 @@ use App\Models\Category;
 use App\Models\Journal;
 use App\Models\UserInterest;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -223,3 +224,38 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'publisher']], f
 Route::get('/load-subcategories', [SubCategoryController::class, 'getSubCategoriesByID'])->name('load-subcategories');
 Route::get('/interests', [UserInterestController::class, 'interests'])->name('interests');
 Route::post('/interests', [UserInterestController::class, 'store'])->name('interests.store');
+
+
+Route::get('migrate', function () {
+    Artisan::call('migrate');
+    return 'Migrated';
+});
+
+Route::get('seed', function () {
+    Artisan::call('db:seed');
+    return 'Seeded';
+});
+
+
+Route::get('clear', function () {
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('config:cache');
+    Artisan::call('view:clear');
+    return 'Cleared';
+});
+
+Route::get('storage-link', function () {
+    Artisan::call('storage:link');
+    return 'Linked';
+});
+
+Route::get('optimize', function () {
+    Artisan::call('optimize');
+    return 'Optimized';
+});
+
+Route::get('key-generate', function () {
+    Artisan::call('key:generate');
+});
+
