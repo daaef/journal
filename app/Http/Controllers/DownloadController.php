@@ -20,3 +20,4 @@ class DownloadController extends Controller
         return downloadJournal($uuid);
     }
 }
+// 
