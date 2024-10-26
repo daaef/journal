@@ -6,18 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'JAPR Dashboard' }}</title>
-    <link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}">
-    <link rel="shortcut icon" href="{{ asset('assets/images/logo/favicon.png') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/file-upload.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/plyr.css') }}">
+    <link rel="shortcut icon" href="{{ loadAssetFile('images/favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ loadAssetFile('assets/images/logo/favicon.png') }}">
+    <link rel="stylesheet" href="{{ loadAssetFile('assets/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ loadAssetFile('assets/css/file-upload.css') }}">
+    <link rel="stylesheet" href="{{ loadAssetFile('assets/css/plyr.css') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
-    <link rel="stylesheet" href="{{ asset('assets/css/full-calendar.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/jquery-ui.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/editor-quill.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/apexcharts.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/calendar.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/jquery-jvectormap-2.0.5.css') }}">
+    <link rel="stylesheet" href="{{ loadAssetFile('assets/css/full-calendar.css') }}">
+    <link rel="stylesheet" href="{{ loadAssetFile('assets/css/jquery-ui.css') }}">
+    <link rel="stylesheet" href="{{ loadAssetFile('assets/css/editor-quill.css') }}">
+    <link rel="stylesheet" href="{{ loadAssetFile('assets/css/apexcharts.css') }}">
+    <link rel="stylesheet" href="{{ loadAssetFile('assets/css/calendar.css') }}">
+    <link rel="stylesheet" href="{{ loadAssetFile('assets/css/jquery-jvectormap-2.0.5.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" rel="stylesheet">
     @vite(['resources/js/app.js', 'resources/sass/main.scss'])
 </head>
@@ -46,7 +46,7 @@
 
         <a href="index.html"
             class="sidebar__logo text-center p-20 position-sticky inset-block-start-0 bg-white w-100 z-1 pb-10">
-            <img class="w-25s" src="{{ asset('images/japr-logo.png') }}" alt="Logo">
+            <img class="w-25s" src="{{ loadAssetFile('images/japr-logo.png') }}" alt="Logo">
         </a>
 
         <div class="sidebar-menu-wrapper overflow-y-auto scroll-sm">
@@ -312,7 +312,7 @@
                         class="users arrow-down-icon border border-gray-200 rounded-pill p-4 d-inline-block pe-40 position-relative"
                         type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="position-relative">
-                            <img src="assets/images/thumbs/user-img.png" alt="Image"
+                            <img src="{{ loadAssetFile('assets/images/thumbs/user-img.png') }}" alt="Image"
                                 class="h-32 w-32 rounded-circle">
                             <span
                                 class="activation-badge w-8 h-8 position-absolute inset-block-end-0 inset-inline-end-0"></span>
@@ -322,7 +322,7 @@
                         <div class="card border border-gray-100 rounded-12 box-shadow-custom">
                             <div class="card-body">
                                 <div class="flex-align gap-8 mb-20 pb-20 border-bottom border-gray-100">
-                                    <img src="assets/images/thumbs/user-img.png" alt=""
+                                    <img src="{{ loadAssetFile('assets/images/thumbs/user-img.png') }}" alt=""
                                         class="w-54 h-54 rounded-circle">
                                     <div class="">
                                         <h4 class="mb-0">{{ auth()->user()->fullname }}</h4>
@@ -377,21 +377,21 @@
     </div>
 
     <!-- Jquery js -->
-    <script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
-    <script src="{{ asset('assets/js/boostrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('assets/js/phosphor-icon.js') }}"></script>
-    <script src="{{ asset('assets/js/file-upload.js') }}"></script>
-    <script src="{{ asset('assets/js/plyr.js') }}"></script>
+    <script src="{{ loadAssetFile('assets/js/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ loadAssetFile('assets/js/boostrap.bundle.min.js') }}"></script>
+    <script src="{{ loadAssetFile('assets/js/phosphor-icon.js') }}"></script>
+    <script src="{{ loadAssetFile('assets/js/file-upload.js') }}"></script>
+    <script src="{{ loadAssetFile('assets/js/plyr.js') }}"></script>
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
-    <script src="{{ asset('assets/js/full-calendar.js') }}"></script>
-    <script src="{{ asset('assets/js/jquery-ui.js') }}"></script>
-    <script src="{{ asset('assets/js/editor-quill.js') }}"></script>
-    <script src="{{ asset('assets/js/apexcharts.min.js') }}"></script>
-    <script src="{{ asset('assets/js/calendar.js') }}"></script>
-    <script src="{{ asset('assets/js/jquery-jvectormap-2.0.5.min.js') }}"></script>
-    <script src="{{ asset('assets/js/jquery-jvectormap-world-mill-en.js') }}"></script>
+    <script src="{{ loadAssetFile('assets/js/full-calendar.js') }}"></script>
+    <script src="{{ loadAssetFile('assets/js/jquery-ui.js') }}"></script>
+    <script src="{{ loadAssetFile('assets/js/editor-quill.js') }}"></script>
+    <script src="{{ loadAssetFile('assets/js/apexcharts.min.js') }}"></script>
+    <script src="{{ loadAssetFile('assets/js/calendar.js') }}"></script>
+    <script src="{{ loadAssetFile('assets/js/jquery-jvectormap-2.0.5.min.js') }}"></script>
+    <script src="{{ loadAssetFile('assets/js/jquery-jvectormap-world-mill-en.js') }}"></script>
     <!-- main js -->
-    <script src="{{ asset('assets/js/main.js') }}"></script>
+    <script src="{{ loadAssetFile('assets/js/main.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script>
         @if (Session::has('message'))

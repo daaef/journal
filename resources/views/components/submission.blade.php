@@ -19,7 +19,7 @@
 @empty
     <p class="mt-2 text-gray-500 dark:text-neutral-400">No published journals at the moment</p>
     <a class="flex flex-col items-center" href="{{ route('submit-manuscript') }}">
-        <img class="h-[100px] opacity-40" src="{{ asset('images/submit-manuscript.png') }}" alt="">
+        <img class="h-[100px] opacity-40" src="{{ loadAssetFile('images/submit-manuscript.png') }}" alt="">
         <p class="text-primary-500 font-semibold">Click to Submit Manuscript</p>
     </a>
 @endforelse

@@ -11,7 +11,7 @@
             <div>
                 <a href="{{ route('dashboard') }}" class="flex font-medium text-sm text-secondary-900 gap-2 items-center">
                     Skip
-                    <img class="h-4" src="{{ asset('images/skip.png') }}" alt="">
+                    <img class="h-4" src="{{ loadAssetFile('images/skip.png') }}" alt="">
                 </a>
             </div>
         </div>

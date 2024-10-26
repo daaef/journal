@@ -44,7 +44,7 @@
     <div class="grid grid-cols-[1fr_2.6fr] gap-[30px]">
         <div>
             <div class="flex gap-x-2 px-2.5 mb-4 items-center">
-                <img class="h-[25px]" src="{{ asset('images/filter.png') }}" alt="Filter Image">
+                <img class="h-[25px]" src="{{ loadAssetFile('images/filter.png') }}" alt="Filter Image">
                 <span class="text-primary-500 font-bold">Filter Results</span>
             </div>
             <nav class="hs-accordion-group " data-hs-accordion-always-open>

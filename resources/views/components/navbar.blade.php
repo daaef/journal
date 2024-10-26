@@ -3,7 +3,7 @@
         <div class="flex gap-5 items-center">
             <a class="flex-none text-xl lg:static lg:translate-y-0 absolute top-[30px] left-[20px] translate-y-[-50%] font-semibold dark:text-white focus:outline-none focus:opacity-80"
                 href="#">
-                <img class="h-14" src="{{ asset('images/japr-logo.png') }}" alt="japr logo">
+                <img class="h-14" src="{{ loadAssetFile('images/japr-logo.png') }}" alt="japr logo">
             </a>
             <div id="hs-navbar-alignment"
                 class="hs-collapse hidden overflow-hidden top-[80px] transition-all duration-300 basis-full grow lg:grow-0 lg:basis-auto lg:static lg:px-0 px-[20px] max-[1023px]:container max-[1023px]:translate-x-[-50%] max-[1023px]:left-[50%] py-[20px] fixed left-0 bg-white w-full lg:block"

@@ -6,7 +6,7 @@
         <div class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
             <div class="mx-auto w-full flex flex-col max-w-sm lg:w-96">
                 <div class="flex-col flex items-center text-center">
-                    <img class="h-20 w-auto" src="{{ asset('images/success_icon.png') }}" alt="Your Company">
+                    <img class="h-20 w-auto" src="{{ loadAssetFile('images/success_icon.png') }}" alt="Your Company">
                     <h2 class="mt-8 text-2xl font-bold leading-9 tracking-tight text-gray-900">Your password has been
                         successfully reset!</h2>
                     <p>you can now log in with your new password. If you

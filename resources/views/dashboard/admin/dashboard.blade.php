@@ -4,7 +4,7 @@
     </x-slot:title>
 
     <div class="grettings-box position-relative rounded-16 bg-[#ff830c] overflow-hidden gap-16 flex-wrap z-1">
-        <img src="{{ asset('assets/images/bg/grettings-pattern.png') }}" alt=""
+        <img src="{{ loadAssetFile('assets/images/bg/grettings-pattern.png') }}" alt=""
             class="position-absolute inset-block-start-0 inset-inline-start-0 z-n1 w-100 h-100 opacity-6">
         <div class="row gy-4">
             <div class="col-sm-7">
@@ -15,7 +15,7 @@
             </div>
             <div class="col-sm-5 d-sm-block d-none">
                 <div class="text-center h-100 d-flex justify-content-center align-items-end ">
-                    <img src="{{ asset('assets/images/thumbs/gretting-img.png') }}" alt="">
+                    <img src="{{ loadAssetFile('assets/images/thumbs/gretting-img.png') }}" alt="">
                 </div>
             </div>
         </div>
