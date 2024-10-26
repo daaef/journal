@@ -25,11 +25,11 @@ return new class extends Migration
             $table->longText('journal_url')->nullable();
             $table->enum('approval_status', ['pending', 'in-progress', 'approved', 'declined'])->default('pending');
             $table->string('meta_title')->nullable();
-            $table->json('meta_keywords')->nullable();
+            $table->longText('meta_keywords')->nullable();
             $table->longText('meta_description')->nullable();
             $table->longText('abstract')->nullable();
             $table->longText('institution')->nullable();
-            $table->string('license')->nullable();
+            $table->json('license')->nullable();
             $table->string('country')->nullable();
 
             // $table->integer('likes')->default(0);
@@ -54,6 +54,10 @@ return new class extends Migration
             $table->json('approved_by')->nullable();
             $table->json('approval_comments')->nullable();
             $table->json('reveiwers')->nullable();
+
+            $table->boolean('accept')->default(true);
+            $table->boolean('agree')->default(true);
+            $table->boolean('is_draft')->default(false);
             $table->timestamps();
         });
     }

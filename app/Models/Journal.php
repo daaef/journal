@@ -36,7 +36,10 @@ class Journal extends Model
         'updated_by',
         'approved_by',
         'approval_comments',
-        // 'likes',
+        'reveiwers',
+        'is_draft',
+        'accept',
+        'agree'
         // 'dislikes',
     ];
 
@@ -88,11 +91,16 @@ class Journal extends Model
     {
         return [
             'is_active' => 'boolean',
+            'agree' => 'boolean',
+            'accept' => 'boolean',
+            'is_draft' => 'boolean',
             'meta_keywords' => 'json',
             'created_by' => 'json',
             'updated_by' => 'json',
             'approved_by' => 'json',
             'approval_comments' => 'json',
+            'license' => 'json',
+            'reveiwers' => 'json',
             // 'author' => 'json',
         ];
     }
