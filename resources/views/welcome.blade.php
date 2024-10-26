@@ -89,7 +89,7 @@
 
                 </div>
             </div>
-            <img class="w-full h-[560px] object-cover" src="{{ asset('/images/headerImg.png') }}" alt="">
+            <img class="w-full h-[560px] object-cover" src="{{ loadAssetFile('/images/headerImg.png') }}" alt="">
         </div>
     </form>
     <section id="most_viewed" class="py-[50px]">
@@ -100,7 +100,7 @@
         <div class="grid grid-cols-5 gap-x-[30px] mt-6">
             <a href="#"
                 class="relative flex flex-col justify-end h-[180px] after:bg-secondary-900/45 after:absolute after:top-0 after:left-0 after:w-full after:h-full rounded-[15px] after:rounded-[15px]">
-                <img class="w-full h-full absolute" src="{{ asset('/images/education.png') }}" alt="">
+                <img class="w-full h-full absolute" src="{{ loadAssetFile('/images/education.png') }}" alt="">
                 <div class="relative p-4 z-[200] text-white flex items-center justify-between">
                     <h5 class="font-bold">Education</h5>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -113,7 +113,7 @@
             </a>
             <a href="#"
                 class="relative flex flex-col justify-end h-[180px] after:bg-secondary-900/45 after:absolute after:top-0 after:left-0 after:w-full after:h-full rounded-[15px] after:rounded-[15px]">
-                <img class="w-full h-full absolute" src="{{ asset('/images/history.png') }}" alt="">
+                <img class="w-full h-full absolute" src="{{ loadAssetFile('/images/history.png') }}" alt="">
                 <div class="relative p-4 z-[200] text-white flex items-center justify-between">
                     <h5 class="font-bold">History</h5>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -126,7 +126,7 @@
             </a>
             <a href="#"
                 class="relative flex flex-col justify-end h-[180px] after:bg-secondary-900/45 after:absolute after:top-0 after:left-0 after:w-full after:h-full rounded-[15px] after:rounded-[15px]">
-                <img class="w-full h-full absolute" src="{{ asset('/images/sports.png') }}" alt="">
+                <img class="w-full h-full absolute" src="{{ loadAssetFile('/images/sports.png') }}" alt="">
                 <div class="relative p-4 z-[200] text-white flex items-center justify-between">
                     <h5 class="font-bold">Sports</h5>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -139,7 +139,7 @@
             </a>
             <a href="#"
                 class="relative flex flex-col justify-end h-[180px] after:bg-secondary-900/45 after:absolute after:top-0 after:left-0 after:w-full after:h-full rounded-[15px] after:rounded-[15px]">
-                <img class="w-full h-full absolute" src="{{ asset('/images/science.png') }}" alt="">
+                <img class="w-full h-full absolute" src="{{ loadAssetFile('/images/science.png') }}" alt="">
                 <div class="relative p-4 z-[200] text-white flex items-center justify-between">
                     <h5 class="font-bold">Science</h5>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -152,7 +152,7 @@
             </a>
             <a href="#"
                 class="relative flex flex-col justify-end h-[180px] after:bg-secondary-900/45 after:absolute after:top-0 after:left-0 after:w-full after:h-full rounded-[15px] after:rounded-[15px]">
-                <img class="w-full h-full absolute" src="{{ asset('/images/technology.png') }}" alt="">
+                <img class="w-full h-full absolute" src="{{ loadAssetFile('/images/technology.png') }}" alt="">
                 <div class="relative p-4 z-[200] text-white flex items-center justify-between">
                     <h5 class="font-bold">Technology</h5>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -186,28 +186,28 @@
         <div class="grid grid-cols-4 gap-8">
             <div class="rounded-[15px] p-6 bg-secondary-900 flex flex-col items-center gap-6">
                 <div class="flex gap-4 items-center flex-col">
-                    <img src="{{ asset('images/metric.svg') }}" alt="Metric">
+                    <img src="{{ loadAssetFile('images/metric.svg') }}" alt="Metric">
                     <h4 class="font-bold text-xl text-white">Journals</h4>
                 </div>
                 <h2 class="text-5xl text-primary-500 font-bold">1004</h2>
             </div>
             <div class="rounded-[15px] p-6 bg-secondary-900 flex flex-col items-center gap-6">
                 <div class="flex gap-4 items-center flex-col">
-                    <img src="{{ asset('images/metric.svg') }}" alt="Metric">
+                    <img src="{{ loadAssetFile('images/metric.svg') }}" alt="Metric">
                     <h4 class="font-bold text-xl text-white">Authors</h4>
                 </div>
                 <h2 class="text-5xl text-primary-500 font-bold">740</h2>
             </div>
             <div class="rounded-[15px] p-6 bg-secondary-900 flex flex-col items-center gap-6">
                 <div class="flex gap-4 items-center flex-col">
-                    <img src="{{ asset('images/metric.svg') }}" alt="Metric">
+                    <img src="{{ loadAssetFile('images/metric.svg') }}" alt="Metric">
                     <h4 class="font-bold text-xl text-white">Reviewers</h4>
                 </div>
                 <h2 class="text-5xl text-primary-500 font-bold">72</h2>
             </div>
             <div class="rounded-[15px] p-6 bg-secondary-900 flex flex-col items-center gap-6">
                 <div class="flex gap-4 items-center flex-col">
-                    <img src="{{ asset('images/metric.svg') }}" alt="Metric">
+                    <img src="{{ loadAssetFile('images/metric.svg') }}" alt="Metric">
                     <h4 class="font-bold text-xl text-white">Manuscripts</h4>
                 </div>
                 <h2 class="text-5xl text-primary-500 font-bold">1604</h2>

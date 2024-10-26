@@ -5,7 +5,7 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
             <div class="col-span-full lg:col-span-1">
                 <a class="flex-none text-xl font-semibold text-white focus:outline-none focus:opacity-80" href="#" aria-label="Brand">
-                    <img src="{{ asset('/images/japr-logo.png') }}" alt="">
+                    <img src="{{ loadAssetFile('/images/japr-logo.png') }}" alt="">
                 </a>
             </div>
             <!-- End Col -->

@@ -267,3 +267,14 @@ function downloadJournal($journal_id) {
         return response()->download(storage_path('app/public/' . $path), $name);
     }
 }
+
+
+function loadAssetFile($asset) {
+    // check if server is in production
+    if (app()->environment('production')) {
+        // return asset('public/'.$asset);
+        return asset($asset);
+    } else {
+        return asset($asset);
+    }
+}

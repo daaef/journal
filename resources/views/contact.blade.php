@@ -20,12 +20,12 @@
                             <input type="text" name="last-name" id="last-name" autocomplete="family-name" class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-500 sm:text-sm sm:leading-6">
                         </div>
                     </div>
-                    <div class="sm:col-span-2">
+                    {{-- <div class="sm:col-span-2">
                         <label for="company" class="block text-sm font-semibold leading-6 text-gray-900">Company</label>
                         <div class="mt-2.5">
                             <input type="text" name="company" id="company" autocomplete="organization" class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-500 sm:text-sm sm:leading-6">
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="sm:col-span-2">
                         <label for="email" class="block text-sm font-semibold leading-6 text-gray-900">Email</label>
                         <div class="mt-2.5">
@@ -66,7 +66,7 @@
                         </div>
                         <label class="text-sm leading-6 text-gray-600" id="switch-1-label">
                             By selecting this, you agree to our
-                            <a href="#" class="font-semibold text-primary-500">privacy&nbsp;policy</a>.
+                            <a href="#" class="font-semibold text-primary-500">privacy policy</a>.
                         </label>
                     </div>
                 </div>

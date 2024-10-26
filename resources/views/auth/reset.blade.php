@@ -6,7 +6,7 @@
         <div class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
             <div class="mx-auto w-full max-w-sm lg:w-96">
                 <div>
-                    <img class="h-20 w-auto" src="{{ asset('images/japr-logo.png') }}" alt="Your Company">
+                    <img class="h-20 w-auto" src="{{ loadAssetFile('images/japr-logo.png') }}" alt="Your Company">
                     <h2 class="mt-8 text-2xl font-bold leading-9 tracking-tight text-gray-900">Create a new JAPR account password password!</h2>
                 </div>
 
@@ -120,7 +120,7 @@
             </div>
         </div>
         <div class="relative hidden w-full flex-1 lg:block">
-            <img class="absolute inset-0 h-full w-full object-cover" src="{{ asset('images/forgot-password.jpg') }}" alt="">
+            <img class="absolute inset-0 h-full w-full object-cover" src="{{ loadAssetFile('images/forgot-password.jpg') }}" alt="">
         </div>
     </header>
 

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 class EloquentJournalRepository implements JournalContract {
     public function create($request) {
+        dd($request->all());
         $journal = new Journal();
         return $this->extracted($request, $journal);
     }
@@ -98,7 +99,6 @@ class EloquentJournalRepository implements JournalContract {
 
 
         $journal->slug = Str::slug($request->title, '-');
-
         $journal->description = $request->description ?: $request->abstract;
 
         // If request has cover_image, upload the file
@@ -110,20 +110,19 @@ class EloquentJournalRepository implements JournalContract {
             if (!Storage::disk('public')->exists($path)) {
                 Storage::disk('public')->makeDirectory($path);
             }
-            $coverPath = $file->storeAs($path, $fileName, $disk);
+            $coverPath = $file->storeAs($path, $coverName, $disk);
             $journal->cover_image = $coverPath;
         }
 
 
         $journal->uuid = Str::uuid();
-
         $journal->approval_status = 'pending';
         $journal->meta_title = $request->meta_title;
         $journal->meta_keywords = $request->meta_keywords;
         $journal->meta_description = $request->meta_description;
 
         $journal->institution = $request->institution;
-        $journal->license = $request->license;
+        $journal->license = json_encode($request->license);
         $journal->approval_level = 0;
         $journal->user_id = $request->user_id ? $request->user_id : auth()->user()->id;
         $journal->category_id = $request->category_id;
@@ -134,6 +133,10 @@ class EloquentJournalRepository implements JournalContract {
 //        $journal->updated_by = $request->updated_by;
 //        $journal->approved_by = $request->approved_by;
 
+        $journal->accept = $request->accept == 'on' ? true : false;
+        $journal->agree = $request->agree == 'on' ? true : false;
+        $journal->is_draft = $request->submit == 'draft' ? true : false;
+        // dd($journal);
         $journal->save();
         return $journal;
     }
@@ -151,7 +154,12 @@ class EloquentJournalRepository implements JournalContract {
                     ->orWhere('author', 'like', "%$search%")
                     ->orWhere('country', 'like', "%$search%")
                     ->orWhere('journal_language', 'like', "%$search%")
-                    ->orWhere('abstract', 'like', "%$search%");
+                    ->orWhere('abstract', 'like', "%$search%")
+                    ->orWhere('meta_title', 'like', "%$search%")
+                    ->orWhere('meta_keywords', 'like', "%$search%")
+                    ->orWhere('meta_description', 'like', "%$search%")
+                    ->orWhere('description', 'like', "%$search%")
+                    ->orWhere('institution', 'like', "%$search%");
             });
         }
 
@@ -171,6 +179,10 @@ class EloquentJournalRepository implements JournalContract {
             $query->where('approval_status', $request->approval_status);
         }
 
+
+        $query->where('approval_status', 'approved');
+        $query->where('is_active', false);
+        $query->where('is_draft', false);
         return $query->paginate(10);
     }
 
@@ -206,6 +218,6 @@ class EloquentJournalRepository implements JournalContract {
     }
 
 
-    
+
 
 }

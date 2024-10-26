@@ -6,7 +6,7 @@
         <div class="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
             <div class="mx-auto w-full flex flex-col max-w-sm lg:w-96">
                 <div class="flex-col flex items-center text-center">
-                    <img class="h-20 w-auto" src="{{ asset('images/mail.png') }}" alt="Your Company">
+                    <img class="h-20 w-auto" src="{{ loadAssetFile('images/mail.png') }}" alt="Your Company">
                     <h2 class="mt-8 text-2xl font-bold leading-9 tracking-tight text-gray-900">Check your email</h2>
                     <p>We sent a password reset link to your email. Please
                         check your inbox</p>
@@ -36,7 +36,7 @@
             </div>
         </div>
         <div class="relative hidden w-full flex-1 lg:block">
-            <img class="absolute inset-0 h-full w-full object-cover" src="{{ asset('images/success.jpg') }}"
+            <img class="absolute inset-0 h-full w-full object-cover" src="{{ loadAssetFile('images/success.jpg') }}"
                 alt="">
         </div>
     </header>

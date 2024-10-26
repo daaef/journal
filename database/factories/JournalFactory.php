@@ -33,7 +33,7 @@ class JournalFactory extends Factory
             'meta_description' => $this->faker->paragraph,
             'abstract' => $this->faker->paragraph,
             'institution' => $this->faker->company,
-            'license' => 'CC BY 4.0',
+            'license' => ['CC BY 4.0', 'CC BY 4.0'],
             'country' => 'Nigeria',
             'approval_level' => 0,
             'user_id' => 4,

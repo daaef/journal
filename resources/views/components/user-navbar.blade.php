@@ -33,7 +33,7 @@
                class="font-semibold text-secondary-900 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 text-sm whitespace-nowrap hover:text-primary-600 focus:outline-none focus:text-primary-600 disabled:opacity-50 disabled:pointer-events-none"
                id="tabs-with-underline-item-1" aria-selected="true" data-hs-tab="#tabs-with-underline-1"
                aria-controls="tabs-with-underline-1" role="tab">
-                Create Collections <img class="h-6" src="{{ asset('images/create-collection.png') }}" alt="">
+                Create Collections <img class="h-6" src="{{ loadAssetFile('images/create-collection.png') }}" alt="">
             </a>
         @endif
 
@@ -42,7 +42,7 @@
                class="font-semibold text-secondary-900 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 text-sm whitespace-nowrap hover:text-primary-600 focus:outline-none focus:text-primary-600 disabled:opacity-50 disabled:pointer-events-none"
                id="tabs-with-underline-item-2" aria-selected="false" data-hs-tab="#tabs-with-underline-2"
                aria-controls="tabs-with-underline-2" role="tab">
-                Submit Manuscript <img class="h-6" src="{{ asset('images/submit-manuscript.png') }}" alt="">
+                Submit Manuscript <img class="h-6" src="{{ loadAssetFile('images/submit-manuscript.png') }}" alt="">
             </a>
         @endif
     </nav>

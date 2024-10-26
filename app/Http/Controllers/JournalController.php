@@ -51,7 +51,7 @@ class JournalController extends Controller
         $categories = $this->categoryRepo->getAll();
         $journals = $this->repo->getAll();
         $regions = globalRegions();
-        dd($regions);
+        // dd($regions);
         $languages = journalLanguages();
         return view('journals', compact('journals', 'regions', 'categories', 'languages'));
     }
