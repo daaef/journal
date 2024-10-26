@@ -14,7 +14,7 @@
     <div class="min-h-[40vh] py-5 flex items-center justify-center gap-5">
         @if (count($journals) > 0)
         {{-- @dd($journals) --}}
-        <div class="grid grid-cols-2 w-full">
+        <div class="grid grid-cols-2 gap-4 w-full">
             <x-submission :submission="$journals"/>
         </div>
         @else
