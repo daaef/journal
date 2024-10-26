@@ -163,7 +163,7 @@
                 <div class="mt-2">
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
-                            <input id="cc-by" name="license" type="checkbox"
+                            <input id="cc-by" name="license[]" type="checkbox"
                                 class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
@@ -172,7 +172,7 @@
                     </div>
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
-                            <input id="cc-by-sa" name="license" type="checkbox"
+                            <input id="cc-by-sa" name="license[]" type="checkbox"
                                 class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
@@ -181,7 +181,7 @@
                     </div>
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
-                            <input id="cc-by-nd" name="license" type="checkbox"
+                            <input id="cc-by-nd" name="license[]" type="checkbox"
                                 class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
@@ -190,7 +190,7 @@
                     </div>
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
-                            <input id="cc-by-nc" name="license" type="checkbox"
+                            <input id="cc-by-nc" name="license[]" type="checkbox"
                                 class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
@@ -199,7 +199,7 @@
                     </div>
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
-                            <input id="cc-by-nc-sa" name="license" type="checkbox"
+                            <input id="cc-by-nc-sa" name="license[]" type="checkbox"
                                 class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
@@ -208,7 +208,7 @@
                     </div>
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
-                            <input id="cc-by-nc-nd" name="license" type="checkbox"
+                            <input id="cc-by-nc-nd" name="license[]" type="checkbox"
                                 class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
@@ -217,7 +217,7 @@
                     </div>
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
-                            <input id="cc0" name="license" type="checkbox"
+                            <input id="cc0" name="license[]" type="checkbox"
                                 class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
@@ -226,7 +226,7 @@
                     </div>
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
-                            <input id="pub_domain" name="license" type="checkbox"
+                            <input id="pub_domain" name="license[]" type="checkbox"
                                 class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
@@ -235,7 +235,7 @@
                     </div>
                     <div class="relative flex gap-x-3">
                         <div class="flex h-6 items-center">
-                            <input id="own_license" name="license" type="checkbox"
+                            <input id="own_license" name="license[]" type="checkbox"
                                 class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600">
                         </div>
                         <div class="text-sm leading-6">
@@ -315,7 +315,6 @@
                 console.error(error);
             });
     </script>
-
     <script>
         const categorySelect = document.getElementById('category_id');
         const subcategorySelect = document.getElementById('subcategory_id');
@@ -339,5 +338,6 @@
                     console.error('Error:', error);
                 });
         });
+
     </script>
 </x-layouts.layout>

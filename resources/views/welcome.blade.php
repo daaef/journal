@@ -89,7 +89,7 @@
 
                 </div>
             </div>
-            <img class="w-full h-[560px] object-fit-cover" src="{{ loadAssetFile('/images/headerImg.png') }}" alt="">
+            <img class="w-full h-[560px] object-cover" src="{{ loadAssetFile('/images/headerImg.png') }}" alt="">
         </div>
     </form>
     <section id="most_viewed" class="py-[50px]">

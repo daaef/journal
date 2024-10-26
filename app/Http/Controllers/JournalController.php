@@ -51,6 +51,7 @@ class JournalController extends Controller
         $categories = $this->categoryRepo->getAll();
         $journals = $this->repo->getAll();
         $regions = globalRegions();
+        dd($regions);
         $languages = journalLanguages();
         return view('journals', compact('journals', 'regions', 'categories', 'languages'));
     }
@@ -63,7 +64,8 @@ class JournalController extends Controller
         if ($request->search) {
             $journals = $this->repo->searchJournal($request);
         }
-        return view('journals', compact('journals', 'categories'));
+        $regions = globalRegions();
+        return view('journals', compact('journals', 'categories', 'regions'));
     }
 
     public function likeJournal(Request $request)

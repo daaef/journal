@@ -5,7 +5,8 @@
                 {{ $journal->title }}
             </h3>
             <p class="mt-2 text-gray-500 dark:text-neutral-400">
-                {!! $journal->description !!}
+{{--                {!! $journal->description !!}--}}
+                {!! Str::limit($journal->description, 50) !!}
             </p>
             <p class="mt-1 text-sm leading-6 text-gray-600">Status: <span class="inline-flex ml-4 items-center gap-x-1.5 py-1 px-1.5 rounded-full text-xs font-medium bg-blue-500 text-gray-200">{{ $journal->approval_status }}</span>
         </div>
