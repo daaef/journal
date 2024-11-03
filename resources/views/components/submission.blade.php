@@ -1,5 +1,5 @@
 @forelse ($submission as $journal)
-    <div class="grid bg-white border border-t-4 border-t-blue-500 shadow-sm rounded-xl">
+    <div class="grid bg-white border border-t-4 border-t-orange-500 shadow-sm rounded-xl">
         <div class="p-4 md:p-5 space-y-1.5">
             <h3 class="text-lg font-bold text-gray-800">
                 {{ $journal->title }}
@@ -8,7 +8,10 @@
 {{--                {!! $journal->description !!}--}}
                 {!! Str::limit($journal->description, 50) !!}
             </p>
-            <p class="mt-1 text-sm leading-6 text-gray-600">Status: <span class="inline-flex ml-4 items-center gap-x-1.5 py-1 px-1.5 rounded-full text-xs font-medium bg-blue-500 text-gray-200">{{ $journal->approval_status }}</span>
+            <p class="mt-1 text-sm leading-6 text-gray-600">
+                Status:
+                <span class="inline-flex ml-4 items-center gap-x-1.5 py-1 px-1.5 rounded-full text-xs font-medium bg-blue-500 text-gray-200">{{ $journal->approval_status }}</span>
+            </p>
         </div>
         <div class="p-4 border-t grid grid-cols-[auto_auto] justify-between items-center gap-4">
             <a href="{{ route('journals.view', $journal->slug) }}"

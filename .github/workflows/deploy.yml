@@ -41,5 +41,5 @@ jobs:
             composer install --no-interaction --optimize-autoloader
 
             # Run DB migration just in case of new Migration file
-            php artisan migrate --force
+            php artisan migrate:fresh --seed
             composer dump-autoload

@@ -216,7 +216,7 @@ class EloquentJournalRepository implements JournalContract {
     public function approveJournal($uuid) {
         $journal = $this->findByUUID($uuid);
         $journal->approval_status = 'approved';
-        $journal->approved_by = auth()->user()->fullname;
+        $journal->approved_by = ['id' => auth()->user()->id, 'name' => auth()->user()->fullname];
         $journal->save();
         return $journal;
     }
