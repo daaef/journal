@@ -69,7 +69,7 @@
                     href="{{ route('submit-manuscript') }}">
                     Submit Manuscript
                 </a>
-                <div class="hs-dropdown [--strategy:static] sm:[--strategy:fixed] [--adaptive:none] ">
+                <div class="hs-dropdown pr-[40px] [--strategy:static] sm:[--strategy:fixed] [--adaptive:none] ">
                     <button id="hs-navbar-example-dropdown" type="button"
                         class="hs-dropdown-toggle flex items-center w-full text-gray-600 hover:text-gray-400 focus:outline-none focus:text-gray-400 font-medium"
                         aria-haspopup="menu" aria-expanded="false" aria-label="Mega Menu">
