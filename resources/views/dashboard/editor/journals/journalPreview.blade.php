@@ -195,8 +195,7 @@
                     <form method="post" action="{{ route('editor.journals.approveJournal') }}">
                         @csrf
                         <input type="hidden" name="journal_uuid" value="{{ $journal->uuid }}" />
-                        <button type="submit" class="btn btn-main rounded-pill py-11 w-100  mt-16">Approve
-                            Journal</button>
+                        <button type="submit" class="btn btn-main rounded-pill py-11 w-100 mt-16">Approve Manuscript</button>
                     </form>
 
                 </div>
