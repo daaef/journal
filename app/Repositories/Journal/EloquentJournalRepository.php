@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 class EloquentJournalRepository implements JournalContract {
     public function create($request) {
-        dd($request->all());
+        // dd($request->all());
         $journal = new Journal();
         return $this->extracted($request, $journal);
     }
@@ -33,7 +33,7 @@ class EloquentJournalRepository implements JournalContract {
     }
 
     public function getAll() {
-        return Journal::where('approval_status', 'approved')->get();
+        return Journal::where('approval_status', 'approved')->where('is_draft', false)->get();
     }
 
     public function findByUUID($uuid) {
@@ -42,6 +42,10 @@ class EloquentJournalRepository implements JournalContract {
 
     public function getUserSubmissions($user_id) {
         return Journal::where('user_id', $user_id)->get();
+    }
+
+    public function getUserDraftSubmissions($user_id) {
+        return Journal::where('user_id', $user_id)->where('is_draft', true)->get();
     }
 
     public function delete($id){
@@ -212,7 +216,7 @@ class EloquentJournalRepository implements JournalContract {
     public function approveJournal($uuid) {
         $journal = $this->findByUUID($uuid);
         $journal->approval_status = 'approved';
-        $journal->approved_by = auth()->user()->fullname;
+        $journal->approved_by = ['id' => auth()->user()->id, 'name' => auth()->user()->fullname];
         $journal->save();
         return $journal;
     }

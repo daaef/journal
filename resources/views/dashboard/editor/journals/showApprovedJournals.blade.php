@@ -52,10 +52,8 @@
                                     </td>
                                     <td>
                                         <div class="flex-align justify-content-center gap-16">
-                                            <span
-                                                class="text-13 py-2 px-8 bg-green-50 text-success-600 d-inline-flex align-items-center gap-8 rounded-pill">
-                                                <span
-                                                    class="w-6 h-6 bg-green-600 rounded-circle flex-shrink-0"></span>
+                                            <span class="text-13 py-2 px-8 bg-green-50 text-success-600 d-inline-flex align-items-center gap-8 rounded-pill">
+                                                <span class="w-6 h-6 bg-green-600 rounded-circle flex-shrink-0"></span>
                                                 Approved
                                             </span>
                                             <a href="{{ route('editor.journals.preview', [$journal->uuid, $journal->slug]) }}"
@@ -67,8 +65,9 @@
                             @empty
                                 <tr>
                                     <td colspan="3">
-                                        <p class="mt-2 text-gray-500 dark:text-neutral-400">No published journals at the
-                                            moment</p>
+                                        <p class="mt-2 text-gray-500 dark:text-neutral-400">
+                                            No published journals at the moment
+                                        </p>
                                     </td>
                                 </tr>
                             @endforelse
