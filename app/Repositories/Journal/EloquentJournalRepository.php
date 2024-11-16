@@ -57,7 +57,7 @@ class EloquentJournalRepository implements JournalContract {
 
     public function getPendingApprovedJournals()
     {
-        return Journal::where('approval_status', 'pending')->get();
+        return Journal::whereIn('approval_status', ['pending', 'approved_with_comment'])->get();
     }
 
     public function getJournalsInProgress() {
@@ -264,11 +264,6 @@ class EloquentJournalRepository implements JournalContract {
             throw $e;
         }
     }
-
-    // get all journals assigned to a user if the user ID is in approved_by column which is a JSON column
-
-
-
 
     public function getJournalsApprovedByUser($user_id) {
         return Journal::where('approved_by', 'like', '%'.$user_id.'%')->get();

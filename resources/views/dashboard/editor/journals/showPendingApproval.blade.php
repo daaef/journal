@@ -24,7 +24,7 @@
                         </thead>
                         <tbody>
                             @forelse ($journals as $journal)
-                                <tr>
+                                <tr class="cursor-pointer"  onclick="window.location='{{ route('editor.journals.preview', [$journal->uuid, $journal->slug]) }}'">
                                     <td>
                                         <div class="flex-align gap-8">
                                             <div class="w-40 h-40 rounded-circle bg-main-600 flex-center flex-shrink-0">

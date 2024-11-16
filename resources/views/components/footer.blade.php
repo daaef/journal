@@ -14,8 +14,8 @@
                 <h4 class="font-semibold text-gray-100">Get in touch</h4>
 
                 <div class="mt-3 grid space-y-3">
-                    <p class="flex gap-2 text-white">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-[64px] lucide-map-pin-check-inside"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><path d="m9 10 2 2 4-4"/></svg>
+                    <p class="grid grid-cols-[24px_1fr] gap-2 text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-map-pin-check-inside"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><path d="m9 10 2 2 4-4"/></svg>
                         <span>Department of Political Science North Carolina Central University 1801 Fayetteville Street Durham, North Carolina 27707</span>
                     </p>
                     <p>

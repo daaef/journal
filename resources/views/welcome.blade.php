@@ -13,24 +13,24 @@
             <div class="sidebar overflow-y-auto h-[500px] pb-2 w-full">
                 <ul class="tree">
                     @foreach ($categories as $category)
-                        <li class="category collapsed font-semibold">
-                            <span class="caret-icon">
-                                <svg class="inline" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        <li class="category flex items-start flex-wrap collapsed font-medium">
+                            <span class="caret-icon block h-[18px]">
+                                <svg class="inline !align-baseline h-[18px] w-[18px]" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round">
                                     <path d="m9 18 6-6-6-6" />
                                 </svg>
                             </span>
                             <input type="checkbox" name="category[]" value="{{ $category->id }}" class="category-checkbox" id="category-{{ $category->id }}" />
-                            <label class="category-label" for="category-{{ $category->id }}">
+                            <label class="category-label w-[180px] truncate" for="category-{{ $category->id }}">
                                 {{ $category->name }}
                             </label>
                             @if ($category->subCategories->count() > 0)
                                 <ul class="subcategories">
                                     @foreach ($category->subCategories as $subCategory)
-                                        <li class="subcategory">
-                                            <span class="caret-icon">
-                                                <svg class="inline" xmlns="http://www.w3.org/2000/svg" width="20"
+                                        <li class="subcategory flex items-start flex-wrap">
+                                            <span class="caret-icon block h-[18px]">
+                                                <svg class="!align-baseline h-[18px] w-[18px]" xmlns="http://www.w3.org/2000/svg" width="20"
                                                     height="20" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                     stroke-linejoin="round">
@@ -39,7 +39,7 @@
                                             </span>
                                             <input type="checkbox" class="subcategory-checkbox" name="subcategory"
                                                 id="subcategory-{{ $subCategory->id }}" value="{{ $subCategory->id }}" />
-                                            <label class="subcategory-label" for="subcategory-{{ $subCategory->id }}">
+                                            <label class="subcategory-label w-[180px] truncate" for="subcategory-{{ $subCategory->id }}">
                                                 {{ $subCategory->name }}
                                             </label>
                                             @if ($subCategory->subSubCategories->count() > 0)

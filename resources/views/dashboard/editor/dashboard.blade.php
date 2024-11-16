@@ -30,7 +30,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="mb-2">{{ $pendingJournals }}</h4>
-                            <span class="text-gray-600">Journals Pending Approvals</span>
+                            <span class="text-gray-600">Pending Manuscripts</span>
                             <div class="flex-between gap-8 mt-16">
                                 <span class="flex-shrink-0 w-48 h-48 flex-center rounded-circle bg-main-600 text-white text-2xl"><i class="ph-fill ph-book-open"></i></span>
                                 <div id="complete-course" class="remove-tooltip-title rounded-tooltip-value"></div>
@@ -54,7 +54,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="mb-2">{{ $journalsInProgress }}</h4>
-                            <span class="text-gray-600">Journals in Progress</span>
+                            <span class="text-gray-600">Manuscripts in Progress</span>
                             <div class="flex-between gap-8 mt-16">
                                 <span class="flex-shrink-0 w-48 h-48 flex-center rounded-circle bg-purple-600 text-white text-2xl"> <i class="ph-fill ph-graduation-cap"></i></span>
                                 <div id="course-progress" class="remove-tooltip-title rounded-tooltip-value"></div>
@@ -66,7 +66,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="mb-2">{{ $declinedJournals }}</h4>
-                            <span class="text-gray-600">Journals Declined</span>
+                            <span class="text-gray-600">Declined Manuscripts</span>
                             <div class="flex-between gap-8 mt-16">
                                 <span class="flex-shrink-0 w-48 h-48 flex-center rounded-circle bg-warning-600 text-white text-2xl"><i class="ph-fill ph-users-three"></i></span>
                                 <div id="community-support" class="remove-tooltip-title rounded-tooltip-value"></div>
