@@ -1,4 +1,4 @@
-name: Deploy LoveTech EICT LMS to the live server
+name: Deploy JAPR Journal Website to the live server
 on:
   push:
     branches:
