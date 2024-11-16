@@ -1,4 +1,4 @@
-<x-layouts.editor_layout>
+<x-layouts.reviewer_layout>
     <x-slot:title>
         Welcome to your Dashboard
     </x-slot:title>
@@ -125,4 +125,4 @@
     </div>
 
 
-</x-layouts.editor_layout>
+</x-layouts.reviewer_layout>

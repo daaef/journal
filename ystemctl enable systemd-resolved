@@ -1,0 +1,27 @@
+[0;1;32m●[0m systemd-resolved.service - Network Name Resolution
+     Loaded: loaded (]8;;file://fedora/usr/lib/systemd/system/systemd-resolved.service/usr/lib/systemd/system/systemd-resolved.service]8;;; [0;1;38:5:185mdisabled[0m; preset: [0;1;32menabled[0m)
+    Drop-In: /usr/lib/systemd/system/service.d
+             └─]8;;file://fedora/usr/lib/systemd/system/service.d/10-timeout-abort.conf10-timeout-abort.conf]8;;
+     Active: [0;1;32mactive (running)[0m since Sat 2024-11-16 02:09:26 WAT; 3s ago
+ Invocation: 8a6ade3e2ea74ccdbbbfc23f68666040
+       Docs: ]8;;man:systemd-resolved.service(8)man:systemd-resolved.service(8)]8;;
+             ]8;;man:org.freedesktop.resolve1(5)man:org.freedesktop.resolve1(5)]8;;
+             ]8;;https://systemd.io/WRITING_NETWORK_CONFIGURATION_MANAGERShttps://systemd.io/WRITING_NETWORK_CONFIGURATION_MANAGERS]8;;
+             ]8;;https://systemd.io/WRITING_RESOLVER_CLIENTShttps://systemd.io/WRITING_RESOLVER_CLIENTS]8;;
+   Main PID: 8621 (systemd-resolve)
+     Status: "[0;1;36mProcessing requests...[0m"
+      Tasks: 1 (limit: 37709)
+     Memory: 5.1M (peak: 6.2M)
+        CPU: 43ms
+     CGroup: /system.slice/systemd-resolved.service
+             └─[0;38;5;245m8621 /usr/lib/systemd/systemd-resolved[0m
+
+Nov 16 02:09:26 fedora systemd[1]: Starting systemd-resolved.service - Network Name Resolution...
+Nov 16 02:09:26 fedora systemd-resolved[8621]: Positive Trust Anchors:
+Nov 16 02:09:26 fedora systemd-resolved[8621]: . IN DS 20326 8 2 e06d44b80b8f1d39a95c0b0d7c65d08458e880409bbc683457104237c7f8ec8d
+Nov 16 02:09:26 fedora systemd-resolved[8621]: Negative trust anchors: home.arpa 10.in-addr.arpa 16.172.in-addr.arpa 17.172.in-addr.arpa 18.172.in-addr.arpa 19.172.in-addr.arpa 20.172.in-addr.arpa 21.172.in-addr.arpa 22.172.in-addr.arpa 23.172.in-addr.arpa 24.172.in-addr.arpa 25.172.in-addr.arpa 26.172.in-addr.arpa 27.172.in-addr.arpa 28.172.in-addr.arpa 29.172.in-addr.arpa 30.172.in-addr.arpa 31.172.in-addr.arpa 170.0.0.192.in-addr.arpa 171.0.0.192.in-addr.arpa 168.192.in-addr.arpa d.f.ip6.arpa ipv4only.arpa resolver.arpa corp home internal intranet lan local private test
+Nov 16 02:09:26 fedora systemd-resolved[8621]: Using system hostname 'fedora'.
+Nov 16 02:09:26 fedora systemd[1]: Started systemd-resolved.service - Network Name Resolution.
+Nov 16 02:09:26 fedora systemd-resolved[8621]: wlo1: Bus client set search domain list to: ng
+Nov 16 02:09:26 fedora systemd-resolved[8621]: wlo1: Bus client set default route setting: yes
+Nov 16 02:09:26 fedora systemd-resolved[8621]: wlo1: Bus client set DNS server list to: 192.168.0.1, 114.114.114.114

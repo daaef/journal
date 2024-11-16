@@ -1,4 +1,4 @@
-<x-layouts.editor_layout>
+<x-layouts.reviewer_layout>
     <div class="breadcrumb mb-24">
         <ul class="flex-align gap-4">
             <li><a href="index.html" class="text-gray-200 fw-normal text-15 hover-text-main-600">Home</a></li>
@@ -65,8 +65,7 @@
                         <div class="mb-24 pb-24 border-bottom border-gray-100">
                             <h5 class="mb-12 fw-bold">Menuscript</h5>
                             <object class="pdf w-full"
-                                data=
-"https://media.geeksforgeeks.org/wp-content/cdn-uploads/20210101201653/PDF.pdf"
+                                data="https://media.geeksforgeeks.org/wp-content/cdn-uploads/20210101201653/PDF.pdf"
                                 height="800">
                             </object>
                         </div>
@@ -170,7 +169,7 @@
             <div class="card mt-24">
                 <div class="card-body">
                     {{-- <h4 class="mb-20">Action</h4> --}}
-                    <form method="post" action="{{ route('editor.journals.approveJournal') }}">
+                    <form method="post" action="{{ route('reviewer.accept') }}">
                         @csrf
                         <input type="hidden" name="journal_uuid" value="{{ $journal->uuid }}" />
                         <button type="submit" class="btn btn-main rounded-pill py-11 w-100  mt-16">Approve
@@ -181,7 +180,7 @@
             </div>
         </div>
     </div>
-</x-layouts.editor_layout>
+</x-layouts.reviewer_layout>
 <script>
     function addReviewer(reviewerId, reviewerName, selectedReviewerid) {
         const selectedReviewersDiv = document.getElementById('selectedReviewers');
