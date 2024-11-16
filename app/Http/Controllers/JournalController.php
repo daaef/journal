@@ -307,6 +307,13 @@ class JournalController extends Controller
         return view('dashboard.editor.journals.showPendingApproval', compact('journals'));
     }
 
+
+    public function reviewerPendingApproval()
+    {
+        $journals = $this->repo->getPendingApprovedJournals();
+        return view('dashboard.reviewer.journals.showPendingApproval', compact('journals'));
+    }
+
     public function previewJournal(string $uuid)
     {
         $journal = $this->repo->findByUuid($uuid);
@@ -355,6 +362,12 @@ class JournalController extends Controller
     {
         $journals = $this->repo->getApprovedJournals();
         return view('dashboard.editor.journals.showApprovedJournals', compact('journals'));
+    }
+
+    public function reviewerApprovedJournals()
+    {
+        $journals = $this->repo->getApprovedJournals();
+        return view('dashboard.reviewer.journals.showApprovedJournals', compact('journals'));
     }
 
 

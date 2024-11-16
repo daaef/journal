@@ -52,7 +52,7 @@
             <div class="p-20 pt-10">
                 <ul class="sidebar-menu">
                     <li class="sidebar-menu__item">
-                        <a href="{{ route('editor.dashboard') }}" class="sidebar-menu__link">
+                        <a href="{{ route('reviewer.dashboard') }}" class="sidebar-menu__link">
                             <span class="icon"><i class="ph ph-squares-four"></i></span>
                             <span class="text">Dashboard</span>
                             {{-- <span class="link-badge">3</span> --}}
@@ -67,11 +67,11 @@
                         <!-- Submenu start -->
                         <ul class="sidebar-submenu">
                             <li class="sidebar-submenu__item">
-                                <a href="{{ route('editor.journals.pendingApproval') }}" class="sidebar-submenu__link">
+                                <a href="{{ route('reviewer.journals.pendingApproval') }}" class="sidebar-submenu__link">
                                     Pending </a>
                             </li>
                             <li class="sidebar-submenu__item">
-                                <a href="{{ route('editor.journals.approved') }}" class="sidebar-submenu__link">
+                                <a href="{{ route('reviewer.journals.approved') }}" class="sidebar-submenu__link">
                                     Approved </a>
                             </li>
                         </ul>

@@ -1,4 +1,4 @@
-<x-layouts.editor_layout>
+<x-layouts.reviewer_layout>
     <x-slot name="title">
         Pending Approval
     </x-slot>
@@ -58,7 +58,7 @@
                                                     class="w-6 h-6 bg-warning-600 rounded-circle flex-shrink-0"></span>
                                                 Pending
                                             </span>
-                                            <a href="{{ route('editor.journals.preview', [$journal->uuid, $journal->slug]) }}"
+                                            <a href="{{ route('reviewer.journals.review', [$journal->uuid, $journal->slug]) }}"
                                                 class="text-gray-900 hover-text-main-600 text-md d-flex">
                                                 <i class="ph ph-caret-right"></i></a>
                                         </div>
@@ -80,4 +80,4 @@
 
         </div>
     </div>
-</x-layouts.editor_layout>
+</x-layouts.reviewer_layout>

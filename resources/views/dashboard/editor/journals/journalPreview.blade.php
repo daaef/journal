@@ -177,10 +177,10 @@
                             <label for="courseTitle" class="h6 mb-8 fw-semibold font-heading">Add Comments<span class="text-13 text-gray-400 fw-medium">(Required)</span> </label>
                             <div class="position-relative">
                                 <textarea type="text" class="text-counter placeholder-13 form-control py-11 pe-76" maxlength="1000" id="courseTitle" rows="10"> </textarea>
-                                <div class="text-gray-400 position-absolute inset-inline-end-0 top-50 translate-middle-y me-16">
+                                {{--<div class="text-gray-400 position-absolute inset-inline-end-0 top-50 translate-middle-y me-16">
                                     <span id="current">0</span>
                                     <span id="maximum">/ 1000</span>
-                                </div>
+                                </div>--}}
                             </div>
                         </div>
                     </div>

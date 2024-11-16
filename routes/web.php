@@ -183,8 +183,8 @@ Route::group(['prefix' => 'reviewer', 'middleware' => ['auth', 'reviewer']], fun
 
     Route::group(['prefix' => 'journals'], function () {
         Route::get('/review/{uuid}/{slug}', [JournalController::class, 'previewJournal'])->name('reviewer.journals.review');
-        Route::get('/pending', [JournalController::class, 'pendingApproval'])->name('reviewer.journals.pendingApproval');
-        Route::get('/approved', [JournalController::class, 'approvedJournals'])->name('reviewer.journals.approved');
+        Route::get('/pending', [JournalController::class, 'reviewerPendingApproval'])->name('reviewer.journals.pendingApproval');
+        Route::get('/approved', [JournalController::class, 'reviewerApprovedJournals'])->name('reviewer.journals.approved');
         Route::post('/approve-journal', [JournalController::class, 'approveJournal'])->name('reviewer.journals.approveJournal');
 
     //     // Manage  Journal Reveiwers

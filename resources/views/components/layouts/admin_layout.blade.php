@@ -197,10 +197,6 @@
                     <button
                         class="users arrow-down-icon border border-gray-200 rounded-pill p-4 d-inline-block pe-40 position-relative"
                         type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {{-- <span class="position-relative">
-                            <img src="{{ auth()->user()->avatar }}" alt="avatar"
-                                class="h-32 w-32 rounded-circle">
-                        </span> --}}
                         {{ Str::words(auth()->user()->fullname, 1, '') }}
                     </button>
                     <div class="dropdown-menu dropdown-menu--lg border-0 bg-transparent p-0">
