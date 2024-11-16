@@ -40,7 +40,7 @@ class EloquentRegistrationRepository implements RegistrationContract {
         DB::commit();
 
         // Send Email Notification
-        $user->notify(new RegistrationNotification($user));
+        // $user->notify(new RegistrationNotification($user));
         return $user;
     }
 
@@ -61,7 +61,7 @@ class EloquentRegistrationRepository implements RegistrationContract {
             $activation->delete();
 
             // Send Welcome Notification
-            $user->notify(new WelcomeNotification($user));
+            // $user->notify(new WelcomeNotification($user));
             return $user;
         }
         return false;

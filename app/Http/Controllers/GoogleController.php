@@ -36,7 +36,7 @@ class GoogleController extends Controller
             $user->assignRole('Publisher');
             $user->markEmailAsVerified();
 
-            $user->notify(new WelcomeNotification($user));
+            // $user->notify(new WelcomeNotification($user));
         }
 
         Auth::login($user);
@@ -62,7 +62,7 @@ class GoogleController extends Controller
         $clientIP = request()->ip();
         $userAgent = request()->userAgent();
         // dd($userAgent);
-        $user->notify(new LoginNotification($user, $clientIP, $userAgent));
+        // $user->notify(new LoginNotification($user, $clientIP, $userAgent));
         return redirect()->route('dashboard');
     }
 }

@@ -39,7 +39,7 @@ class EloquentReviewerRepository implements ReviewerContract {
             }
 
             // Send invitation email to the reviewer
-            Mail::to($user->email)->send(new SendReviewerInvitationNotification($journal, $user));
+            // Mail::to($user->email)->send(new SendReviewerInvitationNotification($journal, $user));
         }
 
         return $journal;

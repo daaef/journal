@@ -90,7 +90,7 @@ class AuthController extends Controller
                     ]);
                 }
 
-                $loggedUser->notify(new RegistrationNotification($user));
+                // $loggedUser->notify(new RegistrationNotification($user));
 
                 $notification = array(
                     'message' => 'Your account is not activated. Please check your email for activation link.',

@@ -48,7 +48,7 @@ class EloquentAuthRepository implements AuthContract
         }
 
         $user = User::where('email', $request->email)->first();
-        return $user->notify(new ResetPasswordNotification($user, $token));
+        // return $user->notify(new ResetPasswordNotification($user, $token));
     }
 
     public function resetPassword($request)
