@@ -25,7 +25,10 @@ class ReviewerDashboardController extends Controller
     public function index(){
         // dd(auth()->user()->hasRole('Reviewer'));
         $reviewer = auth()->user();
-        $journals = $reviewer->reviews()->with('journal')->get();
+        // $journals = $reviewer->reviews()->with('journal')->get();
+        $user = auth()->user();
+        $journals = $this->repo->getJournalsForReviewer($user->id);
+        // dd($journals);
 
         $pendingJournals = $this->repo->getPendingApprovedJournals()->count();
         $approvedJournals = $this->repo->getApprovedJournals()->count();

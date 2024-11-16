@@ -13,6 +13,7 @@ interface JournalContract {
     public function delete($id);
     public function getPendingApprovedJournals();
     public function approveJournal($uuid);
+    public function approveJournalWithComment($uuid, $request);
     public function getJournalsInProgress();
     public function getApprovedJournals();
     public function getRejectedJournals();
@@ -20,4 +21,5 @@ interface JournalContract {
     public function likeJournal($uuid);
     public function dislikeJournal($uuid);
     public function getJournalLikes($uuid);
+    public function getJournalsForReviewer($user_id);
 }
