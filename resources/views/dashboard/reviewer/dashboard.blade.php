@@ -77,11 +77,11 @@
                         <div class="flex-align flex-wrap gap-8">
                             <span class="text-main-600 bg-main-50 w-44 h-44 rounded-circle flex-center text-2xl flex-shrink-0"><i class="ph-fill ph-graduation-cap"></i></span>
                             <div>
-                                <h6 class="mb-0">{{ $journal->journal->title }}</h6>
-                                <span class="text-13 text-gray-500 fw-medium">Author(s) : {{ $journal->journal->author }}</span>
+                                <h6 class="mb-0">{{ $journal->title }}</h6>
+                                <span class="text-13 text-gray-500 fw-medium">Author(s) : {{ $journal->author }}</span>
                             </div>
                         </div>
-                        <a href="{{ route('reviewer.journals.review', [$journal->journal->uuid, $journal->journal->slug]) }}" class="text-gray-900 hover-text-main-600"><i class="ph ph-caret-right"></i></a>
+                        <a href="{{ route('reviewer.journals.review', [$journal->uuid, $journal->slug]) }}" class="text-gray-900 hover-text-main-600"><i class="ph ph-caret-right"></i></a>
                     </div>
                     @empty
                     <p class="mt-2 text-gray-500 dark:text-neutral-400">No assigned journals at the moment</p>

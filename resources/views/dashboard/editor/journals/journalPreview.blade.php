@@ -64,8 +64,7 @@
                         </div>
                         <div class="mb-24 pb-24 border-bottom border-gray-100">
                             <h5 class="mb-12 fw-bold">Menuscript</h5>
-                            <object class="pdf w-full"
-                                data="{{ storage_path('app/public/' . $journal->journal_url)}}"
+                            <object class="pdf w-full" data="{{ storage_path('app/public/' . $journal->journal_url) }}"
                                 height="800">
                             </object>
                         </div>
@@ -174,32 +173,45 @@
                             <h5 class="mb-0">Add Comments</h5>
                         </div> --}}
                         <div class="col-sm-12">
-                            <label for="courseTitle" class="h6 mb-8 fw-semibold font-heading">Add Comments<span class="text-13 text-gray-400 fw-medium">(Required)</span> </label>
-                            <div class="position-relative">
-                                <textarea type="text" class="text-counter placeholder-13 form-control py-11 pe-76" maxlength="1000" id="courseTitle" rows="10"> </textarea>
-                                {{--<div class="text-gray-400 position-absolute inset-inline-end-0 top-50 translate-middle-y me-16">
-                                    <span id="current">0</span>
-                                    <span id="maximum">/ 1000</span>
-                                </div>--}}
-                            </div>
+                            <form action="{{ route('reviewer.journals.approveJournalWithComment') }}" method="post">
+                                @csrf
+                                <label for="comment" class="h6 mb-8 fw-semibold font-heading">Add Comments<span
+                                        class="text-13 text-gray-400 fw-medium">(Required)</span> </label>
+                                <div class="position-relative">
+                                    <textarea name="comment" class="text-counter placeholder-13 form-control py-11 pe-76" maxlength="1000"
+                                        id="comment" rows="10"> </textarea>
+                                    <div
+                                        class="text-gray-400 position-absolute inset-inline-end-0 top-50 translate-middle-y me-16">
+                                        <span id="current">0</span>
+                                        <span id="maximum">/ 1000</span>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="journal_uuid" value="{{ $journal->uuid }}" />
+                                <input type="hidden" name="reviewer_uuid" value="{{ auth()->user()->uuid }}" />
+
+                                <button type="submit" class="btn btn-main rounded-pill py-11 w-100  mt-16">Save</button>
+                            </form>
+
                         </div>
                     </div>
                 </div>
-
             @endif
 
-            <!-- Community Groups card End -->
-            <div class="card mt-24">
-                <div class="card-body">
-                    {{-- <h4 class="mb-20">Action</h4> --}}
-                    <form method="post" action="{{ route('editor.journals.approveJournal') }}">
-                        @csrf
-                        <input type="hidden" name="journal_uuid" value="{{ $journal->uuid }}" />
-                        <button type="submit" class="btn btn-main rounded-pill py-11 w-100 mt-16">Approve Manuscript</button>
-                    </form>
+            @if (auth()->user()->hasRole('Editor'))
+                <!-- Community Groups card End -->
+                <div class="card mt-24">
+                    <div class="card-body">
+                        {{-- <h4 class="mb-20">Action</h4> --}}
+                        <form method="post" action="{{ route('editor.journals.approveJournal') }}">
+                            @csrf
+                            <input type="hidden" name="journal_uuid" value="{{ $journal->uuid }}" />
+                            <button type="submit" class="btn btn-main rounded-pill py-11 w-100  mt-16">Approve
+                                Journal</button>
+                        </form>
 
+                    </div>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 </x-layouts.editor_layout>

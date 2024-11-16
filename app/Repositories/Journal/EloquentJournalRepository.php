@@ -2,8 +2,10 @@
 namespace App\Repositories\Journal;
 use App\Repositories\Journal\JournalContract;
 use App\Models\Journal;
+use App\Models\JournalComment;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class EloquentJournalRepository implements JournalContract {
     public function create($request) {
@@ -55,7 +57,7 @@ class EloquentJournalRepository implements JournalContract {
 
     public function getPendingApprovedJournals()
     {
-        return Journal::where('approval_status', 'pending')->get();
+        return Journal::whereIn('approval_status', ['pending', 'approved_with_comment'])->get();
     }
 
     public function getJournalsInProgress() {
@@ -68,6 +70,14 @@ class EloquentJournalRepository implements JournalContract {
 
     public function getRejectedJournals(){
         return Journal::where('approval_status', 'declined')->get();
+    }
+
+    public function getJournalsForReviewer($user_id) {
+        $journals = Journal::whereHas('reviewers', function ($query) use ($user_id) {
+            $query->where('user_id', $user_id);
+        })->get();
+        // dd($journals);
+        return $journals;
     }
 
     /**
@@ -117,7 +127,6 @@ class EloquentJournalRepository implements JournalContract {
             $coverPath = $file->storeAs($path, $coverName, $disk);
             $journal->cover_image = $coverPath;
         }
-
 
         $journal->uuid = Str::uuid();
         $journal->approval_status = 'pending';
@@ -185,7 +194,7 @@ class EloquentJournalRepository implements JournalContract {
 
 
         $query->where('approval_status', 'approved');
-        $query->where('is_active', false);
+        $query->where('is_active', true);
         $query->where('is_draft', false);
         return $query->paginate(10);
     }
@@ -221,7 +230,56 @@ class EloquentJournalRepository implements JournalContract {
         return $journal;
     }
 
+    // Approve journal with comment
+    public function approveJournalWithComment($uuid, $request) {
+        // begin DB transaction
+        DB::beginTransaction();
 
+        try {
+            $journal = $this->findByUUID($uuid);
+            $journal->approval_status = 'approved_with_comment';
+            $approvedBy = json_decode($journal->approved_by, true) ?? [];
+            $approvedBy[] = [
+                'id' => auth()->user()->id,
+                'name' => auth()->user()->fullname
+            ];
+            $journal->approved_by = $approvedBy;
+            // $journal->approval_comment = $request->comment;
+            $journal->approved_by = json_encode($journal->approved_by);
+            $journal->save();
+
+            //save the comment
+            $comment = new JournalComment();
+            $comment->comment = $request->comment;
+            $comment->user_id = auth()->user()->id;
+            $comment->journal_id = $journal->id;
+            $comment->save();
+
+            // end DB transaction
+            DB::commit();
+
+            return $journal;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function getJournalsApprovedByUser($user_id) {
+        return Journal::where('approved_by', 'like', '%'.$user_id.'%')->get();
+    }
+
+    public function getJournalsAssignedToUser($user_id) {
+        return Journal::where('user_id', $user_id)->get();
+    }
+
+    public function declineJournal($uuid) {
+        $journal = $this->findByUUID($uuid);
+        $journal->approval_status = 'declined';
+        $journal->approved_by = ['id' => auth()->user()->id, 'name' => auth()->user()->fullname];
+        $journal->save();
+        return $journal;
+    }
 
 
 }

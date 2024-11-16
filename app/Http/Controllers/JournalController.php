@@ -357,6 +357,36 @@ class JournalController extends Controller
         return redirect()->back()->with($notification);
     }
 
+    public function approveJournalWithComment(Request $request)
+    {
+        // dd($request->all());
+        // validate request
+        $validator = Validator::make($request->all(), [
+            'comment' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $uuid = $request->journal_uuid;
+
+        $journal = $this->repo->approveJournalWithComment($uuid, $request);
+
+        if ($journal) {
+            $notification = array(
+                'message' => 'Journal Approved successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->back()->with($notification);
+        }
+        $notification = array(
+            'message' => 'Error Approving Journal',
+            'alert-type' => 'error'
+        );
+        return redirect()->back()->with($notification);
+    }
+
 
     public function approvedJournals()
     {
