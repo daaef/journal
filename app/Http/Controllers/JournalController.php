@@ -324,6 +324,16 @@ class JournalController extends Controller
         return view('dashboard.editor.journals.journalPreview', compact('journal', 'reviewers', 'assignedReviewers', 'comments'));
     }
 
+    public function reviewerPreviewJournal(string $uuid)
+    {
+        $journal = $this->repo->findByUuid($uuid);
+        $reviewers = $this->userRepo->getReviewers();
+        // dd($reviewers);
+        $assignedReviewers = $journal->reviewers()->with('reviewer')->get();
+        $comments = $journal->comments()->with('user')->get();
+        return view('dashboard.reviewer.journals.journalPreview', compact('journal', 'reviewers', 'assignedReviewers', 'comments'));
+    }
+
     public function SaveJournalReviewers(Request $request, string $uuid)
     {
 

@@ -1,11 +1,11 @@
 /* ===================== Dashboard Main wrapper css start ========================= */
 .dashboard-main-wrapper {
     margin-inline-start: 252px;
-    min-height: 100vh;
+    height: 100vh;
     display: flex;
     flex-wrap: wrap;
     flex-flow: column;
-    transition: .2s linear; 
+    transition: .2s linear;
     background-color: var(--main-50);
     @include lg-screen {
         margin-inline-start: 0px;
@@ -18,6 +18,8 @@
 .dashboard-body {
     padding-block-start: 24px;
     padding-block-end: 24px;
+    height: calc(100vh - 73px - 61px);
+    overflow-y: auto;
 }
 
 .top-navbar, .dashboard-body {
