@@ -258,7 +258,8 @@ class JournalController extends Controller
     {
 
         $journal = $this->repo->findBySlug($slug);
-        return view('view-abstract', compact('journal'));
+        $comments = $journal->comments()->with('user')->get();
+        return view('view-abstract', compact('journal','comments'));
     }
 
     /**

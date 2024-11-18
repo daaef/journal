@@ -115,12 +115,38 @@
                 </div>
             </div>
         </div>
-        <div class="border p-8 rounded-[8px]">
-            <h4 class="text-3xl text-primary-500 font-bold mb-4">
-                {{ $journal->title }}
-            </h4>
-            <hr class="mb-5">
-            {!! $journal->abstract !!}
+        <div class="grid gap-y-2">
+            @if($journal->approval_status !== 'approved')
+            <div class="border p-8 rounded-[8px]">
+                <h4 class="text-3xl text-secondary-800 font-bold mb-4">
+                    Comments
+                </h4>
+                <hr class="mb-5">
+
+                <ul class="list-none">
+                    @forelse ($comments as $comment)
+                        <li class="flex-align gap-6 text-gray-800 text-15 mb-12">
+                                <span class="flex-shrink-0 text-22 d-flex text-main-600"><i class="ph ph-notepad"></i>
+                                </span>
+                            {{ $comment->comment }}
+                        </li>
+                    @empty
+                        <li class="flex-align gap-6 text-gray-800 text-15 mb-12">
+                                <span class="flex-shrink-0 text-22 d-flex text-main-600"><i class="ph ph-pen"></i>
+                                </span>
+                            No comments yet
+                        </li>
+                    @endforelse
+                </ul>
+            </div>
+            @endif
+            <div class="border p-8 rounded-[8px]">
+                <h4 class="text-3xl text-primary-500 font-bold mb-4">
+                    {{ $journal->title }}
+                </h4>
+                <hr class="mb-5">
+                {!! $journal->abstract !!}
+            </div>
         </div>
     </div>
 </x-layouts.layout>

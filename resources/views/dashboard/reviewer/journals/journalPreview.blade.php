@@ -25,14 +25,14 @@
                             <div class=" share-social position-relative">
                                 <button type="button"
                                         class="share-social__button text-gray-200 text-26 d-flex hover-text-main-600"><i
-                                            class="ph ph-share-network"></i></button>
+                                        class="ph ph-share-network"></i></button>
                                 <div
-                                        class="share-social__icons bg-white box-shadow-2xl p-16 border border-gray-100 rounded-8 position-absolute inset-block-start-100 inset-inline-end-0">
+                                    class="share-social__icons bg-white box-shadow-2xl p-16 border border-gray-100 rounded-8 position-absolute inset-block-start-100 inset-inline-end-0">
                                     <ul class="flex-align gap-8">
                                         <li>
                                             <a href="https://www.facebook.com"
                                                class="flex-center w-36 h-36 border border-main-600 text-white rounded-circle text-xl bg-main-600 hover-bg-main-800 hover-border-main-800"><i
-                                                        class="ph ph-facebook-logo"></i></a>
+                                                    class="ph ph-facebook-logo"></i></a>
                                         </li>
                                         <li>
                                             <a href="https://www.google.com"
@@ -42,12 +42,12 @@
                                         <li>
                                             <a href="https://www.twitter.com"
                                                class="flex-center w-36 h-36 border border-main-600 text-white rounded-circle text-xl bg-main-600 hover-bg-main-800 hover-border-main-800"><i
-                                                        class="ph ph-linkedin-logo"></i></a>
+                                                    class="ph ph-linkedin-logo"></i></a>
                                         </li>
                                         <li>
                                             <a href="https://www.instagram.com"
                                                class="flex-center w-36 h-36 border border-main-600 text-white rounded-circle text-xl bg-main-600 hover-bg-main-800 hover-border-main-800"><i
-                                                        class="ph ph-instagram-logo"></i></a>
+                                                    class="ph ph-instagram-logo"></i></a>
                                         </li>
                                     </ul>
                                 </div>
@@ -115,17 +115,18 @@
                         <h5 class="mb-0">Add Comments</h5>
                     </div> --}}
                     <div class="col-sm-12 h-full">
-                        <form class="h-full" action="{{ route('reviewer.journals.approveJournalWithComment') }}" method="post">
+                        <form class="h-full" action="{{ route('reviewer.journals.approveJournalWithComment') }}"
+                              method="post">
                             @csrf
                             <label for="comment" class="h6 mb-8 fw-semibold font-heading">Add Comments<span
-                                        class="text-13 text-gray-400 fw-medium">(Required)</span> </label>
+                                    class="text-13 text-gray-400 fw-medium">(Required)</span> </label>
                             <div class="position-relative">
                                     <textarea name="comment"
                                               class="text-counter placeholder-13 form-control py-11 pe-76"
                                               maxlength="1500"
                                               id="comment" rows="30"> </textarea>
                                 <div
-                                        class="text-gray-400 position-absolute inset-inline-end-0 top-50 translate-middle-y me-16">
+                                    class="text-gray-400 position-absolute inset-inline-end-0 top-50 translate-middle-y me-16">
                                     <span id="current">0</span>
                                     <span id="maximum">/ 1500</span>
                                 </div>
