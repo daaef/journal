@@ -40,17 +40,17 @@
             </div>
             <!-- End Col -->
 
-            <div>
+           {{-- <div>
                 <h4 class="font-semibold text-gray-100">Resources</h4>
 
                 <div class="mt-3 grid space-y-3">
                     <p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="{{ route('about') }}">Editorial Board</a></p>
-                    {{--<p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="#">About us</a></p>
+                    --}}{{--<p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="#">About us</a></p>
                     <p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="#">Recent Publications</a></p>
                     <p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="#">Announcements</a></p>
-                    <p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="#">News</a></p>--}}
+                    <p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="#">News</a></p>--}}{{--
                 </div>
-            </div>
+            </div>--}}
         </div>
         <!-- End Grid -->
 
