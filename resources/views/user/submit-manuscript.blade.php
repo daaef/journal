@@ -29,38 +29,74 @@
                 <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
 
                     <div>
-                        <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Manuscript
-                            Title</label>
+                        <label for="author" class="block text-sm font-medium leading-6 text-gray-900">Name of authors
+                            (Seperate with commas)</label>
+                        <div class="mt-2">
+                            <input id="author" name="author" type="text"
+                                   value="{{ old('author') ?: auth()->user()->fullname }}" required
+                                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title of manuscript</label>
                         <div class="mt-2">
                             <input id="title" name="title" type="text" value="{{ old('title') }}" required
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
-                    <div>
-                        <label for="author" class="block text-sm font-medium leading-6 text-gray-900">Authors
-                            (Seperate with commas)</label>
+                    <div class="col-span-full">
+                        <label for="abstract" class="block text-sm font-medium leading-6 text-gray-900">Abstract</label>
                         <div class="mt-2">
-                            <input id="author" name="author" type="text"
-                                value="{{ old('author') ?: auth()->user()->fullname }}" required
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            <textarea id="abstract" name="abstract" rows="3" value="{{ old('abstract') }}"
+                                      class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                {{ old('abstract') }}
+                            </textarea>
                         </div>
                     </div>
 
                     <div>
                         <label for="institution"
-                            class="block text-sm font-medium leading-6 text-gray-900">Institution</label>
+                            class="block text-sm font-medium leading-6 text-gray-900">Institution/Affiliation</label>
                         <div class="mt-2">
                             <input id="institution" name="institution" type="text" value="{{ old('institution') }}"
                                 required
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
+
                     <div>
                         <label for="keywords" class="block text-sm font-medium leading-6 text-gray-900">Keywords</label>
                         <div class="mt-2">
                             <input id="keywords" name="meta_keywords" type="text" value="{{ old('keywords') }}"
                                 required
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        </div>
+                    </div>
+                    <div class="col-span-full">
+                        <label for="cover-photo"
+                               class="block text-sm font-medium leading-6 text-gray-900">Manuscript (Please attach manuscript: word doc and pdf)</label>
+                        <div
+                            class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                            <div class="text-center">
+                                <svg class="mx-auto h-12 w-12 text-gray-300" xmlns="http://www.w3.org/2000/svg"
+                                     width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round">
+                                    <path
+                                        d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20" />
+                                </svg>
+                                <div class="mt-4 flex text-sm leading-6 text-gray-600">
+                                    <label for="file-upload"
+                                           class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
+                                        <span>Upload Manuscript</span>
+                                        <input id="file-upload" name="manuscripts" type="file" class="sr-only">
+                                    </label>
+                                    <p class="pl-1">or drag and drop</p>
+                                </div>
+                                <span id="file-name"
+                                      class="text-sm font-medium hidden inline-block text-gray-100 py-2 px-4 bg-primary-600 rounded-md"></span>
+                                <p class="text-xs leading-5 text-gray-600">PDF up to 10MB</p>
+                            </div>
                         </div>
                     </div>
                     <div class="w-full">
@@ -119,42 +155,6 @@
                             </select>
                         </div>
                     </div> --}}
-                    <div class="col-span-full">
-                        <label for="abstract" class="block text-sm font-medium leading-6 text-gray-900">Abstract</label>
-                        <div class="mt-2">
-                            <textarea id="abstract" name="abstract" rows="3" value="{{ old('abstract') }}"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                {{ old('abstract') }}
-                            </textarea>
-                        </div>
-                    </div>
-                    <div class="col-span-full">
-                        <label for="cover-photo"
-                            class="block text-sm font-medium leading-6 text-gray-900">Manuscript</label>
-                        <div
-                            class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                            <div class="text-center">
-                                <svg class="mx-auto h-12 w-12 text-gray-300" xmlns="http://www.w3.org/2000/svg"
-                                    width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path
-                                        d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20" />
-                                </svg>
-                                <div class="mt-4 flex text-sm leading-6 text-gray-600">
-                                    <label for="file-upload"
-                                        class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
-                                        <span>Upload Manuscript</span>
-                                        <input id="file-upload" name="manuscripts" type="file" class="sr-only">
-                                    </label>
-                                    <p class="pl-1">or drag and drop</p>
-                                </div>
-                                <span id="file-name"
-                                    class="text-sm font-medium hidden inline-block text-gray-100 py-2 px-4 bg-primary-600 rounded-md"></span>
-                                <p class="text-xs leading-5 text-gray-600">PDF up to 10MB</p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div>
