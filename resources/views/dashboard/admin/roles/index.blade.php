@@ -23,7 +23,7 @@
                             <th class="h6 text-gray-300">Status</th>
                             <th class="h6 text-gray-300">Created At</th>
                             <th class="h6 text-gray-300">Updated At</th>
-                            {{-- <th class="h6 text-gray-300">Actions</th> --}}
+                            <th class="h6 text-gray-300">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -75,14 +75,14 @@
                                     </span>
                                 </td>
 
-                                {{-- <td>
+                                <td>
                                     <a href="{{ route('roles.edit', $role->uuid) }}"
                                         class="bg-main-50 text-main-600 py-2 px-14 rounded-pill hover-bg-main-600 hover-text-white">
                                         Edit</a>
                                     <a href="{{ route('roles.destroy', $role->uuid) }}"
                                         class="bg-danger-50 text-danger-600 py-2 px-14 rounded-pill hover-bg-danger-600 hover-text-white">
                                         Delete</a>
-                                </td> --}}
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

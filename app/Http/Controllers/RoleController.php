@@ -120,6 +120,10 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $notification = array(
+            'message' => "Role can't be deleted. It has users assigned to it",
+            'alert-type' => 'error'
+        );
+        return redirect()->back()->with($notification);
     }
 }
