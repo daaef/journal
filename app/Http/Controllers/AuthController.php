@@ -113,7 +113,7 @@ class AuthController extends Controller
             // $user->notify(new LoginNotification($user, $clientIP, $userAgent));
 
             //If user is an admin
-            if ($user->hasRole('Admin')) {
+            if ($user->hasRole('Admin') || $user->hasRole('Managing Director') || $user->hasRole('Associate Editor')) {
                 return redirect()->route('admin.dashboard');
             }
 
