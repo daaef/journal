@@ -27,7 +27,7 @@
                 <div class="mb-20">
                     <label for="name" class="h6 mb-8 fw-semibold">Name</label>
                     <input type="text" class="form-control fw-medium text-15" id="name" name="name"
-                        value="{{ $role->name }}" placeholder="Role Name">
+                        value="{{ $role->name }}" placeholder="Role Name" readonly>
                 </div>
 
                 <div class="mb-20">
