@@ -41,7 +41,7 @@ class UsersTableSeeder extends Seeder
         $editor->is_first_login = true;
         $editor->is_active = true;
         $editor->save();
-        $editor->assignRole('Editor');
+        $editor->assignRole('Editor in Chief');
 
         // Seed author user
         $author = new \App\Models\User();
@@ -59,19 +59,19 @@ class UsersTableSeeder extends Seeder
         $author->assignRole('Author');
 
         // Seed Publisher user
-        $publisher = new \App\Models\User();
-        $publisher->fullname = 'Publisher User';
-        $publisher->username = 'publisher';
-        $publisher->email = 'publisher@example.com';
-        $publisher->country = 'Nigeria';
-        $publisher->password = bcrypt('password');
-        $publisher->uuid = \Illuminate\Support\Str::uuid();
-        $publisher->avatar = 'https://via.placeholder.com/150';
-        $publisher->email_verified_at = now();
-        $publisher->is_first_login = true;
-        $publisher->is_active = true;
-        $publisher->save();
-        $publisher->assignRole('Publisher');
+        // $publisher = new \App\Models\User();
+        // $publisher->fullname = 'Publisher User';
+        // $publisher->username = 'publisher';
+        // $publisher->email = 'publisher@example.com';
+        // $publisher->country = 'Nigeria';
+        // $publisher->password = bcrypt('password');
+        // $publisher->uuid = \Illuminate\Support\Str::uuid();
+        // $publisher->avatar = 'https://via.placeholder.com/150';
+        // $publisher->email_verified_at = now();
+        // $publisher->is_first_login = true;
+        // $publisher->is_active = true;
+        // $publisher->save();
+        // $publisher->assignRole('Author');
 
         // Seed Reviewer user
         $publisher = new \App\Models\User();
@@ -86,7 +86,7 @@ class UsersTableSeeder extends Seeder
         $publisher->is_first_login = true;
         $publisher->is_active = true;
         $publisher->save();
-        $publisher->assignRole('Reviewer');
+        $publisher->assignRole('Associate Editor');
 
     }
 }

@@ -24,7 +24,7 @@ class ReviewersTableSeeder extends Seeder
         $publisher->is_first_login = true;
         $publisher->is_active = true;
         $publisher->save();
-        $publisher->assignRole('Reviewer');
+        $publisher->assignRole('Associate Editor');
 
         $publisher = new \App\Models\User();
         $publisher->fullname = 'Nani Reviewer';
@@ -38,7 +38,7 @@ class ReviewersTableSeeder extends Seeder
         $publisher->is_first_login = true;
         $publisher->is_active = true;
         $publisher->save();
-        $publisher->assignRole('Reviewer');
+        $publisher->assignRole('Associate Editor');
 
 
         $publisher = new \App\Models\User();
@@ -53,6 +53,6 @@ class ReviewersTableSeeder extends Seeder
         $publisher->is_first_login = true;
         $publisher->is_active = true;
         $publisher->save();
-        $publisher->assignRole('Reviewer');
+        $publisher->assignRole('Associate Editor');
     }
 }

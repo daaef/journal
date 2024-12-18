@@ -33,54 +33,52 @@ class RoleAndPermissionSeeder extends Seeder
 
 
         $adminRole = Role::create(['name' => 'Admin', 'is_active' => true, 'uuid' => Str::uuid()]);
-        $editorRole = Role::create(['name' => 'Editor', 'is_active' => true, 'uuid' => Str::uuid()]);
+        $editorRole = Role::create(['name' => 'Editor in Chief', 'is_active' => true, 'uuid' => Str::uuid()]);
         $authorRole = Role::create(['name' => 'Author', 'is_active' => true, 'uuid' => Str::uuid()]);
-        $contributorRole = Role::create(['name' => 'Contributor', 'is_active' => true, 'uuid' => Str::uuid()]);
-        $publisherRole = Role::create(['name' => 'Publisher', 'is_active' => true, 'uuid' => Str::uuid()]);
-        $reviewerRole = Role::create(['name' => 'Reviewer', 'is_active' => true, 'uuid' => Str::uuid()]);
+        // $contributorRole = Role::create(['name' => 'Contributor', 'is_active' => true, 'uuid' => Str::uuid()]);
+        // $publisherRole = Role::create(['name' => 'Publisher', 'is_active' => true, 'uuid' => Str::uuid()]);
+        $associateEditor = Role::create(['name' => 'Associate Editor', 'is_active' => true, 'uuid' => Str::uuid()]);
 
-        Role::create(['name' => 'Chief Editor', 'is_active' => true, 'uuid' => Str::uuid()]);
-        Role::create(['name' => 'Managing Editor', 'is_active' => true, 'uuid' => Str::uuid()]);
-        Role::create(['name' => 'Associate Editor', 'is_active' => true, 'uuid' => Str::uuid()]);
-        Role::create(['name' => 'Peer Reviewer', 'is_active' => true, 'uuid' => Str::uuid()]);
+        // Role::create(['name' => 'Editor in Chief', 'is_active' => true, 'uuid' => Str::uuid()]);
+        $managingEditor = Role::create(['name' => 'Managing Editor', 'is_active' => true, 'uuid' => Str::uuid()]);
+        // Role::create(['name' => 'Associate Editor', 'is_active' => true, 'uuid' => Str::uuid()]);
+        // Role::create(['name' => 'Peer Reviewer', 'is_active' => true, 'uuid' => Str::uuid()]);
 
-        $adminRole->givePermissionTo([
-            'create-users',
-            'edit-users',
-            'delete-users',
-            'create-publications',
-            'edit-publications',
-            'delete-publications',
-        ]);
+        // $adminRole->givePermissionTo([
+        //     'create-users',
+        //     'edit-users',
+        //     'delete-users',
+        //     'create-roles',
+        //     'edit-roles',
+        //     'delete-roles',
+        //     'create-permissions',
+        //     'edit-permissions',
+        //     'delete-permissions',
+        //     'assign-associate-editors'
+        // ]);
 
-        $editorRole->givePermissionTo([
-            'create-publications',
-            'edit-publications',
-            'delete-publications',
-        ]);
+        // $editorRole->givePermissionTo([
+        //     'assign-associate-editors',
+        //     'approve-journal',
+        //     'decline-journal',
+        // ]);
 
-        $authorRole->givePermissionTo([
-            'create-publications',
-            'edit-publications',
-            'delete-publications',
-        ]);
+        // $managingEditor->givePermissionTo([
+        //     'assign-associate-editors',
+        //     'approve-journal',
+        //     'decline-journal',
+        // ]);
 
-        $contributorRole->givePermissionTo([
-            'create-posts',
-            'edit-posts',
-            'delete-posts',
-        ]);
+        // $authorRole->givePermissionTo([
+        //     'create-journal',
+        //     'edit-journal',
+        //     'delete-journal',
+        // ]);
 
-        $publisherRole->givePermissionTo([
-            'create-posts',
-            'edit-posts',
-            'delete-posts',
-        ]);
-
-        $reviewerRole->givePermissionTo([
-            'create-posts',
-            'edit-posts',
-            'delete-posts',
-        ]);
+        // $associateEditor->givePermissionTo([
+        //     'approve-journal',
+        //     'decline-journal',
+        //     'review-journal',
+        // ]);
     }
 }

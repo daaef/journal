@@ -15,7 +15,7 @@ class PublisherMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!auth()->user()->hasRole('Publisher')){
+        if(!auth()->user()->hasRole('Author')){
             $notification = array(
                 'message' => 'You are not authorized to access this page',
                 'alert-type' => 'error'
