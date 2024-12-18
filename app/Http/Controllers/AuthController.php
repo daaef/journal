@@ -132,7 +132,7 @@ class AuthController extends Controller
             }
 
             //If user is a publisher
-            if ($user->hasRole('Publisher')) {
+            if ($user->hasRole('Author')) {
                 // Check if user has interest
                 if ($user->userInterests->isEmpty()) {
                     // dd('No interest');
