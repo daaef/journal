@@ -90,16 +90,16 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="mb-20 flex-between flex-wrap gap-8">
-                            <h5 class="mb-0">Add Reviewers</h5>
+                            <h5 class="mb-0">Add Associate Editors</h5>
                         </div>
                         <form action="{{ route('editor.journals.reviewers.save', $journal->uuid) }}" method="post">
                             @csrf
                             <div class="col">
-                                <label for="reviewer" class="h6 mb-8 fw-semibold font-heading">Select Reviewers
+                                <label for="reviewer" class="h6 mb-8 fw-semibold font-heading">Select Associate Editors
                                 </label>
                                 <div class="position-relative">
                                     <select id="reviewerSelect" class="form-select py-9 placeholder-13 text-15">
-                                        <option value="1" disabled selected>Select a reviewer</option>
+                                        <option value="1" disabled selected>Select an Associate Editor</option>
                                         @foreach ($reviewers as $reviewer)
                                             <option value="{{ $reviewer->uuid }}">{{ $reviewer->fullname }}</option>
                                         @endforeach
@@ -110,7 +110,7 @@
                             </div>
                             <div class="col">
                                 <button type="submit" class="btn btn-main rounded-pill py-11 w-100  mt-16">Save
-                                    Reviewer(s)</button>
+                                    Associate Editor(s)</button>
                             </div>
                         </form>
                     </div>
@@ -120,7 +120,7 @@
                 <div class="card {{ auth()->user()->hasRole('Reviewer') ? ' ' : 'mt-24' }}">
                     <div class="card-body">
                         <div class="mb-20 flex-between flex-wrap gap-8">
-                            <h5 class="mb-0">Reviewers</h5>
+                            <h5 class="mb-0">Associate Editors</h5>
                         </div>
                         <ul class="list-inside">
                             @forelse ($assignedReviewers as $assignedReviewer)
@@ -135,7 +135,7 @@
                                     <span class="flex-shrink-0 text-22 d-flex text-main-600"><i
                                             class="ph ph-eye-closed"></i>
                                     </span>
-                                    No reviewers assigned
+                                    No Associate Editors assigned
                                 </li>
                             @endforelse
                         </ul>

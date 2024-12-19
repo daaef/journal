@@ -19,8 +19,6 @@
                         href="{{ route('about') }}">Editorial Board</a>
                     <a class="hover:text-gray-400 focus:outline-none focus:text-gray-400 @if (Route::is('journals.index')) text-primary-500 font-bold @else text-gray-900 font-medium @endif"
                         href="{{ route('journals') }}">Journals</a>
-                    <a class="font-medium @if (Route::is('contact')) text-primary-500 font-bold @else text-gray-900 font-medium @endif hover:text-gray-400 focus:outline-none focus:text-gray-400 "
-                        href="{{ route('contact') }}">Contact Us</a>
                     {{-- @dd(Auth::check()) --}}
                     @auth()
                         <a class="font-bold lg:hidden text-gray-900 hover:text-gray-400 focus:outline-none focus:text-gray-400 "
@@ -104,7 +102,7 @@
                                 Dashboard
                             </a>
                         @endif
-                        @if (auth()->user()->hasRole('Reviewer'))
+                        @if (auth()->user()->hasRole('Associate Editor'))
                             <a class="@if (Route::is('dashboard')) text-primary-500 font-bold @else text-gray-800 font-medium @endif flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm  hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
                                 href="{{ route('reviewer.dashboard') }}">
                                 Dashboard

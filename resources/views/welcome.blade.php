@@ -201,7 +201,7 @@
             <div class="rounded-[15px] p-6 bg-secondary-900 flex flex-col items-center gap-6">
                 <div class="flex gap-4 items-center flex-col">
                     <img src="{{ loadAssetFile('images/metric.svg') }}" alt="Metric">
-                    <h4 class="font-bold text-xl text-white">Reviewers</h4>
+                    <h4 class="font-bold text-xl text-white">Associate Editors</h4>
                 </div>
                 <h2 class="text-5xl text-primary-500 font-bold">72</h2>
             </div>
