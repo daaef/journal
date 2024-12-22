@@ -134,7 +134,10 @@
                             <input type="hidden" name="journal_uuid" value="{{ $journal->uuid }}"/>
                             <input type="hidden" name="reviewer_uuid" value="{{ auth()->user()->uuid }}"/>
 
-                            <button type="submit" class="btn btn-main rounded-pill py-11 w-100  mt-16">Save</button>
+                            <div class="flex">
+                                <button type="submit" name="action" value="approve" class="btn btn-main rounded-pill py-11 w-100  mt-16">Approve</button>
+                                <button type="submit" name="action" value="decline" class="btn btn-danger rounded-pill py-11 w-100  mt-16 ml-4">Decline</button>
+                            </div>
                         </form>
                     </div>
                 </div>

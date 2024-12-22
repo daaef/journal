@@ -317,6 +317,7 @@ class JournalController extends Controller
 
     public function previewJournal(string $uuid)
     {
+        // return "dsdsds";
         $journal = $this->repo->findByUuid($uuid);
         $reviewers = $this->userRepo->getReviewers();
         // dd($reviewers);
@@ -379,6 +380,8 @@ class JournalController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
+
+        // return $request->all();
 
         $uuid = $request->journal_uuid;
 

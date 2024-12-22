@@ -16,7 +16,7 @@ class EditorMiddleware
     public function handle(Request $request, Closure $next): Response
     {
 
-        if (!auth()->user()->hasRole('Editor')) {
+        if (!auth()->user()->hasRole('Managing Editor')) {
             $notification = array(
                 'message' => 'You are not authorized to access this page',
                 'alert-type' => 'error'

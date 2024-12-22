@@ -1,8 +1,14 @@
 <?php
 namespace App\Repositories\Journal;
+
+use App\Jobs\SendReviewerInvitationJob;
+use App\Jobs\UserManuscriptJob;
+use App\Mail\SendReviewerInvitationNotification;
 use App\Repositories\Journal\JournalContract;
 use App\Models\Journal;
 use App\Models\JournalComment;
+use App\Models\Reviewer;
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -232,12 +238,18 @@ class EloquentJournalRepository implements JournalContract {
 
     // Approve journal with comment
     public function approveJournalWithComment($uuid, $request) {
+
         // begin DB transaction
         DB::beginTransaction();
 
         try {
+            $updateReviewer = Reviewer::where('user_id', auth()->user()->id)->first();
+            $updateReviewer->is_accepted = $request->action == "approve" ? 1:0;
+            $updateReviewer->comment = $request->comment;
+            $updateReviewer->save();
+
             $journal = $this->findByUUID($uuid);
-            $journal->approval_status = 'approved_with_comment';
+            // $journal->approval_status = 'approved_with_comment';
             $approvedBy = json_decode($journal->approved_by, true) ?? [];
             $approvedBy[] = [
                 'id' => auth()->user()->id,
@@ -254,6 +266,46 @@ class EloquentJournalRepository implements JournalContract {
             $comment->user_id = auth()->user()->id;
             $comment->journal_id = $journal->id;
             $comment->save();
+
+            $reviewers = Reviewer::where('journal_id', $journal->id)->pluck('user_id')->toArray();
+            $reviewersApproved = Reviewer::where(['journal_id' => $journal->id, 'is_accepted' => 1])->pluck('user_id')->toArray();
+            $reviewersResponded = Reviewer::where(['journal_id' => $journal->id])->whereNotNull('comment')->pluck('user_id')->toArray();
+
+            // if($request->action == "approve"){
+                $reviewersArray = $reviewersApproved;
+
+                if (!in_array(auth()->user()->id, $reviewersArray)) {
+                    if($request->action == "approve"){
+                        $reviewersArray[] = auth()->user()->id;
+                    }
+                }
+                $percent = (count($reviewersApproved)/$journal->reviewers_count)*100;
+
+                if (count($reviewers) == count($reviewersResponded)) {
+                    if ($percent > 50) {
+                        $journal->approval_status = 'approved';
+
+                        $details['user'] = User::find($journal->user_id);
+                        $details['journal'] = $journal;
+                        $details['messageBody'] = "Your manuscript with the title: ".$journal->title." has been approved for publication.";
+                        dispatch(new UserManuscriptJob($details));
+
+                    }else{
+                        $journal->approval_status = 'declined';
+
+                        $details['user'] = User::find($journal->user_id);
+                        $details['journal'] = $journal;
+                        $details['messageBody'] = "Your manuscript with the title: ".$journal->title." has been declined for publication.";
+                        dispatch(new UserManuscriptJob($details));
+                    }
+                }else{
+                    $journal->approval_status = 'in-progress';
+                }
+
+                $journal->reveiwers = $reviewersArray;
+                $journal->save();
+            // }
+
 
             // end DB transaction
             DB::commit();
