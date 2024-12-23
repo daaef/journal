@@ -2,7 +2,7 @@
 <footer class="mt-auto bg-primary-500 w-full">
     <div class="container py-10 px-4 sm:px-6 lg:px-8 lg:pt-20 mx-auto">
         <!-- Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
             <div class="col-span-full lg:col-span-1">
                 <a class="flex-none text-xl font-semibold text-white focus:outline-none focus:opacity-80" href="#" aria-label="Brand">
                     <img src="{{ loadAssetFile('/images/japr-logo.png') }}" alt="">

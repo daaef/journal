@@ -36,11 +36,11 @@
             </div>
         </div>
     </x-slot:breadcrumb>
-    <div class="grid grid-cols-[1fr_2.6fr] gap-[30px]">
-        <div>
-            <div class="flex gap-x-2 px-2.5 mb-4 items-center">
-                <img class="h-[25px]" src="{{ loadAssetFile('images/filter.png') }}" alt="Filter Image">
-                <span class="text-primary-500 font-bold">Filter Results</span>
+    <div class="grid lg:grid-cols-[300px_1fr] relative gap-[30px] overflow-x-hidden">
+        <div id="filter" class="lg:translate-x-0 translate-x-[-100%] lg:static absolute transition-all duration-300">
+            <div class="flex gap-x-2 px-2.5 mb-4 relative items-center">
+                <img class="h-[25px] cursor-pointer lg:static absolute right-0 lg:translate-x-0 translate-x-[100%] top-0" src="{{ loadAssetFile('images/filter.png') }}" alt="Filter Image">
+                <span id="filter-toggle" class="text-primary-500 font-bold">Filter Results</span>
             </div>
             <nav class="hs-accordion-group " data-hs-accordion-always-open>
                 <form action="{{ route('journals') }}" class="w-full flex space-y-2.5 flex-col flex-wrap"
@@ -406,7 +406,8 @@
                 </form>
             </nav>
         </div>
-        <div class="border pl-8 border-transparent border-l-secondary-900/50">
+        <div class="lg:border pl-8 border-transparent border-l-secondary-900/50">
+
             {{--<div class="flex justify-between mb-6">
                 <div class="grid gap-2">
                     <label for="">Sort by</label>
@@ -482,6 +483,7 @@
                 </div>
             </div>
             <div class="grid gap-4">
+
                 <x-journal :journals="$journals" />
             </div>
             <div class="flex justify-between mt-6">

@@ -1,11 +1,11 @@
 @forelse ($journals->take($limit ?? 1000) as $journal)
     <div class="journal w-full">
-        <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-[8px] p-4 md:p-5">
+        <div class="grid bg-white border border-gray-200 shadow-sm rounded-[8px] p-4 md:p-5">
             <h3 class="font-semibold text-lg mb-2">{{ $journal->title }}</h3>
             <hr class="border-[#762A1E] mb-2">
-            <div class="grid grid-cols-[1fr_2px_1fr]">
+            <div class="grid lg:grid-cols-[1fr_2px_1fr]">
                 <div class="py-3 space-y-3]">
-                    
+
                     <h5 class="flex w-full justify-between">
                         <span class="text-secondary-900 w-[45%]">Author(s):</span>
                         <span class="w-[50%]">{{ $journal->author }}</span>
@@ -23,19 +23,19 @@
                         <span class="w-[50%]">{{ $journal->journal_format }}</span>
                     </h5>
                     <h5 class="flex w-full justify-between">
-                        <span class="text-secondary-900 w-[45%]">Published by:</span>
-                        <span class="w-[50%]">{{ $journal->created_by ?: 'Admin' }}</span>
+                        <span class="text-secondary-900 w-[45%]">Country:</span>
+                        <span class="w-[50%]">{{ $journal->country }}</span>
                     </h5>
                 </div>
-                <div class="w-[2px] h-full bg-secondary-900"></div>
-                <div class="py-3 space-y-3] w-full pl-5">
+                <div class="lg:w-[2px] lg:h-full w-full h-[2px] bg-secondary-900"></div>
+                <div class="py-3 space-y-3] w-full lg:pl-5">
                     <h5 class="flex w-full justify-between">
                         <span class="text-secondary-900 w-[45%]">Last Updated:</span>
                         <span class="w-[50%]">{{ $journal->updated_at->format('d F Y') }}</span>
                     </h5>
                     <h5 class="flex w-full justify-between">
-                        <span class="text-secondary-900 w-[45%]">License:</span>
-                        <span class="w-[50%]">CC BY-NC-ND</span>
+                        <span class="text-secondary-900 w-[45%]">Institution:</span>
+                        <span class="w-[50%]">{{ $journal->institution }}</span>
                     </h5>
                     <h5 class="flex w-full justify-between">
                         <span class="text-secondary-900 w-[45%]">Available in:</span>
@@ -46,7 +46,7 @@
                     </h5>
                 </div>
             </div>
-            <div class="flex justify-between mt-4">
+            <div class="lg:flex grid gap-4 justify-between mt-4">
                 <div class="flex gap-x-3">
                     <a href="{{ route('journals.view', $journal->slug) }}"
                         class="text-gray-100 bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600">View</a>

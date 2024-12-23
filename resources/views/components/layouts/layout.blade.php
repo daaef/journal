@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/pagedone@1.2.2/src/css/pagedone.css " rel="stylesheet"/>
+{{--    <link href="https://cdn.jsdelivr.net/npm/pagedone@1.2.2/src/css/pagedone.css " rel="stylesheet"/>--}}
     @vite(['resources/js/app.js', 'resources/sass/style.scss'])
     <style>
         .swiper-wrapper {
@@ -182,7 +182,7 @@
     @endif
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/pagedone@1.1.2/src/js/pagedone.js"></script>
+{{--<script src="https://cdn.jsdelivr.net/npm/pagedone@1.1.2/src/js/pagedone.js"><//script>--}}
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 <script>
@@ -203,6 +203,16 @@
             prevEl: ".swiper-button-prev",
         },
     });
+</script>
+<script>
+    const catFilter = document.querySelector('#filter')
+    const filterToggle = document.querySelector('#filter-toggle')
+
+    filterToggle.addEventListener('click', ()=> {
+        console.log('toggling')
+        console.log('catFilter', catFilter)
+        catFilter.classList.toggle('translate-x-[-100%]')
+    })
 </script>
 </body>
 </html>
