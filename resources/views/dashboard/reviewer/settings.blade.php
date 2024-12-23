@@ -81,7 +81,7 @@
                                 <span class="text-13 text-gray-500 fw-medium">Author(s) : {{ $journal->author }}</span>
                             </div>
                         </div>
-                        <a href="{{ route('reviewer.journals.review', [$journal->uuid, $journal->slug]) }}" class="text-gray-900 hover-text-main-600"><i class="ph ph-caret-right"></i></a>
+                        <a href="{{ route('reviewer.journals.preview', [$journal->uuid, $journal->slug]) }}" class="text-gray-900 hover-text-main-600"><i class="ph ph-caret-right"></i></a>
                     </div>
                     @empty
                     <p class="mt-2 text-gray-500 dark:text-neutral-400">No assigned journals at the moment</p>

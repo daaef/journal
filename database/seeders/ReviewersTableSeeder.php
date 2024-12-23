@@ -13,8 +13,8 @@ class ReviewersTableSeeder extends Seeder
     public function run(): void
     {
         $publisher = new \App\Models\User();
-        $publisher->fullname = 'Afe Reviewer';
-        $publisher->username = 'afereviewer';
+        $publisher->fullname = 'Afe Editor';
+        $publisher->username = 'afe_editor';
         $publisher->email = 'afe@example.com';
         $publisher->country = 'Nigeria';
         $publisher->password = bcrypt('password');
@@ -27,7 +27,7 @@ class ReviewersTableSeeder extends Seeder
         $publisher->assignRole('Associate Editor');
 
         $publisher = new \App\Models\User();
-        $publisher->fullname = 'Nani Reviewer';
+        $publisher->fullname = 'Nani Editor';
         $publisher->username = 'nani';
         $publisher->email = 'nani@example.com';
         $publisher->country = 'Nigeria';
@@ -42,9 +42,9 @@ class ReviewersTableSeeder extends Seeder
 
 
         $publisher = new \App\Models\User();
-        $publisher->fullname = 'John Reviewer';
-        $publisher->username = 'john';
-        $publisher->email = 'john@example.com';
+        $publisher->fullname = 'Managing Editor';
+        $publisher->username = 'managing_editor';
+        $publisher->email = 'managing@example.com';
         $publisher->country = 'Nigeria';
         $publisher->password = bcrypt('password');
         $publisher->uuid = \Illuminate\Support\Str::uuid();

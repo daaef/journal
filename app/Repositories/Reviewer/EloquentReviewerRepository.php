@@ -17,7 +17,6 @@ class EloquentReviewerRepository implements ReviewerContract {
     }
 
     public function SaveJournalReviewers($request, $uuid){
-
         $reviewers = $request->reviewers;
         $journal = $this->journalRepository->findByUUID($uuid);
         // Get users by uuid for the requesr array
@@ -29,6 +28,7 @@ class EloquentReviewerRepository implements ReviewerContract {
             // check if the user is already a reviewer
             $reviewer = Reviewer::where('journal_id', $journal->id)->where('user_id', $user->id)->first();
 
+//            dd($reviewer);
             // create a new reviewer if the user is not a reviewer
             if(!$reviewer){
                 $reviewer = new Reviewer();
@@ -40,7 +40,7 @@ class EloquentReviewerRepository implements ReviewerContract {
                 // Send invitation email to the reviewer
                 $details['user'] = $user;
                 $details['journal'] = $journal;
-                dispatch(new SendReviewerInvitationNotification($user, $journal));
+//                dispatch(new SendReviewerInvitationNotification($user, $journal));
             }
         }
 

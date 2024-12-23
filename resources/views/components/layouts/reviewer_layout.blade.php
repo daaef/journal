@@ -71,8 +71,17 @@
                                     Pending </a>
                             </li>
                             <li class="sidebar-submenu__item">
+                                <a href="{{ route('reviewer.journals.inProgress') }}" class="sidebar-submenu__link">
+                                    In Progress </a>
+                            </li>
+                            <li class="sidebar-submenu__item">
                                 <a href="{{ route('reviewer.journals.approved') }}" class="sidebar-submenu__link">
-                                    Approved </a>
+                                    Approved
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu__item">
+                                <a href="{{ route('reviewer.journals.rejected') }}" class="sidebar-submenu__link">
+                                    Declined </a>
                             </li>
                         </ul>
                         <!-- Submenu End -->

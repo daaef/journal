@@ -1,4 +1,4 @@
-<x-layouts.reviewer_layout>
+<x-layouts.editor_layout>
     <x-slot name="title">
         Approved Journals
     </x-slot>
@@ -8,7 +8,7 @@
             <div class="card mt-24 overflow-hidden">
                 <div class="card-header">
                     <div class="mb-0 flex-between flex-wrap gap-8">
-                        <h4 class="mb-0">All Approved Journals</h4>
+                        <h4 class="mb-0">All In Progress Journals</h4>
                         <a href=""
                             class="text-13 fw-medium text-main-600 hover-text-decoration-underline">See All</a>
                     </div>
@@ -52,11 +52,9 @@
                                     </td>
                                     <td>
                                         <div class="flex-align justify-content-center gap-16">
-                                            <span
-                                                class="text-13 py-2 px-8 bg-green-50 text-success-600 d-inline-flex align-items-center gap-8 rounded-pill">
-                                                <span
-                                                    class="w-6 h-6 bg-green-600 rounded-circle flex-shrink-0"></span>
-                                                Approved
+                                            <span class="text-13 py-2 px-8 bg-green-50 text-success-600 d-inline-flex align-items-center gap-8 rounded-pill">
+                                                <span class="w-6 h-6 bg-green-600 rounded-circle flex-shrink-0"></span>
+                                                In Progress
                                             </span>
                                             <a href="{{ route('editor.journals.preview', [$journal->uuid, $journal->slug]) }}"
                                                 class="text-gray-900 hover-text-main-600 text-md d-flex">
@@ -67,8 +65,9 @@
                             @empty
                                 <tr>
                                     <td colspan="3">
-                                        <p class="mt-2 text-gray-500 dark:text-neutral-400">No published journals at the
-                                            moment</p>
+                                        <p class="mt-2 text-gray-500 dark:text-neutral-400">
+                                            No in progress journals at the moment
+                                        </p>
                                     </td>
                                 </tr>
                             @endforelse
@@ -80,4 +79,4 @@
 
         </div>
     </div>
-</x-layouts.reviewer_layout>
+</x-layouts.editor_layout>

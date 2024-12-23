@@ -16,13 +16,12 @@ class EditorMiddleware
     public function handle(Request $request, Closure $next): Response
     {
 
-        if (!auth()->user()->hasRole('Managing Editor')) {
+        if (!auth()->user()->hasAnyRole(['Managing Editor', 'Editor in Chief'])) {
             $notification = array(
                 'message' => 'You are not authorized to access this page',
                 'alert-type' => 'error'
             );
-            return redirect()->back()->with($notification);
-
+            return redirect()->route('home')->with($notification);
         }
         return $next($request);
     }

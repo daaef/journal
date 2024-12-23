@@ -58,7 +58,7 @@
                                                     class="w-6 h-6 bg-green-600 rounded-circle flex-shrink-0"></span>
                                                 Approved
                                             </span>
-                                            <a href="{{ route('editor.journals.preview', [$journal->uuid, $journal->slug]) }}"
+                                            <a href="{{ route('reviewer.journals.preview', [$journal->uuid, $journal->slug]) }}"
                                                 class="text-gray-900 hover-text-main-600 text-md d-flex">
                                                 <i class="ph ph-caret-right"></i></a>
                                         </div>

@@ -119,23 +119,17 @@ class AuthController extends Controller
 
 
             //If user is an admin
-            if ($user->hasRole('Admin') || $user->hasRole('Managing Director')) {
+            if ($user->hasRole('Admin')) {
                 return redirect()->route('admin.dashboard');
             }
 
             //If user is an editor
-            if ($user->hasRole('Managing Editor')) {
+            if ($user->hasRole('Managing Editor') || $user->hasRole('Editor in Chief')) {
                 // return $roles;
                 return redirect()->route('editor.dashboard');
             }
 
-            //If user is an author
-            if ($user->hasRole('Author')) {
-                return redirect()->route('dashboard');
-            }
-
-            if ($user->hasRole('Associate Editor')) {
-
+            if ($user->hasRole('Associate Editor') || $user->hasRole('Desk Editor')) {
                 return redirect()->route('reviewer.dashboard');
             }
 
