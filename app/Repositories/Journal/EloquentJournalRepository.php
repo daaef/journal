@@ -214,6 +214,14 @@ class EloquentJournalRepository implements JournalContract {
         return $journal;
     }
 
+    public function getPendingApprovedJournalsForReviewer($reviewerId)
+    {
+        return Journal::whereHas('reviewers', function ($query) use ($reviewerId) {
+            $query->where('user_id', $reviewerId)
+                ->where('is_accepted', 0);
+        })->where('approval_status', 'pending')->get();
+    }
+
     public function dislikeJournal($request) {
         $journal = $this->findByUUID($request->uuid);
         $journal->dislikes += 1;

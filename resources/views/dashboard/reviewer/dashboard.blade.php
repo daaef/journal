@@ -71,22 +71,27 @@
                     <div class="mb-20 flex-between flex-wrap gap-8">
                         <h4 class="mb-0">Journals Pending Reviews</h4>
                     </div>
-
-                    @forelse ($journals as $journal)
-                    <div class="p-xl-4 py-16 px-12 flex-between gap-8 rounded-8 border border-gray-100 hover-border-gray-200 transition-1 mb-16">
-                        <div class="flex-align flex-wrap gap-8">
-                            <span class="text-main-600 bg-main-50 w-44 h-44 rounded-circle flex-center text-2xl flex-shrink-0"><i class="ph-fill ph-graduation-cap"></i></span>
-                            <div>
-                                <h6 class="mb-0">{{ $journal->title }}</h6>
-                                <span class="text-13 text-gray-500 fw-medium">Author(s) : {{ $journal->author }}</span>
+                    @if($journals->count() > 0)
+                        @forelse ($journals as $journal)
+                            <div
+                                class="p-xl-4 py-16 px-12 flex-between gap-8 rounded-8 border border-gray-100 hover-border-gray-200 transition-1 mb-16">
+                                <div class="flex-align flex-wrap gap-8">
+                                    <span
+                                        class="text-main-600 bg-main-50 w-44 h-44 rounded-circle flex-center text-2xl flex-shrink-0"><i
+                                            class="ph-fill ph-graduation-cap"></i></span>
+                                    <div>
+                                        <h6 class="mb-0">{{ $journal->title }}</h6>
+                                        <span
+                                            class="text-13 text-gray-500 fw-medium">Author(s) : {{ $journal->author }}</span>
+                                    </div>
+                                </div>
+                                <a href="{{ route('reviewer.journals.preview', [$journal->uuid, $journal->slug]) }}"
+                                   class="text-gray-900 hover-text-main-600"><i class="ph ph-caret-right"></i></a>
                             </div>
-                        </div>
-                        <a href="{{ route('reviewer.journals.preview', [$journal->uuid, $journal->slug]) }}" class="text-gray-900 hover-text-main-600"><i class="ph ph-caret-right"></i></a>
-                    </div>
-                    @empty
-                    <p class="mt-2 text-gray-500 dark:text-neutral-400">No assigned journals at the moment</p>
-                    @endforelse
-
+                        @empty
+                            <p class="mt-2 text-gray-500 dark:text-neutral-400">No assigned journals at the moment</p>
+                        @endforelse
+                    @endif
                 </div>
             </div>
 
