@@ -9,19 +9,21 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendReviewerInvitationNotification extends Mailable
+class UserManuscriptNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $user;
     public $journal;
+    public $messageBody;
     /**
      * Create a new message instance.
      */
-    public function __construct($user, $journal)
+    public function __construct($user, $journal, $messageBody)
     {
         $this->user = $user;
         $this->journal = $journal;
+        $this->messageBody = $messageBody;
     }
 
     /**
@@ -33,6 +35,8 @@ class SendReviewerInvitationNotification extends Mailable
     {
         $user = $this->user;
         $journal = $this->journal;
-        return $this->view('emails.invite_reviewer', compact('user', 'journal'));
+        $messageBody = $this->messageBody;
+        return $this->view('emails.user_manuscript', compact('user', 'journal', 'messageBody'));
     }
+
 }

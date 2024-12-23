@@ -35,12 +35,20 @@ class EloquentReviewerRepository implements ReviewerContract {
                 $reviewer->fullname = $user->fullname;
                 $reviewer->journal_id = $journal->id;
                 $reviewer->user_id = $user->id;
-                $reviewer->save();
-            }
+                $reviewer->save();//reviewers_count
 
-            // Send invitation email to the reviewer
-            // Mail::to($user->email)->send(new SendReviewerInvitationNotification($journal, $user));
+                // Send invitation email to the reviewer
+                $details['user'] = $user;
+                $details['journal'] = $journal;
+                dispatch(new SendReviewerInvitationNotification($user, $journal));
+            }
         }
+
+        // Update the reviewers count
+        //get all reviewers for the journal
+        $reviewers = Reviewer::where('journal_id', $journal->id)->get();
+        $journal->reviewers_count = count($reviewers);
+        $journal->save();
 
         return $journal;
     }

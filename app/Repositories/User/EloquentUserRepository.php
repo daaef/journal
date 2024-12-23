@@ -116,7 +116,7 @@ class EloquentUserRepository implements UserContract {
     public function getReviewers()
     {
         return User::whereHas('roles', function ($query) {
-            $query->where('name', 'Reviewer');
+            $query->where('name', 'Associate Editor');
         })->get();
     }
 }

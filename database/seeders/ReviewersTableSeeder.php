@@ -53,6 +53,6 @@ class ReviewersTableSeeder extends Seeder
         $publisher->is_first_login = true;
         $publisher->is_active = true;
         $publisher->save();
-        $publisher->assignRole('Associate Editor');
+        $publisher->assignRole('Managing Editor');
     }
 }

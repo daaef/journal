@@ -104,8 +104,6 @@
                 <button type="button" class="toggle-btn d-xl-none d-flex text-26 text-gray-500"><i
                         class="ph ph-list"></i></button>
                 <!-- Toggle Button End -->
-
-
             </div>
 
             <div class="flex-align gap-16">

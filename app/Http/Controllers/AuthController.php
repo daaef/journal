@@ -44,6 +44,8 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
+
+
         if ($validator->fails()) {
 
             $notification = array(
@@ -60,6 +62,7 @@ class AuthController extends Controller
             'email' => ['required'],
             'password' => ['required'],
         ]);
+
 
         // Auth::attempt($credentials);
         if (Auth::attempt($credentials)) {
@@ -101,8 +104,6 @@ class AuthController extends Controller
                 return back()->with($notification)->withInput();
             }
 
-
-
             $user->last_login_at = now();
             $user->save();
 
@@ -112,13 +113,19 @@ class AuthController extends Controller
             // dd($userAgent);
             // $user->notify(new LoginNotification($user, $clientIP, $userAgent));
 
+            //get all user roles
+            $roles = $user->getRoleNames();
+
+
+
             //If user is an admin
-            if ($user->hasRole('Admin') || $user->hasRole('Managing Director') || $user->hasRole('Associate Editor')) {
+            if ($user->hasRole('Admin') || $user->hasRole('Managing Director')) {
                 return redirect()->route('admin.dashboard');
             }
 
             //If user is an editor
-            if ($user->hasRole('Editor')) {
+            if ($user->hasRole('Managing Editor')) {
+                // return $roles;
                 return redirect()->route('editor.dashboard');
             }
 
@@ -127,7 +134,8 @@ class AuthController extends Controller
                 return redirect()->route('dashboard');
             }
 
-            if ($user->hasRole('Reviewer')) {
+            if ($user->hasRole('Associate Editor')) {
+
                 return redirect()->route('reviewer.dashboard');
             }
 
