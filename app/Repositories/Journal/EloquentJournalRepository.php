@@ -246,6 +246,24 @@ class EloquentJournalRepository implements JournalContract {
         return $journal;
     }
 
+    /**
+     * @description Notify authors of their journal status changes or updates.
+     * @param $journal
+     * @return array $mailData
+     * @return void
+    */
+    protected function notifyAuthor($journal, array $maildata)
+    {
+        $author = User::findById($journal->author);
+
+        if ($author && $author->email)
+        {
+            if (isset($mailData['messageBody'])) {
+                Mail::to($author->email)->send(new JournalStatusChangeNotificationMail($journal, $author, $mailData['messageBody']));
+            }
+        }
+    }
+
     // Approve journal with comment
    public function approveJournalWithComment($uuid, $request) {
     // begin DB transaction
@@ -275,7 +293,7 @@ class EloquentJournalRepository implements JournalContract {
         $reviewers = Reviewer::where('journal_id', $journal->id)->pluck('user_id')->toArray();
         $reviewersApproved = Reviewer::where(['journal_id' => $journal->id, 'is_accepted' => 1])->pluck('user_id')->toArray();
         $reviewersResponded = Reviewer::where(['journal_id' => $journal->id])->whereNotNull('comment')->pluck('user_id')->toArray();
-        $messageBody = '';
+        $messageBody = ''; // TODO: Add variable for journal authors data to send them emails of statuses. For dynamic email sending.
         if ($journal->reviewers_count > 0) {
             $percent = (count($reviewersApproved) / $journal->reviewers_count) * 100;
 
@@ -283,17 +301,21 @@ class EloquentJournalRepository implements JournalContract {
                 if ($percent > 50) {
                     $journal->approval_status = 'approved';
                     $messageBody = "Your manuscript with the title: " . $journal->title . " has been approved for publication.";
+                    $this->notifyAuthor($journal, ['messageBody' => $messageBody]);
                 } else {
                     $journal->approval_status = 'declined';
                     $messageBody = "Your manuscript with the title: " . $journal->title . " has been declined for publication.";
+                    $this->notifyAuthor($journal, ['messageBody' => $messageBody]);
                 }
             } else {
                 $journal->approval_status = 'in-progress';
                 $messageBody = "Your manuscript with the title: " . $journal->title . " is still in progress.";
+                $this->notifyAuthor($journal, ['messageBody' => $messageBody]);
             }
         } else {
             $journal->approval_status = 'in-progress';
             $messageBody = "Your manuscript with the title: " . $journal->title . " is still in progress.";
+            $this->notifyAuthor($journal, ['messageBody' => $messageBody]);
         }
 
         $journal->reviewers = $reviewers;
@@ -302,7 +324,7 @@ class EloquentJournalRepository implements JournalContract {
         DB::commit();
 //        dd($messageBody);
         // Send email notifications
-        $roles = ['Author', 'Admin', 'Editor in Chief', 'Managing Editor', 'Desk Editor'];
+        $roles = ['Admin', 'Editor in Chief', 'Managing Editor', 'Desk Editor'];
         $users = User::role($roles)->get();
         foreach ($users as $user) {
             Mail::to($user->email)->send(new JournalStatusChangeNotificationMail( $journal, $user, $messageBody));
