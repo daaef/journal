@@ -50,13 +50,24 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-20">
+                            <label class="h6 mb-8 fw-semibold" for="password">Password</label>
+                            <input type="password" name="password" id="password" class="form-control fw-medium text-15" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-20">
+                            <label class="h6 mb-8 fw-semibold" for="password_confirmation">Confirm Password</label>
+                            <input type="password" name="confirm_password" id="password_confirmation" class="form-control fw-medium text-15" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-20">
                             <label for="country" class="h6 mb-8 fw-semibold">Country</label>
                             <select name="country" id="country" class="form-select py-9 placeholder-13 text-15">
                                 <option value="">Select a Country</option>
                                 <option value="Nigeria">Nigeria</option>
                                 <option value="Ghana">Ghana</option>
                             </select>
-
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -84,14 +95,11 @@
                         </select>
                     </div>
                 </div>
-
-
-            <div class="flex-align justify-content-end gap-8">
-                <a href="{{ url()->previous() }}" class="btn btn-outline-main rounded-pill py-9">Back</a>
-                <button type="submit" class="btn btn-main rounded-pill py-9">Continue</button>
-
-            </div>
-        </form>
+                <div class="flex-align justify-content-end gap-8">
+                    <a href="{{ url()->previous() }}" class="btn btn-outline-main rounded-pill py-9">Back</a>
+                    <button type="submit" class="btn btn-main rounded-pill py-9">Continue</button>
+                </div>
+            </form>
         </div>
     </div>
 </x-layouts.admin_layout>

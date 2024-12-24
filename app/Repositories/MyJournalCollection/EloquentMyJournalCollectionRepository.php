@@ -18,9 +18,8 @@ class EloquentMyJournalCollectionRepository implements MyJournalCollectionContra
         return $myJournalCollection;
     }
 
-    // Check of user has added journal to his collection
+    // Check if user has added journal to his collection
     public function checkJournalInMyCollection($request) {
-        $myJournalCollection = MyJournalCollection::where('journal_id', $request->journal_id)->where('user_id', $request->user_id)->first();
-        return $myJournalCollection;
+        return MyJournalCollection::where('journal_id', $request->journal_id)->where('user_id', $request->user_id)->first();
     }
 }

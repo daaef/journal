@@ -56,7 +56,9 @@ class UserController extends Controller
             'confirm_password' => 'required|same:password',
         ]);
 
+
         if ($validator->fails()) {
+            dd($validator->errors());
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
