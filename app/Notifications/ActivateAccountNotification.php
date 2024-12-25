@@ -10,13 +10,15 @@ use Illuminate\Notifications\Notification;
 class ActivateAccountNotification extends Notification
 {
     use Queueable;
+    protected $user;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct($user)
     {
-        //
+        //Set user information
+        $this->user = $user;
     }
 
     /**
