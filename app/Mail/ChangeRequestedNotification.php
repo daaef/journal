@@ -21,7 +21,7 @@ class ChangeRequested extends Mailable
         $this->messageBody = $messageBody;
     }
 
-    public function build(): static
+    public function build()
     {
         return $this->subject('Change Request for Journal')
             ->view('emails.change_requested');

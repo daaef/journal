@@ -38,6 +38,7 @@ class Journal extends Model
         'approval_comments',
         'reveiwers',
         'is_draft',
+        'change_requests',
         'accept',
         'agree'
         // 'dislikes',
@@ -101,6 +102,7 @@ class Journal extends Model
             'approval_comments' => 'json',
             'license' => 'json',
             'reveiwers' => 'json',
+            'change_requests' => 'json',
             // 'author' => 'json',
         ];
     }

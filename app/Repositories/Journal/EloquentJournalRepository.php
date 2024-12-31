@@ -340,7 +340,7 @@ class EloquentJournalRepository implements JournalContract {
     /**
      * Handle author update and compare changes.
      */
-    public function authorUpdate(int $journalId, array $updatedFields, $authorId): Journal
+    public function authorUpdate($journalId, array $updatedFields, $authorId): Journal
     {
         return DB::transaction(function () use ($journalId, $updatedFields, $authorId) {
             $journal = Journal::findOrFail($journalId);
