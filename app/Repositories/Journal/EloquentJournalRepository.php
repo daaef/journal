@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Stmt\TryCatch;
 
 class EloquentJournalRepository implements JournalContract {
     public function create($request) {
@@ -262,6 +263,114 @@ class EloquentJournalRepository implements JournalContract {
                 Mail::to($author->email)->send(new JournalStatusChangeNotificationMail($journal, $author, $mailData['messageBody']));
             }
         }
+    }
+
+        /**
+     * Notify author and editors of change request.
+     */
+    private function notifyChangeRequested(Journal $journal, int $editorId, array $changes, array $maildata)
+    {
+        // Notify the author
+        $author = User::find($journal->user_id);
+        // TODO: Implement template
+        // Mail::to($author->email)->send(new ChangeRequested($journal, $changes));
+
+        // Notify all attached editors
+        $editors = User::whereIn('id', collect($journal->editors)->pluck('editor_id'))->get();
+        foreach ($editors as $editor) {
+            if ($editor->id !== $editorId) {
+                // TODO: Implement template
+                // Mail::to($editor->email)->send(new EditorNotification($journal, $changes));
+            }
+        }
+    }
+
+        /**
+     * Notify editor when author updates changes.
+     */
+    private function notifyEditorOnUpdate(Journal $journal, $updatedChanges, array $maildata)
+    {
+        $editorsToNotify = collect($updatedChanges)->filter(fn($change) => $change['status'] === 'resolved')
+            ->pluck('editor_id')
+            ->unique();
+
+        foreach ($editorsToNotify as $editorId) {
+            $editor = User::find($editorId);
+            if ($editor) {
+                // TODO: Implement template
+                // Mail::to($editor->email)->send(new ChangeResolved($journal, $updatedChanges));
+            }
+        }
+    }
+
+    /**
+     * Request changes to a journal.
+     */
+    public function requestChange($journal_id, array $changes, $editor_id): Journal
+    {
+        return DB::transaction(function () use ($journal_id, $changes, $editor_id) {
+            $journal = Journal::findOrFail($journal_id);
+
+            $existingChanges = $journal->change_requests ?? [];
+            foreach ($changes as $change) {
+                $existingChanges[] = [
+                    'field' => $change['field'],
+                    'current_value' => $journal->{$change['field']},
+                    'suggested_change' => $change['suggested_change'],
+                    'comment' => $change['comment'] ?? null,
+                    'editor_id' => $editor_id,
+                    'status' => 'pending',
+                    'timestamp' => now()->toISOString(),
+                ];
+            }
+
+            // Update journal status
+            $journal->update([
+                'approval_status' => 'changes_requested',
+                'change_requests' => $existingChanges,
+            ]);
+
+            // TODO: Send notifications to author and other editors
+            // $this->notifyChangeRequested($journal, $editor_id, $existingChanges);
+
+            return $journal;
+        });
+    }
+
+    /**
+     * Handle author update and compare changes.
+     */
+    public function authorUpdate(int $journalId, array $updatedFields, $authorId): Journal
+    {
+        return DB::transaction(function () use ($journalId, $updatedFields, $authorId) {
+            $journal = Journal::findOrFail($journalId);
+            $updatedChanges = collect($journal->change_requests)->map(function ($change) use ($updatedFields, $journal) {
+                if (isset($updatedFields[$change['field']]) && $change['status'] === 'pending') {
+                    $updatedValue = $updatedFields[$change['field']];
+                    if ($updatedValue === $change['suggested_change']) {
+                        // Mark change as resolved
+                        $change['status'] = 'resolved';
+                        $change['resolved_at'] = now()->toISOString();
+
+                        // Update journal field
+                        $journal->{$change['field']} = $updatedValue;
+                    }
+                    $change['author_update'] = $updatedValue;
+                }
+                return $change;
+            });
+
+            // Save updated fields and changes
+            $journal->update([
+                'change_requests' => $updatedChanges,
+            ]);
+            $journal->save();
+
+            // TODO: Notify the editor who requested the change
+            // $this->notifyEditorOnUpdate($journal, $updatedChanges);
+
+            return $journal;
+        });
     }
 
     // Approve journal with comment

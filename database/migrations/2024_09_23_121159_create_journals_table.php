@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('journal_format')->nullable();
             $table->string('journal_language')->nullable();
             $table->longText('journal_url')->nullable();
-            $table->enum('approval_status', ['pending', 'in-progress', 'approved', 'approved_with_comment', 'declined'])->default('pending');
+            $table->enum('approval_status', ['pending', 'in-progress', 'approved', 'approved_with_comment', 'declined', 'changes_requested'])->default('pending');
             $table->string('meta_title')->nullable();
             $table->longText('meta_keywords')->nullable();
             $table->longText('meta_description')->nullable();
@@ -55,6 +55,20 @@ return new class extends Migration
             $table->json('approval_comments')->nullable();
             $table->json('reveiwers')->nullable();
 
+            // Array to track requested changes
+            /**
+             * @var array change_requests
+             * @var uuid [change_requests.editor_id] editor_id
+             * @var string [change_requests.field] e.g title, description
+             * @var string [change_requests.current_value] e.g Sample description
+             * @var string [change_requests.suggested_change] e.g Sample description in details
+             * @var string [change_requests.status] status (default -> pending)[pending, approved, in-review, resolved]
+             * @var object [change_requests.comment]
+             * @var date [change_requests.timestamp]
+             */
+            $table->json('change_requests')->nullable()->comment('Array of change requests including editor ID, status, and change details');
+
+            // Flags and metadata
             $table->boolean('accept')->default(true);
             $table->boolean('agree')->default(true);
             $table->boolean('is_draft')->default(false);
