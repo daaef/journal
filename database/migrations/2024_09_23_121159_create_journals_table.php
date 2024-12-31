@@ -55,6 +55,10 @@ return new class extends Migration
             $table->json('approval_comments')->nullable();
             $table->json('reveiwers')->nullable();
 
+            $table->json('reviewers_ratings')->nullable();
+            $table->integer('total_ratings')->nullable();
+            $table->float('rating_percentage')->nullable();
+
             // Array to track requested changes
             /**
              * @var array change_requests
