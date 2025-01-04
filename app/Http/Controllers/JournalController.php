@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ManuscriptSubmissionNotification;
+use App\Mail\SendReviewerInvitationNotification;
 use App\Models\User;
 use App\Repositories\Category\CategoryContract;
 use App\Repositories\DislikeJournal\DislikeJournalContract;
@@ -11,6 +13,7 @@ use App\Repositories\Reviewer\ReviewerContract;
 use App\Repositories\SubCategory\SubCategoryContract;
 use App\Repositories\User\UserContract;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -208,11 +211,22 @@ class JournalController extends Controller
         $journal = $this->repo->submitManuscript($request);
 
         if ($journal) {
+            // Send email notification to the author
+            Mail::to(auth()->user()->email)->send(new ManuscriptSubmissionNotification(auth()->user(), $journal, 'Author'));
+
+            // Send email notification to the admin, editor in chief, and managing editor
+            $roles = ['Admin', 'Editor in Chief', 'Managing Editor', 'Desk Editor'];
+            $users = User::role($roles)->get();
+            foreach ($users as $user) {
+                Mail::to($user->email)->send(new ManuscriptSubmissionNotification($user, $journal, $user->getRoleNames()->first()));
+            }
+
+
             $notification = array(
                 'message' => 'Manuscript Submitted successfully',
                 'alert-type' => 'success'
             );
-            return redirect()->route('journals.index')->with($notification);
+            return redirect()->route('user.submissions')->with($notification);
         }
 
         $notification = array(
@@ -309,12 +323,6 @@ class JournalController extends Controller
     }
 
 
-    public function reviewerPendingApproval()
-    {
-        $journals = $this->repo->getPendingApprovedJournals();
-        return view('dashboard.reviewer.journals.showPendingApproval', compact('journals'));
-    }
-
     public function previewJournal(string $uuid)
     {
         // return "dsdsds";
@@ -341,12 +349,24 @@ class JournalController extends Controller
 
         $journal = $this->reviewerRepo->SaveJournalReviewers($request, $uuid);
         if ($journal) {
+            // Send email notification to each reviewer
+            foreach ($request->reviewers as $reviewerUuid) {
+                $reviewer = User::where('uuid', $reviewerUuid)->first();
+                Mail::to($reviewer->email)->send(new SendReviewerInvitationNotification($reviewer, $journal));
+            }
+
             $notification = array(
-                'message' => 'Reviewers saved successfully',
+                'message' => 'Reviewers saved successfully and email notifications sent',
                 'alert-type' => 'success'
             );
             return redirect()->back()->with($notification);
         }
+
+        $notification = array(
+            'message' => 'Error saving reviewers',
+            'alert-type' => 'error'
+        );
+        return redirect()->back()->with($notification);
     }
 
     public function approveJournal(Request $request)
@@ -401,6 +421,48 @@ class JournalController extends Controller
         return redirect()->back()->with($notification);
     }
 
+    /**
+     * Request changes to a journal by an editor
+    */
+    public function requestChange(Request $request, $journal_id)
+    {
+        $validated = $request->validate([
+            'changes' => 'required|array',
+            'changes.*.field' => 'required|string',
+            'changes.*.suggested_change' => 'required|string',
+            'changes.*.comment' => 'nullable|string',
+        ]);
+
+        $editorId = auth()->id();
+
+        $journal = $this->repo->requestChange($journal_id, $validated['changes'], $editorId);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Change requests submitted successfully.',
+            'data' => $journal,
+        ], 200);
+    }
+
+    /**
+     * Update a journal by the author based on change requests.
+     */
+    public function authorUpdate(Request $request, $journalId)
+    {
+        $validated = $request->validate([
+            'updated_fields' => 'required|array',
+        ]);
+
+        $authorId = auth()->id();
+
+        $journal = $this->repo->authorUpdate($journalId, $validated['updated_fields'], $authorId);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Journal updated successfully based on change requests.',
+            'data' => $journal,
+        ], 200);
+    }
 
     public function approvedJournals()
     {
@@ -408,14 +470,42 @@ class JournalController extends Controller
         return view('dashboard.editor.journals.showApprovedJournals', compact('journals'));
     }
 
+    public function inProgressJournals()
+    {
+        $journals = $this->repo->getJournalsInProgress();
+        return view('dashboard.editor.journals.showInProgressJournals', compact('journals'));
+    }
+
+    public function rejectedJournals()
+    {
+        $journals = $this->repo->getRejectedJournals();
+        return view('dashboard.editor.journals.showRejectedJournals', compact('journals'));
+    }
+
     public function reviewerApprovedJournals()
     {
-        $journals = $this->repo->getApprovedJournals();
+        $journals = $this->repo->getApprovedJournalsForReviewer();
         return view('dashboard.reviewer.journals.showApprovedJournals', compact('journals'));
     }
 
+    public function reviewerPendingApproval()
+    {
+        $journals = $this->repo->getPendingApprovedJournalsForReviewer();
+        // dd($journals);
+        return view('dashboard.reviewer.journals.showPendingApproval', compact('journals'));
+    }
 
+    public function reviewerInProgressJournals()
+    {
+        $journals = $this->repo->getInProgressJournalsForReviewer();
+        return view('dashboard.reviewer.journals.showInProgressJournals', compact('journals'));
+    }
 
+    public function reviewerRejectedJournals()
+    {
+        $journals = $this->repo->getDeclinedJournalsForReviewer();
+        return view('dashboard.reviewer.journals.showRejectedJournals', compact('journals'));
+    }
 
     /**
      * Remove the specified resource from storage.

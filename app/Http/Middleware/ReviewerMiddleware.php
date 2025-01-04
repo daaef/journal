@@ -15,7 +15,7 @@ class ReviewerMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!auth()->user()->hasRole('Associate Editor')){
+        if(!auth()->user()->hasRole('Associate Editor') && !auth()->user()->hasRole('Desk Editor')){
             $notification = array(
                 'message' => 'You are not authorized to access this page',
                 'alert-type' => 'error'

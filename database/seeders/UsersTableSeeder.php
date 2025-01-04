@@ -30,8 +30,8 @@ class UsersTableSeeder extends Seeder
 
         // Seed editor user
         $editor = new \App\Models\User();
-        $editor->fullname = 'Editor User';
-        $editor->username = 'editor';
+        $editor->fullname = 'Editor in Chief User';
+        $editor->username = 'editor_in_chief';
         $editor->email = 'editor@example.com';
         $editor->country = 'Nigeria';
         $editor->password = bcrypt('password');
@@ -75,9 +75,9 @@ class UsersTableSeeder extends Seeder
 
         // Seed Reviewer user
         $publisher = new \App\Models\User();
-        $publisher->fullname = 'Reviewer User';
-        $publisher->username = 'reviewer';
-        $publisher->email = 'reviewer@example.com';
+        $publisher->fullname = 'Associate Editor';
+        $publisher->username = 'associate_editor';
+        $publisher->email = 'associate@example.com';
         $publisher->country = 'Nigeria';
         $publisher->password = bcrypt('password');
         $publisher->uuid = \Illuminate\Support\Str::uuid();
@@ -88,5 +88,19 @@ class UsersTableSeeder extends Seeder
         $publisher->save();
         $publisher->assignRole('Associate Editor');
 
+        // Seed Reviewer user
+        $publisher = new \App\Models\User();
+        $publisher->fullname = 'Desk Editor';
+        $publisher->username = 'desk_editor';
+        $publisher->email = 'desk@example.com';
+        $publisher->country = 'Nigeria';
+        $publisher->password = bcrypt('password');
+        $publisher->uuid = \Illuminate\Support\Str::uuid();
+        $publisher->avatar = 'https://via.placeholder.com/150';
+        $publisher->email_verified_at = now();
+        $publisher->is_first_login = true;
+        $publisher->is_active = true;
+        $publisher->save();
+        $publisher->assignRole('Desk Editor');
     }
 }

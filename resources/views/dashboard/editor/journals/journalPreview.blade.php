@@ -86,7 +86,7 @@
 
         <div class="col-md-3">
             <!-- Community Groups card Start -->
-            @if (auth()->user()->hasRole('Managing Editor'))
+            @if (auth()->user()->hasRole('Editor in Chief') || auth()->user()->hasRole('Managing Editor'))
                 <div class="card">
                     <div class="card-body">
                         <div class="mb-20 flex-between flex-wrap gap-8">
@@ -197,7 +197,7 @@
                 </div>
             @endif
 
-            @if (auth()->user()->hasRole('Managing Editor'))
+            @if (auth()->user()->hasRole('Editor in Chief') || auth()->user()->hasRole('Managing Editor'))
                 <!-- Community Groups card End -->
                 <div class="card mt-24">
                     <div class="card-body">

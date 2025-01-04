@@ -6,20 +6,22 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class SendReviewerInvitationNotification extends Mailable
+class ManuscriptSubmissionNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $user;
     public $journal;
+    public $role;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($user, $journal)
+    public function __construct($user, $journal, $role)
     {
         $this->user = $user;
         $this->journal = $journal;
+        $this->role = $role;
     }
 
     /**
@@ -29,10 +31,11 @@ class SendReviewerInvitationNotification extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.invite_reviewer')
+        return $this->view('emails.manuscript_submission')
                     ->with([
                         'user' => $this->user,
                         'journal' => $this->journal,
+                        'role' => $this->role,
                     ]);
     }
 }

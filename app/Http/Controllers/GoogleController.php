@@ -33,7 +33,7 @@ class GoogleController extends Controller
                 'avatar' => $googleUser->avatar,
                 'uuid' => Str::uuid(),
             ]);
-            $user->assignRole('Publisher');
+            $user->assignRole('Author');
             $user->markEmailAsVerified();
 
             // $user->notify(new WelcomeNotification($user));
@@ -49,7 +49,7 @@ class GoogleController extends Controller
         }
 
         //If user is an editor
-        if ($user->hasRole('Editor')) {
+        if ($user->hasRole('Editor in Chief') || $user->hasRole('Managing Editor')) {
             return redirect()->route('editor.dashboard');
         }
 

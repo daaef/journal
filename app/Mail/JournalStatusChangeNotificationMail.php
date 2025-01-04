@@ -6,20 +6,22 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class SendReviewerInvitationNotification extends Mailable
+class JournalStatusChangeNotificationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user;
     public $journal;
+    public $user;
+    public $messageBody;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($user, $journal)
+    public function __construct($journal, $user, $messageBody)
     {
-        $this->user = $user;
         $this->journal = $journal;
+        $this->user = $user;
+        $this->messageBody = $messageBody;
     }
 
     /**
@@ -27,12 +29,13 @@ class SendReviewerInvitationNotification extends Mailable
      *
      * @return $this
      */
-    public function build()
+    public function build(): static
     {
-        return $this->view('emails.invite_reviewer')
+        return $this->view('emails.journal-status-change-notification')
                     ->with([
-                        'user' => $this->user,
                         'journal' => $this->journal,
+                        'user' => $this->user,
+                        'messageBody' => $this->messageBody,
                     ]);
     }
 }

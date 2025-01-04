@@ -41,6 +41,7 @@ class RoleAndPermissionSeeder extends Seeder
 
         // Role::create(['name' => 'Editor in Chief', 'is_active' => true, 'uuid' => Str::uuid()]);
         $managingEditor = Role::create(['name' => 'Managing Editor', 'is_active' => true, 'uuid' => Str::uuid()]);
+        $managingEditor = Role::create(['name' => 'Desk Editor', 'is_active' => true, 'uuid' => Str::uuid()]);
         // Role::create(['name' => 'Associate Editor', 'is_active' => true, 'uuid' => Str::uuid()]);
         // Role::create(['name' => 'Peer Reviewer', 'is_active' => true, 'uuid' => Str::uuid()]);
 
