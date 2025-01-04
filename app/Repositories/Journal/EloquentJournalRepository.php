@@ -215,12 +215,60 @@ class EloquentJournalRepository implements JournalContract {
         return $journal;
     }
 
-    public function getPendingApprovedJournalsForReviewer($reviewerId)
+    public function getPendingApprovedJournalsForReviewer()
     {
-        return Journal::whereHas('reviewers', function ($query) use ($reviewerId) {
-            $query->where('user_id', $reviewerId)
-                ->where('is_accepted', 0);
-        })->where('approval_status', 'pending')->get();
+        $userId = auth()->user()->id;
+
+        $journalQuery = Journal::where('approval_status', 'pending')
+            ->whereIn('id', function ($query) use ($userId) {
+                $query->select('journal_id')
+                    ->from('reviewers')
+                    ->where('user_id', $userId);
+            });
+// dd($journalQuery);
+        return $journalQuery->paginate(100);
+    }
+
+    public function getInProgressJournalsForReviewer()
+    {
+        $userId = auth()->user()->id;
+
+        $journalQuery = Journal::where('approval_status', 'in-progress')
+            ->whereIn('id', function ($query) use ($userId) {
+                $query->select('journal_id')
+                    ->from('reviewers')
+                    ->where('user_id', $userId);
+            });
+// dd($journalQuery);
+        return $journalQuery->paginate(100);
+    }
+
+    public function getApprovedJournalsForReviewer()
+    {
+        $userId = auth()->user()->id;
+
+        $journalQuery = Journal::where('approval_status', 'approved')
+            ->whereIn('id', function ($query) use ($userId) {
+                $query->select('journal_id')
+                    ->from('reviewers')
+                    ->where('user_id', $userId);
+            });
+// dd($journalQuery);
+        return $journalQuery->paginate(100);
+    }
+
+    public function getDeclinedJournalsForReviewer()
+    {
+        $userId = auth()->user()->id;
+
+        $journalQuery = Journal::where('approval_status', 'declined')
+            ->whereIn('id', function ($query) use ($userId) {
+                $query->select('journal_id')
+                    ->from('reviewers')
+                    ->where('user_id', $userId);
+            });
+// dd($journalQuery);
+        return $journalQuery->paginate(100);
     }
 
     public function dislikeJournal($request) {
@@ -255,7 +303,8 @@ class EloquentJournalRepository implements JournalContract {
     */
     protected function notifyAuthor($journal, array $maildata)
     {
-        $author = User::findById($journal->author);
+        $author = User::find($journal->user_id);
+        // dd($author->email);
 
         if ($author && $author->email)
         {
@@ -374,77 +423,80 @@ class EloquentJournalRepository implements JournalContract {
     }
 
     // Approve journal with comment
-   public function approveJournalWithComment($uuid, $request) {
-    // begin DB transaction
-    DB::beginTransaction();
+    public function approveJournalWithComment($uuid, $request)
+    {
+        DB::beginTransaction();
 
-    try {
-        $updateReviewer = Reviewer::where('user_id', auth()->user()->id)->first();
-        $updateReviewer->is_accepted = $request->action == "approve" ? 1 : 0;
-        $updateReviewer->comment = $request->comment;
-        $updateReviewer->save();
+        try {
+            $journal = $this->findByUUID($uuid);
 
-        $journal = $this->findByUUID($uuid);
-        $approvedBy = json_decode($journal->approved_by, true) ?? [];
-        $approvedBy[] = [
-            'id' => auth()->user()->id,
-            'name' => auth()->user()->fullname
-        ];
-        $journal->approved_by = json_encode($approvedBy);
+            // NOTE: Prevent duplicate reviews if the status is in-progress
+            $approvedBy = collect(json_decode($journal->approved_by, true));
+            if ($journal->approval_status === 'in-progress' && $approvedBy->contains('id', auth()->user()->id)) {
+                return response()->json(['message' => 'You have already reviewed this journal.'], 403);
+            }
 
-        // Save the comment
-        $comment = new JournalComment();
-        $comment->comment = $request->comment;
-        $comment->user_id = auth()->user()->id;
-        $comment->journal_id = $journal->id;
-        $comment->save();
+            // NOTE: Update reviewer details
+            $reviewer = Reviewer::where('user_id', auth()->user()->id)->where('journal_id', $journal->id)->first();
+            if (!$reviewer) {
+                return response()->json(['message' => 'You are not assigned as a reviewer for this journal.'], 403);
+            }
 
-        $reviewers = Reviewer::where('journal_id', $journal->id)->pluck('user_id')->toArray();
-        $reviewersApproved = Reviewer::where(['journal_id' => $journal->id, 'is_accepted' => 1])->pluck('user_id')->toArray();
-        $reviewersResponded = Reviewer::where(['journal_id' => $journal->id])->whereNotNull('comment')->pluck('user_id')->toArray();
-        $messageBody = ''; // TODO: Add variable for journal authors data to send them emails of statuses. For dynamic email sending.
-        if ($journal->reviewers_count > 0) {
-            $percent = (count($reviewersApproved) / $journal->reviewers_count) * 100;
+            $reviewer->is_accepted = $request->action === "approve" ? 1 : 0;
+            $reviewer->comment = $request->comment;
+            $reviewer->save();
 
-            if (count($reviewers) == count($reviewersResponded)) {
-                if ($percent > 50) {
-                    $journal->approval_status = 'approved';
-                    $messageBody = "Your manuscript with the title: " . $journal->title . " has been approved for publication.";
-                    $this->notifyAuthor($journal, ['messageBody' => $messageBody]);
+            // NOTE: Save reviewer's approval in the journal
+            $approvedBy->push(['id' => auth()->user()->id, 'name' => auth()->user()->fullname]);
+            $journal->approved_by = $approvedBy->toJson();
+
+            JournalComment::create([
+                'comment' => $request->comment,
+                'user_id' => auth()->user()->id,
+                'journal_id' => $journal->id,
+            ]);
+
+            // NOTE: Calculate approval percentage
+            $reviewers = Reviewer::where('journal_id', $journal->id)->count();
+            $reviewersApproved = Reviewer::where('journal_id', $journal->id)->where('is_accepted', 1)->count();
+            $reviewersResponded = Reviewer::where('journal_id', $journal->id)->whereNotNull('comment')->count();
+
+            $approvalPercentage = $reviewers > 0 ? ($reviewersApproved / $reviewers) * 100 : 0;
+
+            // NOTE: Update journal approval status
+            if ($reviewers === $reviewersResponded) {
+                if ($approvalPercentage > 50) {
+                    $journal->approval_status = 'reviewed';
+                    $messageBody = "Your manuscript titled '{$journal->title}' has been approved for publication.";
                 } else {
                     $journal->approval_status = 'declined';
-                    $messageBody = "Your manuscript with the title: " . $journal->title . " has been declined for publication.";
-                    $this->notifyAuthor($journal, ['messageBody' => $messageBody]);
+                    $messageBody = "Your manuscript titled '{$journal->title}' has been declined for publication.";
                 }
             } else {
                 $journal->approval_status = 'in-progress';
-                $messageBody = "Your manuscript with the title: " . $journal->title . " is still in progress.";
-                $this->notifyAuthor($journal, ['messageBody' => $messageBody]);
+                $messageBody = "Your manuscript titled '{$journal->title}' is still under review.";
             }
-        } else {
-            $journal->approval_status = 'in-progress';
-            $messageBody = "Your manuscript with the title: " . $journal->title . " is still in progress.";
+
+            $journal->save();
+
+            DB::commit();
+
+            // NOTE: Notify the author
             $this->notifyAuthor($journal, ['messageBody' => $messageBody]);
+
+            // NOTE: Notify admins and other roles
+            $roles = ['Admin', 'Editor in Chief', 'Managing Editor', 'Desk Editor'];
+            $users = User::role($roles)->get();
+            foreach ($users as $user) {
+                Mail::to($user->email)->send(new JournalStatusChangeNotificationMail($journal, $user, $messageBody));
+            }
+
+            return $journal;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e;
         }
-
-        $journal->reviewers = $reviewers;
-        $journal->save();
-
-        DB::commit();
-//        dd($messageBody);
-        // Send email notifications
-        $roles = ['Admin', 'Editor in Chief', 'Managing Editor', 'Desk Editor'];
-        $users = User::role($roles)->get();
-        foreach ($users as $user) {
-            Mail::to($user->email)->send(new JournalStatusChangeNotificationMail( $journal, $user, $messageBody));
-        }
-
-        return $journal;
-    } catch (\Exception $e) {
-        DB::rollBack();
-        throw $e;
     }
-}
 
     public function getJournalsApprovedByUser($user_id) {
         return Journal::where('approved_by', 'like', '%'.$user_id.'%')->get();

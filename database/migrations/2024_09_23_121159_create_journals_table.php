@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('journal_format')->nullable();
             $table->string('journal_language')->nullable();
             $table->longText('journal_url')->nullable();
-            $table->enum('approval_status', ['pending', 'in-progress', 'approved', 'approved_with_comment', 'declined', 'changes_requested'])->default('pending');
+            $table->enum('approval_status', ['pending', 'in-progress', 'approved', 'approved_with_comment', 'declined', 'changes_requested', 'reviewed'])->default('pending');
             $table->string('meta_title')->nullable();
             $table->longText('meta_keywords')->nullable();
             $table->longText('meta_description')->nullable();

@@ -484,25 +484,26 @@ class JournalController extends Controller
 
     public function reviewerApprovedJournals()
     {
-        $journals = $this->repo->getApprovedJournals();
+        $journals = $this->repo->getApprovedJournalsForReviewer();
         return view('dashboard.reviewer.journals.showApprovedJournals', compact('journals'));
     }
 
     public function reviewerPendingApproval()
     {
-        $journals = $this->repo->getPendingApprovedJournals();
+        $journals = $this->repo->getPendingApprovedJournalsForReviewer();
+        // dd($journals);
         return view('dashboard.reviewer.journals.showPendingApproval', compact('journals'));
     }
 
     public function reviewerInProgressJournals()
     {
-        $journals = $this->repo->getPendingApprovedJournals();
+        $journals = $this->repo->getInProgressJournalsForReviewer();
         return view('dashboard.reviewer.journals.showInProgressJournals', compact('journals'));
     }
 
     public function reviewerRejectedJournals()
     {
-        $journals = $this->repo->getRejectedJournals();
+        $journals = $this->repo->getDeclinedJournalsForReviewer();
         return view('dashboard.reviewer.journals.showRejectedJournals', compact('journals'));
     }
 
