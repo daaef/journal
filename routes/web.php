@@ -191,6 +191,11 @@ Route::group(['prefix' => 'reviewer', 'middleware' => ['auth', 'reviewer']], fun
         Route::get('/in-progress', [JournalController::class, 'reviewerInProgressJournals'])->name('reviewer.journals.inProgress');
         Route::post('/approve-journal', [JournalController::class, 'approveJournal'])->name('reviewer.journals.approveJournal');
         Route::post('/approve-journal-with-comment', [JournalController::class, 'approveJournalWithComment'])->name('reviewer.journals.approveJournalWithComment');
+        /**!SECTION
+         * Request change for journals
+         */
+        Route::post('/journals/{journalId}/request-change', [JournalController::class, 'requestChange'])
+        ->name('journals.request-change');
     });
 });
 
@@ -204,6 +209,11 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'publisher']], f
     Route::get('/submissions', [JournalController::class, 'userSubmissions'])->name('user.submissions');
     Route::get('/download-journal/{uuid}', [DownloadController::class, 'downloadJournal'])->name('download-journal');
 
+    /**!SECTION
+     * Make changes and update to requests
+     */
+    Route::post('/journals/{journalId}/author-update', [JournalController::class, 'authorUpdate'])
+        ->name('journals.author-update');
 
 
 

@@ -10,9 +10,14 @@ class Reviewer extends Model
     use HasFactory;
 
 
+    // public function journal()
+    // {
+    //     return $this->belongsTo(Journal::class);
+    // }
+
     public function journal()
     {
-        return $this->belongsTo(Journal::class);
+        return $this->belongsTo(Journal::class, 'journal_id');
     }
 
     public function reviewer()

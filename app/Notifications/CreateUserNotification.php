@@ -10,13 +10,15 @@ use Illuminate\Notifications\Notification;
 class CreateUserNotification extends Notification
 {
     use Queueable;
+    protected $user;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct($user)
     {
-        //
+        // set user information here
+        $this->user = $user;
     }
 
     /**
@@ -34,6 +36,7 @@ class CreateUserNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        // dd($this->user->email);
         return (new MailMessage)
         ->subject('Welcome to ' . config('app.name') . '!')
         ->greeting('Hello ' . $this->user->fullname . '!')

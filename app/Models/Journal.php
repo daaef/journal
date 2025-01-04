@@ -37,7 +37,11 @@ class Journal extends Model
         'approved_by',
         'approval_comments',
         'reveiwers',
+        'reviewers_ratings',
+        'total_ratings',
+        'rating_percentage',
         'is_draft',
+        'change_requests',
         'accept',
         'agree'
         // 'dislikes',
@@ -72,10 +76,15 @@ class Journal extends Model
         return $this->hasMany(JournalLike::class);
     }
 
+    // public function reviewers()
+    // {
+    //     return $this->hasMany(Reviewer::class);
+    // }
+
     public function reviewers()
-    {
-        return $this->hasMany(Reviewer::class);
-    }
+{
+    return $this->hasMany(Reviewer::class, 'journal_id');
+}
 
     public function author()
     {
@@ -86,6 +95,29 @@ class Journal extends Model
     {
         return $this->hasMany(Approval::class);
     }
+
+    /**
+     * Calculate and update the approval status.
+     */
+    // public function calculateApprovalStatus()
+    // {
+    //     $totalRatings = collect($this->reviewers_ratings)->sum('rating');
+    //     $totalReviewers = count($this->reviewers_ratings);
+
+    //     $this->total_ratings = $totalRatings;
+    //     $this->rating_percentage = $totalReviewers > 0
+    //         ? ($totalRatings / ($totalReviewers * 5)) * 100 // Assuming a 5-star rating
+    //         : 0;
+
+    //     // Automatic approval if percentage is greater than 65%
+    //     if ($this->rating_percentage >= 65) {
+    //         $this->approval_status = 'approved';
+    //     } else {
+    //         $this->approval_status = 'pending_review';
+    //     }
+
+    //     $this->save();
+    // }
 
     protected function cast()
     {
@@ -101,6 +133,10 @@ class Journal extends Model
             'approval_comments' => 'json',
             'license' => 'json',
             'reveiwers' => 'json',
+            'change_requests' => 'json',
+            'reviewers_ratings' => 'json',
+            'total_ratings' => 'integer',
+            'rating_percentage' => 'float',
             // 'author' => 'json',
         ];
     }

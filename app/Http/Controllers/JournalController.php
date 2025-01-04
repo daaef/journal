@@ -421,6 +421,48 @@ class JournalController extends Controller
         return redirect()->back()->with($notification);
     }
 
+    /**
+     * Request changes to a journal by an editor
+    */
+    public function requestChange(Request $request, $journal_id)
+    {
+        $validated = $request->validate([
+            'changes' => 'required|array',
+            'changes.*.field' => 'required|string',
+            'changes.*.suggested_change' => 'required|string',
+            'changes.*.comment' => 'nullable|string',
+        ]);
+
+        $editorId = auth()->id();
+
+        $journal = $this->repo->requestChange($journal_id, $validated['changes'], $editorId);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Change requests submitted successfully.',
+            'data' => $journal,
+        ], 200);
+    }
+
+    /**
+     * Update a journal by the author based on change requests.
+     */
+    public function authorUpdate(Request $request, $journalId)
+    {
+        $validated = $request->validate([
+            'updated_fields' => 'required|array',
+        ]);
+
+        $authorId = auth()->id();
+
+        $journal = $this->repo->authorUpdate($journalId, $validated['updated_fields'], $authorId);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Journal updated successfully based on change requests.',
+            'data' => $journal,
+        ], 200);
+    }
 
     public function approvedJournals()
     {
@@ -442,25 +484,26 @@ class JournalController extends Controller
 
     public function reviewerApprovedJournals()
     {
-        $journals = $this->repo->getApprovedJournals();
+        $journals = $this->repo->getApprovedJournalsForReviewer();
         return view('dashboard.reviewer.journals.showApprovedJournals', compact('journals'));
     }
 
     public function reviewerPendingApproval()
     {
-        $journals = $this->repo->getPendingApprovedJournals();
+        $journals = $this->repo->getPendingApprovedJournalsForReviewer();
+        // dd($journals);
         return view('dashboard.reviewer.journals.showPendingApproval', compact('journals'));
     }
 
     public function reviewerInProgressJournals()
     {
-        $journals = $this->repo->getPendingApprovedJournals();
+        $journals = $this->repo->getInProgressJournalsForReviewer();
         return view('dashboard.reviewer.journals.showInProgressJournals', compact('journals'));
     }
 
     public function reviewerRejectedJournals()
     {
-        $journals = $this->repo->getRejectedJournals();
+        $journals = $this->repo->getDeclinedJournalsForReviewer();
         return view('dashboard.reviewer.journals.showRejectedJournals', compact('journals'));
     }
 

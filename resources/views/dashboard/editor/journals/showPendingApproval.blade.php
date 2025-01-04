@@ -40,7 +40,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="flex-align gap-8 mt-12">
+                                        <!-- <div class="flex-align gap-8 mt-12">
                                             <div class="progress w-100px  bg-main-100 rounded-pill h-4"
                                                 role="progressbar" aria-label="Basic example" aria-valuenow="32"
                                                 aria-valuemin="0" aria-valuemax="100">
@@ -48,7 +48,7 @@
                                                 </div>
                                             </div>
                                             <span class="text-main-600 flex-shrink-0 text-13 fw-medium">32%</span>
-                                        </div>
+                                        </div> -->
                                     </td>
                                     <td>
                                         <div class="flex-align justify-content-center gap-16">
