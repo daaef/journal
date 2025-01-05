@@ -69,10 +69,10 @@
             <div class="card mt-24">
                 <div class="card-body">
                     <div class="mb-20 flex-between flex-wrap gap-8">
-                        <h4 class="mb-0">Journals Pending Reviews</h4>
+                        <h4 class="mb-0">Journals Assigned to you</h4>
                     </div>
-                    @if($journals->count() > 0)
-                        @forelse ($journals as $journal)
+                    @if($allJournals->count() > 0)
+                        @forelse ($allJournals as $journal)
                             <div
                                 class="p-xl-4 py-16 px-12 flex-between gap-8 rounded-8 border border-gray-100 hover-border-gray-200 transition-1 mb-16">
                                 <div class="flex-align flex-wrap gap-8">

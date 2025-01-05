@@ -169,6 +169,7 @@ Route::group(['prefix' => 'editor', 'middleware' => ['auth', 'editor']], functio
         Route::get('/approved', [JournalController::class, 'approvedJournals'])->name('editor.journals.approved');
         Route::get('/in-progress', [JournalController::class, 'inProgressJournals'])->name('editor.journals.inProgress');
         Route::get('/declined', [JournalController::class, 'rejectedJournals'])->name('editor.journals.rejected');
+        Route::get('/reviewed', [JournalController::class, 'reviewedJournals'])->name('editor.journals.reviewed');
         Route::post('/approve-journal', [JournalController::class, 'approveJournal'])->name('editor.journals.approveJournal');
 
         // Manage  Journal Reveiwers

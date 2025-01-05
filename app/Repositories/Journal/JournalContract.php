@@ -22,6 +22,7 @@ interface JournalContract {
     public function getPendingApprovedJournalsForReviewer();
     public function getInProgressJournalsForReviewer();
     public function getApprovedJournalsForReviewer();
+    public function getJournalsReviewed();
     public function getDeclinedJournalsForReviewer();
     public function searchJournal($request);
     public function likeJournal($uuid);

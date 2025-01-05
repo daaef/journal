@@ -36,7 +36,8 @@ class ReviewerDashboardController extends Controller
         $journalsInProgress = $this->repo->getJournalsInProgress()->count();
         $declinedJournals = $this->repo->getRejectedJournals()->count();
         $journals = $this->repo->getPendingApprovedJournalsForReviewer($reviewerId);
+        $allJournals = $this->repo->getJournalsForReviewer($reviewerId);
 
-        return view('dashboard.reviewer.dashboard', compact('pendingJournals', 'approvedJournals', 'journalsInProgress', 'declinedJournals', 'journals'));
+        return view('dashboard.reviewer.dashboard', compact('pendingJournals', 'approvedJournals', 'journalsInProgress', 'declinedJournals', 'journals', 'allJournals'));
     }
 }

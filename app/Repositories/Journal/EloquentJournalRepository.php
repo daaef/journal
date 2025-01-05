@@ -73,6 +73,10 @@ class EloquentJournalRepository implements JournalContract {
         return Journal::where('approval_status', 'in-progress')->get();
     }
 
+    public function getJournalsReviewed() {
+        return Journal::where('approval_status', 'reviewed')->get();
+    }
+
     public function getApprovedJournals(){
         return Journal::where('approval_status', 'approved')->get();
     }

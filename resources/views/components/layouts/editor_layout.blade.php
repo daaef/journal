@@ -83,6 +83,10 @@
                                 <a href="{{ route('editor.journals.rejected') }}" class="sidebar-submenu__link">
                                     Declined </a>
                             </li>
+                            <li class="sidebar-submenu__item">
+                                <a href="{{ route('editor.journals.reviewed') }}" class="sidebar-submenu__link">
+                                    Reviewed </a>
+                            </li>
                         </ul>
                         <!-- Submenu End -->
                     </li>

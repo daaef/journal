@@ -482,6 +482,12 @@ class JournalController extends Controller
         return view('dashboard.editor.journals.showRejectedJournals', compact('journals'));
     }
 
+    public function reviewedJournals()
+    {
+        $journals = $this->repo->getJournalsReviewed();
+        return view('dashboard.editor.journals.showRejectedJournals', compact('journals'));
+    }
+
     public function reviewerApprovedJournals()
     {
         $journals = $this->repo->getApprovedJournalsForReviewer();
