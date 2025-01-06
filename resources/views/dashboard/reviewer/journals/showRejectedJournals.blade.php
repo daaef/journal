@@ -1,6 +1,6 @@
 <x-layouts.reviewer_layout>
     <x-slot name="title">
-        Approved Journals
+        Approved Manuscripts
     </x-slot>
     <div class="row gy-4">
         <div class="col-lg-12">
@@ -8,7 +8,7 @@
             <div class="card mt-24 overflow-hidden">
                 <div class="card-header">
                     <div class="mb-0 flex-between flex-wrap gap-8">
-                        <h4 class="mb-0">All Declined Journals</h4>
+                        <h4 class="mb-0">All Declined Manuscripts</h4>
                         <a href=""
                             class="text-13 fw-medium text-main-600 hover-text-decoration-underline">See All</a>
                     </div>
@@ -67,7 +67,7 @@
                             @empty
                                 <tr>
                                     <td colspan="3">
-                                        <p class="mt-2 text-gray-500 dark:text-neutral-400">No declined journals at the
+                                        <p class="mt-2 text-gray-500 dark:text-neutral-400">No Declined Manuscripts at the
                                             moment</p>
                                     </td>
                                 </tr>

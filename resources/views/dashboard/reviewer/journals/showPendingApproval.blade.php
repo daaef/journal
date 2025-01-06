@@ -8,7 +8,7 @@
             <div class="card mt-24 overflow-hidden">
                 <div class="card-header">
                     <div class="mb-0 flex-between flex-wrap gap-8">
-                        <h4 class="mb-0">All Pending Journals</h4>
+                        <h4 class="mb-0">All Pending Manuscripts</h4>
                         <a href=""
                             class="text-13 fw-medium text-main-600 hover-text-decoration-underline">See All</a>
                     </div>

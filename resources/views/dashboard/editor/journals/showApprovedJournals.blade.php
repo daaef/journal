@@ -1,6 +1,6 @@
 <x-layouts.editor_layout>
     <x-slot name="title">
-        Approved Journals
+        Approved Manuscripts
     </x-slot>
     <div class="row gy-4">
         <div class="col-lg-12">
@@ -8,7 +8,7 @@
             <div class="card mt-24 overflow-hidden">
                 <div class="card-header">
                     <div class="mb-0 flex-between flex-wrap gap-8">
-                        <h4 class="mb-0">All Approved Journals</h4>
+                        <h4 class="mb-0">All Approved Manuscripts</h4>
                         <a href=""
                             class="text-13 fw-medium text-main-600 hover-text-decoration-underline">See All</a>
                     </div>

@@ -42,7 +42,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="mb-2">{{ $approvedJournals }}</h4>
-                            <span class="text-gray-600">Approved Journals</span>
+                            <span class="text-gray-600">Approved Manuscripts</span>
                             <div class="flex-between gap-8 mt-16">
                                 <span class="flex-shrink-0 w-48 h-48 flex-center rounded-circle bg-main-two-600 text-white text-2xl"><i class="ph-fill ph-certificate"></i></span>
                                 <div id="earned-certificate" class="remove-tooltip-title rounded-tooltip-value"></div>
