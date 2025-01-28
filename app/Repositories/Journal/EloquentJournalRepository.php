@@ -510,13 +510,73 @@ class EloquentJournalRepository implements JournalContract {
         return Journal::where('user_id', $user_id)->get();
     }
 
-    public function declineJournal($uuid) {
+ public function declineJournalWithComment($uuid, $request)
+{
+    DB::beginTransaction();
+
+    try {
         $journal = $this->findByUUID($uuid);
-        $journal->approval_status = 'declined';
-        $journal->approved_by = ['id' => auth()->user()->id, 'name' => auth()->user()->fullname];
+
+        $declinedBy = collect(json_decode($journal->approved_by, true));
+        if ($journal->approval_status === 'in-progress' && $declinedBy->contains('id', auth()->user()->id)) {
+            return response()->json(['message' => 'You have already reviewed this journal.'], 403);
+        }
+
+        $reviewer = Reviewer::where('user_id', auth()->user()->id)->where('journal_id', $journal->id)->first();
+        if (!$reviewer) {
+            return response()->json(['message' => 'You are not assigned as a reviewer for this journal.'], 403);
+        }
+
+        $reviewer->is_accepted = 0;
+        $reviewer->comment = $request->comment;
+        $reviewer->save();
+
+        $declinedBy->push(['id' => auth()->user()->id, 'name' => auth()->user()->fullname]);
+        $journal->approved_by = $declinedBy->toJson();
+
+        JournalComment::create([
+            'comment' => $request->comment,
+            'user_id' => auth()->user()->id,
+            'journal_id' => $journal->id,
+        ]);
+
+        $reviewers = Reviewer::where('journal_id', $journal->id)->count();
+        $reviewersDeclined = Reviewer::where('journal_id', $journal->id)->where('is_accepted', 0)->count();
+        $reviewersResponded = Reviewer::where('journal_id', $journal->id)->whereNotNull('comment')->count();
+
+        $declinePercentage = $reviewers > 0 ? ($reviewersDeclined / $reviewers) * 100 : 0;
+
+        if ($reviewers === $reviewersResponded) {
+            if ($declinePercentage > 50) {
+                $journal->approval_status = 'declined';
+                $messageBody = "Your manuscript titled '{$journal->title}' has been declined for publication.";
+            } else {
+                $journal->approval_status = 'reviewed';
+                $messageBody = "Your manuscript titled '{$journal->title}' has been reviewed.";
+            }
+        } else {
+            $journal->approval_status = 'in-progress';
+            $messageBody = "Your manuscript titled '{$journal->title}' is still under review.";
+        }
+
         $journal->save();
+
+        DB::commit();
+
+        $this->notifyAuthor($journal, ['messageBody' => $messageBody]);
+
+        $roles = ['Admin', 'Editor in Chief', 'Managing Editor', 'Desk Editor'];
+        $users = User::role($roles)->get();
+        foreach ($users as $user) {
+            Mail::to($user->email)->send(new JournalStatusChangeNotificationMail($journal, $user, $messageBody));
+        }
+
         return $journal;
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return $e;
     }
+}
 
 
 }

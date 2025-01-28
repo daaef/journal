@@ -73,6 +73,8 @@
                     </div>
                     @if($allJournals->count() > 0)
                         @forelse ($allJournals as $journal)
+                            <a href="{{ route('reviewer.journals.preview', [$journal->uuid, $journal->slug]) }}"
+                               class="text-gray-900 hover-text-main-600 block">
                             <div
                                 class="p-xl-4 py-16 px-12 flex-between gap-8 rounded-8 border border-gray-100 hover-border-gray-200 transition-1 mb-16">
                                 <div class="flex-align flex-wrap gap-8">
@@ -81,13 +83,18 @@
                                             class="ph-fill ph-graduation-cap"></i></span>
                                     <div>
                                         <h6 class="mb-0">{{ $journal->title }}</h6>
-                                        <span
-                                            class="text-13 text-gray-500 fw-medium">Author(s) : {{ $journal->author }}</span>
+                                        <p
+                                            class="text-13 text-gray-500 fw-medium">Author(s) : {{ $journal->author }}</p>
                                     </div>
                                 </div>
-                                <a href="{{ route('reviewer.journals.preview', [$journal->uuid, $journal->slug]) }}"
-                                   class="text-gray-900 hover-text-main-600"><i class="ph ph-caret-right"></i></a>
+                                <div class="grid grid-cols-[1fr_auto] gap-4 items-center">
+                                    <p class="text-13 text-gray-500 fw-medium">
+                                        Status : {{ ucwords(str_replace('-', ' ', $journal->approval_status)) }}
+                                    </p>
+                                    <i class="ph ph-caret-right"></i>
+                                </div>
                             </div>
+                            </a>
                         @empty
                             <p class="mt-2 text-gray-500 dark:text-neutral-400">No assigned journals at the moment</p>
                         @endforelse

@@ -29,14 +29,15 @@ class JournalController extends Controller
     protected $reviewerRepo;
 
     public function __construct(
-        JournalContract $journalContract,
-        CategoryContract $categoryContract,
-        SubCategoryContract $subCategoryContract,
-        LikeJournalContract $likeJournalContract,
+        JournalContract        $journalContract,
+        CategoryContract       $categoryContract,
+        SubCategoryContract    $subCategoryContract,
+        LikeJournalContract    $likeJournalContract,
         DislikeJournalContract $dislikeJournalContract,
-        UserContract $userContract,
-        ReviewerContract $reviewerContract
-    ) {
+        UserContract           $userContract,
+        ReviewerContract       $reviewerContract
+    )
+    {
         $this->repo = $journalContract;
         $this->categoryRepo = $categoryContract;
         $this->subCategoryRepo = $subCategoryContract;
@@ -203,7 +204,6 @@ class JournalController extends Controller
         ]);
 
 
-
 //        if ($validator->fails()) {
 //            return redirect()->back()->withErrors($validator)->withInput();
 //        }
@@ -273,7 +273,7 @@ class JournalController extends Controller
 
         $journal = $this->repo->findBySlug($slug);
         $comments = $journal->comments()->with('user')->get();
-        return view('view-abstract', compact('journal','comments'));
+        return view('view-abstract', compact('journal', 'comments'));
     }
 
     /**
@@ -423,7 +423,7 @@ class JournalController extends Controller
 
     /**
      * Request changes to a journal by an editor
-    */
+     */
     public function requestChange(Request $request, $journal_id)
     {
         $validated = $request->validate([
@@ -480,6 +480,34 @@ class JournalController extends Controller
     {
         $journals = $this->repo->getRejectedJournals();
         return view('dashboard.editor.journals.showRejectedJournals', compact('journals'));
+    }
+
+    public function declineJournalWithComment(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'comment' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $uuid = $request->journal_uuid;
+
+        $journal = $this->repo->declineJournalWithComment($uuid, $request);
+
+        if ($journal) {
+            $notification = array(
+                'message' => 'Journal Declined successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->back()->with($notification);
+        }
+        $notification = array(
+            'message' => 'Error Declining Journal',
+            'alert-type' => 'error'
+        );
+        return redirect()->back()->with($notification);
     }
 
     public function reviewedJournals()

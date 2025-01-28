@@ -38,6 +38,14 @@ Route::get('/about', function () {
     return view('about')->with('journals', Journal::all());
 })->name('about');
 
+Route::get('/privacy', function () {
+    return view('privacy')->with('journals', Journal::all());
+})->name('privacy');
+
+Route::get('/terms', function () {
+    return view('terms')->with('journals', Journal::all());
+})->name('terms');
+
 Route::get('/user-interests', [UserController::class, 'interests'])->name('user.interests');
 
 
@@ -192,6 +200,7 @@ Route::group(['prefix' => 'reviewer', 'middleware' => ['auth', 'reviewer']], fun
         Route::get('/in-progress', [JournalController::class, 'reviewerInProgressJournals'])->name('reviewer.journals.inProgress');
         Route::post('/approve-journal', [JournalController::class, 'approveJournal'])->name('reviewer.journals.approveJournal');
         Route::post('/approve-journal-with-comment', [JournalController::class, 'approveJournalWithComment'])->name('reviewer.journals.approveJournalWithComment');
+        Route::post('/decline-with-comment', [JournalController::class, 'declineJournalWithComment'])->name('reviewer.journals.declineWithComment');
         /**!SECTION
          * Request change for journals
          */
