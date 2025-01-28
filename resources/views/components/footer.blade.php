@@ -45,10 +45,10 @@
 
                 <div class="mt-3 grid space-y-3">
                     <p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="{{ route('contact') }}">Contact us</a></p>
-                    {{--<p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="#">About us</a></p>
-                    <p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="#">Recent Publications</a></p>
-                    <p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="#">Announcements</a></p>
-                    <p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="#">News</a></p>--}}
+                    <p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="{{ route('editorial') }}">Editorial</a></p>
+                    <p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="{{ route('privacy') }}">Privacy and Policy</a></p>
+                    <p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="{{ route('terms') }}">Terms and Conditions</a></p>
+{{--                    <p><a class="inline-flex gap-x-2 text-white hover:text-white focus:outline-none focus:text-white" href="#">News</a></p>--}}
                 </div>
             </div>
         </div>

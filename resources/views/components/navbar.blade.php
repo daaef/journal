@@ -15,8 +15,8 @@
 
                     {{--                    <a class="font-medium text-gray-900 hover:text-gray-400 focus:outline-none focus:text-gray-400 "--}}
                     {{--                        href="#">About JAPR</a>--}}
-                    <a class="hover:text-gray-400 focus:outline-none focus:text-gray-400 @if (Route::is('about')) text-primary-500 font-bold @else text-gray-900 font-medium @endif"
-                       href="{{ route('about') }}">Editorial Board</a>
+                    <a class="hover:text-gray-400 focus:outline-none focus:text-gray-400 @if (Route::is('editorial')) text-primary-500 font-bold @else text-gray-900 font-medium @endif"
+                       href="{{ route('editorial') }}">Editorial Board</a>
                     <a class="hover:text-gray-400 focus:outline-none focus:text-gray-400 @if (Route::is('journals.index')) text-primary-500 font-bold @else text-gray-900 font-medium @endif"
                        href="{{ route('journals') }}">Journals</a>
                     {{-- @dd(Auth::check()) --}}

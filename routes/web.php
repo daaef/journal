@@ -34,9 +34,9 @@ Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
 
-Route::get('/about', function () {
-    return view('about')->with('journals', Journal::all());
-})->name('about');
+Route::get('/editorial', function () {
+    return view('editorial')->with('journals', Journal::all());
+})->name('editorial');
 
 Route::get('/privacy', function () {
     return view('privacy')->with('journals', Journal::all());
