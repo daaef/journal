@@ -13,7 +13,9 @@
         "laravel/pulse": "^1.2",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
-        "spatie/laravel-permission": "^6.9"
+        "spatie/laravel-permission": "^6.9",
+        "symfony/http-client": "^7.2",
+        "symfony/mailgun-mailer": "^7.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

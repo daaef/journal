@@ -64,6 +64,7 @@ class RegistrationController extends Controller
 
         } catch (\Throwable $th) {
             //throw $th;
+            dd($th);
             $notification = array(
                 'message' => 'An Error Occured',
                 'alert-type' => 'error'
@@ -98,6 +99,7 @@ class RegistrationController extends Controller
             }
 
         } catch (\Throwable $th) {
+            dd($th);
             //throw $th;
             $notification = array(
                 'message' => 'An Error Occured',
