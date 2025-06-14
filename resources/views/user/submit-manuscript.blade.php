@@ -255,10 +255,6 @@
                                         class="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-600"
                                         required>
                                 </div>
-                                <div class="text-sm leading-6">
-                                    <label for="accept" class="text-gray-500">I agree with JAPR's Review
-                                        Policy</label>
-                                </div>
                             </div>
                         </div>
                         <div class="mt-6 space-y-6">
