@@ -230,6 +230,11 @@ Route::group(['prefix' => 'editor', 'middleware' => ['auth', 'editor']], functio
         Route::get('/reviewed', [JournalController::class, 'reviewedJournals'])->name('editor.journals.reviewed');
         Route::post('/approve-journal', [JournalController::class, 'approveJournal'])->name('editor.journals.approveJournal');
 
+        // Managing Editor Notice Routes (New JAPR Workflow)
+        Route::get('/ready-for-notice', [JournalController::class, 'readyForNotice'])->name('editor.journals.readyForNotice');
+        Route::post('/send-approval-notice', [JournalController::class, 'sendApprovalNotice'])->name('editor.journals.sendApprovalNotice');
+        Route::post('/send-decline-notice', [JournalController::class, 'sendDeclineNotice'])->name('editor.journals.sendDeclineNotice');
+
         // Editor Final Decision Routes
         Route::post('/approve-for-publication', [JournalController::class, 'approveForPublication'])->name('editor.journals.approveForPublication');
         Route::post('/reject-manuscript', [JournalController::class, 'rejectManuscript'])->name('editor.journals.rejectManuscript');

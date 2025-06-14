@@ -41,6 +41,45 @@
                 <div class="col-xxl-3 col-sm-6">
                     <div class="card">
                         <div class="card-body">
+                            <h4 class="mb-2">{{ $journalsInProgress }}</h4>
+                            <span class="text-gray-600">Under Review</span>
+                            <div class="flex-between gap-8 mt-16">
+                                <span class="flex-shrink-0 w-48 h-48 flex-center rounded-circle bg-purple-600 text-white text-2xl"> <i class="ph-fill ph-graduation-cap"></i></span>
+                                <div id="course-progress" class="remove-tooltip-title rounded-tooltip-value"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if(auth()->user()->hasRole('Managing Editor'))
+                <div class="col-xxl-3 col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="mb-2">{{ $readyForNotice ?? 0 }}</h4>
+                            <span class="text-gray-600">Ready for Notice</span>
+                            <div class="flex-between gap-8 mt-16">
+                                <span class="flex-shrink-0 w-48 h-48 flex-center rounded-circle bg-info text-white text-2xl"><i class="ph-fill ph-bell"></i></span>
+                                <div id="ready-notice" class="remove-tooltip-title rounded-tooltip-value"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @else
+                <div class="col-xxl-3 col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="mb-2">{{ $reviewedJournals ?? 0 }}</h4>
+                            <span class="text-gray-600">Reviewed</span>
+                            <div class="flex-between gap-8 mt-16">
+                                <span class="flex-shrink-0 w-48 h-48 flex-center rounded-circle bg-success text-white text-2xl"><i class="ph-fill ph-check-circle"></i></span>
+                                <div id="reviewed" class="remove-tooltip-title rounded-tooltip-value"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+                <div class="col-xxl-3 col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
                             <h4 class="mb-2">{{ $approvedJournals }}</h4>
                             <span class="text-gray-600">Approved Manuscripts</span>
                             <div class="flex-between gap-8 mt-16">
@@ -50,31 +89,29 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xxl-3 col-sm-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="mb-2">{{ $journalsInProgress }}</h4>
-                            <span class="text-gray-600">Manuscripts in Progress</span>
-                            <div class="flex-between gap-8 mt-16">
-                                <span class="flex-shrink-0 w-48 h-48 flex-center rounded-circle bg-purple-600 text-white text-2xl"> <i class="ph-fill ph-graduation-cap"></i></span>
-                                <div id="course-progress" class="remove-tooltip-title rounded-tooltip-value"></div>
-                            </div>
-                        </div>
-                    </div>
+            </div>
+
+            <!-- Managing Editor Quick Actions (JAPR Workflow) -->
+            @if(auth()->user()->hasRole('Managing Editor') && ($readyForNotice ?? 0) > 0)
+            <div class="card mt-24">
+                <div class="card-header">
+                    <h5 class="mb-0">📢 Managing Editor Actions Required</h5>
                 </div>
-                <div class="col-xxl-3 col-sm-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="mb-2">{{ $declinedJournals }}</h4>
-                            <span class="text-gray-600">Declined Manuscripts</span>
-                            <div class="flex-between gap-8 mt-16">
-                                <span class="flex-shrink-0 w-48 h-48 flex-center rounded-circle bg-warning-600 text-white text-2xl"><i class="ph-fill ph-users-three"></i></span>
-                                <div id="community-support" class="remove-tooltip-title rounded-tooltip-value"></div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <div class="d-flex align-items-center">
+                            <i class="ph ph-bell me-2"></i>
+                            <div>
+                                <strong>{{ $readyForNotice }} manuscript(s)</strong> have completed peer review and are ready for your approval/decline notice.
                             </div>
                         </div>
                     </div>
+                    <a href="{{ route('editor.journals.readyForNotice') }}" class="btn btn-info">
+                        <i class="ph ph-eye me-2"></i>Review & Send Notices
+                    </a>
                 </div>
             </div>
+            @endif
 
         </div>
         <div class="col-lg-3">

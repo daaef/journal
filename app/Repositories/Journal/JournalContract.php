@@ -37,6 +37,11 @@ interface JournalContract {
     public function submitReview($journal_uuid, $reviewer_id, $comment, $rating, $recommendation, $criteria_ratings = [], $confidential_comments = null, $is_finalizing = true);
     public function uploadRevision($journal_uuid, $revision_file, $revision_notes, $author_id);
     
+    // JAPR Workflow Methods
+    public function getJournalsReadyForNotice();
+    public function sendApprovalNotice($uuid, $comment = null);
+    public function sendDeclineNotice($uuid, $reason);
+    
     // Version Control Methods
     public function getVersionHistory($journal_uuid);
     public function compareVersions($journal_uuid, $version1_id, $version2_id);

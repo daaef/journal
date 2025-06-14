@@ -33,9 +33,16 @@ class RoleAndPermissionSeeder extends Seeder
 
         // Editor/Managing Editor Permissions
         Permission::create(['name' => 'assign-associate-editors', 'is_active' => true, 'uuid' => Str::uuid()]);
+        Permission::create(['name' => 'send-approval-notice', 'is_active' => true, 'uuid' => Str::uuid()]);
+        Permission::create(['name' => 'send-decline-notice', 'is_active' => true, 'uuid' => Str::uuid()]);
         Permission::create(['name' => 'final-approve-manuscript', 'is_active' => true, 'uuid' => Str::uuid()]);
         Permission::create(['name' => 'final-reject-manuscript', 'is_active' => true, 'uuid' => Str::uuid()]);
         Permission::create(['name' => 'publish-manuscript', 'is_active' => true, 'uuid' => Str::uuid()]);
+        
+        // Copy Desk Editor Permissions
+        Permission::create(['name' => 'copy-edit-manuscript', 'is_active' => true, 'uuid' => Str::uuid()]);
+        Permission::create(['name' => 'final-edit-manuscript', 'is_active' => true, 'uuid' => Str::uuid()]);
+        Permission::create(['name' => 'prepare-for-publication', 'is_active' => true, 'uuid' => Str::uuid()]);
 
         // Reviewer Permissions
         Permission::create(['name' => 'review-manuscript', 'is_active' => true, 'uuid' => Str::uuid()]);
@@ -58,6 +65,7 @@ class RoleAndPermissionSeeder extends Seeder
         $externalReviewerRole = Role::create(['name' => 'External Reviewer', 'is_active' => true, 'uuid' => Str::uuid()]);
         $authorRole = Role::create(['name' => 'Author', 'is_active' => true, 'uuid' => Str::uuid()]);
         $deskEditorRole = Role::create(['name' => 'Desk Editor', 'is_active' => true, 'uuid' => Str::uuid()]);
+        $copyDeskEditorRole = Role::create(['name' => 'Copy Desk Editor', 'is_active' => true, 'uuid' => Str::uuid()]);
 
         // Assign Permissions to Roles
 
@@ -74,16 +82,15 @@ class RoleAndPermissionSeeder extends Seeder
             'publish-manuscript'
         ]);
 
-        // Managing Editor - Operational management and final decisions
+        // Managing Editor - Operational management and sends notices
         $managingEditorRole->givePermissionTo([
-            'assign-associate-editors', 'final-approve-manuscript', 'final-reject-manuscript',
-            'publish-manuscript'
+            'assign-associate-editors', 'send-approval-notice', 'send-decline-notice'
         ]);
 
-        // Associate Editor - Review process management (KEY ROLE)
+        // Associate Editor - Review process management (Peer Reviewers)
         $associateEditorRole->givePermissionTo([
             'assign-reviewers', 'manage-review-process', 'request-revisions',
-            'coordinate-reviews'
+            'coordinate-reviews', 'review-manuscript', 'provide-feedback'
         ]);
 
         // External Reviewer - Review and feedback only
@@ -99,6 +106,11 @@ class RoleAndPermissionSeeder extends Seeder
         // Desk Editor - Administrative support
         $deskEditorRole->givePermissionTo([
             'review-manuscript', 'provide-feedback'
+        ]);
+        
+        // Copy Desk Editor - Final editing and publication preparation
+        $copyDeskEditorRole->givePermissionTo([
+            'copy-edit-manuscript', 'final-edit-manuscript', 'prepare-for-publication'
         ]);
     }
 }

@@ -88,6 +88,21 @@
                                 <a href="{{ route('editor.journals.reviewed') }}" class="sidebar-submenu__link">
                                     Reviewed </a>
                             </li>
+                            @if(auth()->user()->hasRole('Managing Editor'))
+                            <li class="sidebar-submenu__item">
+                                <a href="{{ route('editor.journals.readyForNotice') }}" class="sidebar-submenu__link">
+                                    <span class="d-flex align-items-center">
+                                        Ready for Notice
+                                        @php
+                                            $readyCount = \App\Models\Journal::where('approval_status', 'ready_for_managing_editor_notice')->count();
+                                        @endphp
+                                        @if($readyCount > 0)
+                                            <span class="badge bg-info text-white ms-2">{{ $readyCount }}</span>
+                                        @endif
+                                    </span>
+                                </a>
+                            </li>
+                            @endif
                         </ul>
                         <!-- Submenu End -->
                     </li>

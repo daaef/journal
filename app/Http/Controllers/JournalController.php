@@ -1204,4 +1204,97 @@ class JournalController extends Controller
         $journals = $this->repo->getReviewedJournalsForReviewer();
         return view('dashboard.reviewer.journals.showReviewedJournals', compact('journals'));
     }
+
+    /**
+     * Get manuscripts ready for Managing Editor notice (JAPR Workflow)
+     */
+    public function readyForNotice()
+    {
+        $journals = $this->repo->getJournalsReadyForNotice();
+        return view('dashboard.editor.journals.showReadyForNotice', compact('journals'));
+    }
+
+    /**
+     * Send approval notice to author (JAPR Workflow)
+     */
+    public function sendApprovalNotice(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'journal_uuid' => 'required',
+            'notice_comment' => 'nullable|string|max:1000'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            $journal = $this->repo->sendApprovalNotice(
+                $request->journal_uuid, 
+                $request->notice_comment
+            );
+
+            if ($journal) {
+                $notification = [
+                    'message' => 'Approval notice sent successfully to author, Editor-in-Chief, and Desk Editor',
+                    'alert-type' => 'success'
+                ];
+                return redirect()->back()->with($notification);
+            }
+        } catch (\Exception $e) {
+            $notification = [
+                'message' => $e->getMessage(),
+                'alert-type' => 'error'
+            ];
+            return redirect()->back()->with($notification);
+        }
+
+        $notification = [
+            'message' => 'Error sending approval notice',
+            'alert-type' => 'error'
+        ];
+        return redirect()->back()->with($notification);
+    }
+
+    /**
+     * Send decline notice to author (JAPR Workflow)
+     */
+    public function sendDeclineNotice(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'journal_uuid' => 'required',
+            'decline_reason' => 'required|string|max:1000'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            $journal = $this->repo->sendDeclineNotice(
+                $request->journal_uuid, 
+                $request->decline_reason
+            );
+
+            if ($journal) {
+                $notification = [
+                    'message' => 'Decline notice sent successfully to author, Editor-in-Chief, and Desk Editor',
+                    'alert-type' => 'success'
+                ];
+                return redirect()->back()->with($notification);
+            }
+        } catch (\Exception $e) {
+            $notification = [
+                'message' => $e->getMessage(),
+                'alert-type' => 'error'
+            ];
+            return redirect()->back()->with($notification);
+        }
+
+        $notification = [
+            'message' => 'Error sending decline notice',
+            'alert-type' => 'error'
+        ];
+        return redirect()->back()->with($notification);
+    }
 }

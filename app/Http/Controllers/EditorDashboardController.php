@@ -28,7 +28,9 @@ class EditorDashboardController extends Controller
         $approvedJournals = $this->repo->getApprovedJournals()->count();
         $journalsInProgress = $this->repo->getJournalsInProgress()->count();
         $declinedJournals = $this->repo->getRejectedJournals()->count();
+        $readyForNotice = $this->repo->getJournalsReadyForNotice()->count();
+        $reviewedJournals = $this->repo->getJournalsReviewed()->count();
         // dd($pendingArticles);
-        return view('dashboard.editor.dashboard', compact('pendingJournals', 'approvedJournals', 'journalsInProgress', 'declinedJournals'));
+        return view('dashboard.editor.dashboard', compact('pendingJournals', 'approvedJournals', 'journalsInProgress', 'declinedJournals', 'readyForNotice', 'reviewedJournals'));
     }
 }

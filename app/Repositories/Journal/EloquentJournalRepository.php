@@ -793,9 +793,24 @@ protected function sendManuscriptSubmissionNotifications($journal)
         $journal->total_ratings = $totalRatings;
         $journal->rating_percentage = ($sumRatings / $totalRatings) * 20; // Convert to percentage (1-5 scale to 0-100)
 
-        // Change status to "reviewed" immediately after any review submission
-        // Editor can only approve/decline if at least 2 reviews are done
-        $journal->approval_status = 'reviewed';
+        // JAPR Workflow: Status changes based on Associate Editor (Peer Reviewer) count
+        // Need 2-3 Associate Editor reviews before Managing Editor can send notice
+        $associateEditorReviews = $journal->reviewerAssignments()
+            ->whereNotNull('review_submitted_at')
+            ->whereHas('user', function($query) {
+                $query->whereHas('roles', function($roleQuery) {
+                    $roleQuery->where('name', 'Associate Editor');
+                });
+            })
+            ->count();
+
+        if ($associateEditorReviews >= 2) {
+            // Enough peer reviews for Managing Editor decision
+            $journal->approval_status = 'ready_for_managing_editor_notice';
+        } else {
+            // Still waiting for more Associate Editor reviews
+            $journal->approval_status = 'under_peer_review';
+        }
 
         $journal->save();
 
@@ -1013,6 +1028,170 @@ protected function sendManuscriptSubmissionNotifications($journal)
 
         foreach ($editors as $editor) {
             $editor->notify(new ManuscriptStatusChangedNotification(
+                $journal,
+                $journal->approval_status,
+                $status,
+                $message,
+                $actionUrl
+            ));
+        }
+    }
+
+    /**
+     * Get journals ready for Managing Editor notice (JAPR Workflow)
+     */
+    public function getJournalsReadyForNotice()
+    {
+        return Journal::where('approval_status', 'ready_for_managing_editor_notice')
+            ->with(['reviewerAssignments.user', 'category', 'user'])
+            ->orderBy('updated_at', 'desc')
+            ->get();
+    }
+
+    /**
+     * Send approval notice to author (JAPR Workflow)
+     */
+    public function sendApprovalNotice($uuid, $comment = null)
+    {
+        $journal = $this->findByUUID($uuid);
+
+        // Ensure manuscript is ready for notice
+        if ($journal->approval_status !== 'ready_for_managing_editor_notice') {
+            throw new \Exception('Manuscript is not ready for Managing Editor notice. Current status: ' . $journal->approval_status);
+        }
+
+        // Check minimum review requirement (at least 2 reviews)
+        $completedReviews = $journal->reviewerAssignments()
+            ->whereNotNull('review_submitted_at')
+            ->count();
+
+        if ($completedReviews < 2) {
+            throw new \Exception('At least 2 reviews must be completed before sending notice. Currently ' . $completedReviews . ' review(s) completed.');
+        }
+
+        $oldStatus = $journal->approval_status;
+
+        // Update journal status to approved for copy desk editing
+        $journal->approval_status = 'approved_for_copy_editing';
+        $user = Auth::user();
+        $journal->managing_editor_notice = [
+            'sent_by' => ['id' => Auth::id(), 'name' => $user ? $user->fullname : 'System'],
+            'sent_at' => now(),
+            'type' => 'approval',
+            'comment' => $comment
+        ];
+        $journal->managing_editor_notice_sent_at = now();
+
+        $journal->save();
+
+        // Send comprehensive notifications to Author, Editor-in-Chief, and Desk Editor
+        $this->sendApprovalNoticeNotifications($journal, $comment, $oldStatus);
+
+        return $journal;
+    }
+
+    /**
+     * Send decline notice to author (JAPR Workflow)
+     */
+    public function sendDeclineNotice($uuid, $reason)
+    {
+        $journal = $this->findByUUID($uuid);
+
+        // Ensure manuscript is ready for notice
+        if ($journal->approval_status !== 'ready_for_managing_editor_notice') {
+            throw new \Exception('Manuscript is not ready for Managing Editor notice. Current status: ' . $journal->approval_status);
+        }
+
+        // Check minimum review requirement (at least 2 reviews)
+        $completedReviews = $journal->reviewerAssignments()
+            ->whereNotNull('review_submitted_at')
+            ->count();
+
+        if ($completedReviews < 2) {
+            throw new \Exception('At least 2 reviews must be completed before sending notice. Currently ' . $completedReviews . ' review(s) completed.');
+        }
+
+        $oldStatus = $journal->approval_status;
+
+        // Update journal status to declined
+        $journal->approval_status = 'declined';
+        $user = Auth::user();
+        $journal->managing_editor_notice = [
+            'sent_by' => ['id' => Auth::id(), 'name' => $user ? $user->fullname : 'System'],
+            'sent_at' => now(),
+            'type' => 'decline',
+            'reason' => $reason
+        ];
+        $journal->managing_editor_notice_sent_at = now();
+
+        $journal->save();
+
+        // Send comprehensive notifications to Author, Editor-in-Chief, and Desk Editor
+        $this->sendDeclineNoticeNotifications($journal, $reason, $oldStatus);
+
+        return $journal;
+    }
+
+    /**
+     * Send comprehensive notifications for Managing Editor approval notice
+     */
+    private function sendApprovalNoticeNotifications($journal, $comment, $oldStatus)
+    {
+        $author = User::find($journal->user_id);
+        $actionUrl = route('dashboard');
+
+        // Notify author
+        if ($author) {
+            $author->notify(new ManuscriptStatusChangedNotification(
+                $journal,
+                $oldStatus,
+                'approved_for_copy_editing',
+                $comment ?? 'Your manuscript has been approved by the peer review process and will proceed to copy editing.',
+                $actionUrl
+            ));
+        }
+
+        // Notify Editor-in-Chief and Desk Editor
+        $this->notifyEditorsAndDeskEditor($journal, 'approved', "Manuscript \"{$journal->title}\" has been approved by Managing Editor and is ready for copy editing.");
+    }
+
+    /**
+     * Send comprehensive notifications for Managing Editor decline notice
+     */
+    private function sendDeclineNoticeNotifications($journal, $reason, $oldStatus)
+    {
+        $author = User::find($journal->user_id);
+        $actionUrl = route('dashboard');
+
+        // Notify author
+        if ($author) {
+            $author->notify(new ManuscriptStatusChangedNotification(
+                $journal,
+                $oldStatus,
+                'declined',
+                "Your manuscript has been declined after peer review. Reason: {$reason}",
+                $actionUrl
+            ));
+        }
+
+        // Notify Editor-in-Chief and Desk Editor
+        $this->notifyEditorsAndDeskEditor($journal, 'declined', "Manuscript \"{$journal->title}\" has been declined by Managing Editor.");
+    }
+
+    /**
+     * Notify Editor-in-Chief and Desk Editor (JAPR Workflow)
+     */
+    private function notifyEditorsAndDeskEditor($journal, $status, $message)
+    {
+        $roles = ['Editor in Chief', 'Desk Editor'];
+        $users = User::whereHas('roles', function($query) use ($roles) {
+            $query->whereIn('name', $roles);
+        })->get();
+
+        $actionUrl = route('editor.journals.preview', [$journal->uuid, $journal->slug]);
+
+        foreach ($users as $user) {
+            $user->notify(new ManuscriptStatusChangedNotification(
                 $journal,
                 $journal->approval_status,
                 $status,
