@@ -251,15 +251,6 @@
                         <div class="mt-6 space-y-6">
                             <div class="relative flex gap-x-3">
                                 <div class="flex items-center h-6">
-                                    <input id="accept" name="accept" type="checkbox"
-                                        class="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-600"
-                                        required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-6 space-y-6">
-                            <div class="relative flex gap-x-3">
-                                <div class="flex items-center h-6">
                                     <input id="agree" name="agree_japr_policy" type="checkbox"
                                         class="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-600"
                                         required>
