@@ -152,23 +152,9 @@
                                 <!-- Enhanced Action Buttons -->
                                 <div class="flex-align gap-8 mt-12">
                                     <a href="{{ route('reviewer.journals.review', [$journal->uuid, $journal->slug]) }}"
-                                       class="btn btn-outline-main btn-sm rounded-pill">
-                                        <i class="ph ph-eye me-8"></i>Preview
-                                    </a>
-                                    <a href="{{ route('reviewer.journals.review', [$journal->uuid, $journal->slug]) }}"
                                        class="btn btn-main btn-sm rounded-pill">
-                                        <i class="ph ph-star me-8"></i>Enhanced Review
+                                        <i class="ph ph-eye me-8"></i>Review
                                     </a>
-                                    @if($journal->approval_status === 'pending')
-                                        <button class="btn btn-success btn-sm rounded-pill"
-                                                onclick="quickApprove('{{ $journal->uuid }}')">
-                                            <i class="ph ph-check me-8"></i>Quick Approve
-                                        </button>
-                                        <button class="btn btn-warning btn-sm rounded-pill"
-                                                onclick="requestChanges('{{ $journal->uuid }}')">
-                                            <i class="ph ph-pencil me-8"></i>Request Changes
-                                        </button>
-                                    @endif
                                 </div>
                             </div>
                         @empty
@@ -265,9 +251,9 @@
                             <a href="{{ route('reviewer.journals.pendingApproval') }}" class="btn btn-outline-warning btn-sm rounded-pill">
                                 <i class="ph ph-list me-8"></i>View Pending Reviews
                             </a>
-                            <a href="{{ route('reviewer.journals.myAssignedReviews') }}" class="btn btn-outline-info btn-sm rounded-pill">
+                            {{-- <a href="{{ route('reviewer.journals.myAssignedReviews') }}" class="btn btn-outline-info btn-sm rounded-pill">
                                 <i class="ph ph-user-check me-8"></i>My Assigned Reviews
-                            </a>
+                            </a> --}}
                             <a href="{{ route('reviewer.notifications.dashboard') }}" class="btn btn-outline-main btn-sm rounded-pill">
                                 <i class="ph ph-bell me-8"></i>View Notifications
                             </a>

@@ -237,30 +237,19 @@
 
     <div class="row gy-4">        <!-- Review Form Section -->
         <div class="col-lg-8">
-            <div class="card border">                <div class="card-header bg-gray-50 border-bottom">
-                    <h5 class="mb-0 text-gray-800">
-                        @if($existingReview)
+            <div class="card border">                <div class="card-header bg-gray-50 border-bottom">                    <h5 class="mb-0 text-gray-800">
+                        @if($existingReview && $existingReview->review_submitted_at)
                             <i class="ph ph-check-circle text-success me-12"></i>Your Review 
-                            @if($existingReview->review_submitted_at)
-                                (Submitted {{ $existingReview->review_submitted_at->format('M j, Y \a\t g:i A') }})
-                            @else
-                                (Content Available)
-                            @endif
+                            (Submitted {{ $existingReview->review_submitted_at->format('M j, Y \a\t g:i A') }})
                         @else
                             <i class="ph ph-pencil me-12"></i>Submit Your Review
                         @endif
-                    </h5>
-                    @if($existingReview)                        <div class="alert alert-info mt-16 mb-0">
+                    </h5>@if($existingReview && $existingReview->review_submitted_at)                        <div class="alert alert-info mt-16 mb-0">
                             <div class="d-flex align-items-center">
                                 <i class="ph ph-info text-info me-8"></i>
                                 <div>
-                                    @if($existingReview->review_submitted_at)
-                                        <strong>Review Completed:</strong> Your review has been submitted and is now read-only. 
-                                        Reviews can only be submitted once and cannot be modified.
-                                    @else
-                                        <strong>Review Content:</strong> You have existing review content for this manuscript.
-                                        All fields are read-only to preserve your work.
-                                    @endif
+                                    <strong>Review Completed:</strong> Your review has been submitted and is now read-only. 
+                                    Reviews can only be submitted once and cannot be modified.
                                 </div>
                             </div>
                         </div>
@@ -284,7 +273,7 @@
                                 <div class="row g-4 mb-20">
                                         <div class="col-md-4">
                                             <div class="border border-gray-200 rounded p-16 text-center">
-                                                <label class="fw-bold text-gray-800 mb-8 d-block">Scholarly Merit</label>                                                <select name="criteria_ratings[scholarly_merit]" class="form-select form-select-sm" {{ $existingReview ? 'disabled' : '' }}>
+                                                <label class="fw-bold text-gray-800 mb-8 d-block">Scholarly Merit</label>                                                <select name="criteria_ratings[scholarly_merit]" class="form-select form-select-sm" {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
                                                     <option value="">Select Rating</option>
                                                     <option value="1" {{ ($existingReview && isset($existingReview->criteria_ratings['scholarly_merit']) && $existingReview->criteria_ratings['scholarly_merit'] == 1) ? 'selected' : '' }}>1 - Poor</option>
                                                     <option value="2" {{ ($existingReview && isset($existingReview->criteria_ratings['scholarly_merit']) && $existingReview->criteria_ratings['scholarly_merit'] == 2) ? 'selected' : '' }}>2 - Fair</option>
@@ -298,7 +287,7 @@
                                         <div class="col-md-4">
                                             <div class="border border-gray-200 rounded p-16 text-center">
                                                 <label class="fw-bold text-gray-800 mb-8 d-block">Methodology</label>
-                                                <select name="criteria_ratings[methodology]" class="form-select form-select-sm" {{ $existingReview ? 'disabled' : '' }}>
+                                                <select name="criteria_ratings[methodology]" class="form-select form-select-sm" {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
                                                     <option value="">Select Rating</option>
                                                     <option value="1" {{ ($existingReview && isset($existingReview->criteria_ratings['methodology']) && $existingReview->criteria_ratings['methodology'] == 1) ? 'selected' : '' }}>1 - Poor</option>
                                                     <option value="2" {{ ($existingReview && isset($existingReview->criteria_ratings['methodology']) && $existingReview->criteria_ratings['methodology'] == 2) ? 'selected' : '' }}>2 - Fair</option>
@@ -312,7 +301,7 @@
                                         <div class="col-md-4">
                                             <div class="border border-gray-200 rounded p-16 text-center">
                                                 <label class="fw-bold text-gray-800 mb-8 d-block">Presentation</label>
-                                                <select name="criteria_ratings[presentation]" class="form-select form-select-sm" {{ $existingReview ? 'disabled' : '' }}>
+                                                <select name="criteria_ratings[presentation]" class="form-select form-select-sm" {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
                                                     <option value="">Select Rating</option>
                                                     <option value="1" {{ ($existingReview && isset($existingReview->criteria_ratings['presentation']) && $existingReview->criteria_ratings['presentation'] == 1) ? 'selected' : '' }}>1 - Poor</option>
                                                     <option value="2" {{ ($existingReview && isset($existingReview->criteria_ratings['presentation']) && $existingReview->criteria_ratings['presentation'] == 2) ? 'selected' : '' }}>2 - Fair</option>
@@ -335,7 +324,7 @@
                                             <label class="form-label fw-bold text-gray-800 mb-12">
                                                 Overall Quality Rating
                                             </label>
-                                            <select name="rating" class="form-select" required {{ $existingReview ? 'disabled' : '' }}>
+                                            <select name="rating" class="form-select" required {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
                                                 <option value="">Select Overall Rating</option>
                                                 <option value="1" {{ ($existingReview->rating ?? '') == 1 ? 'selected' : '' }}>1 - Poor (Reject)</option>
                                                 <option value="2" {{ ($existingReview->rating ?? '') == 2 ? 'selected' : '' }}>2 - Fair (Major Concerns)</option>
@@ -347,7 +336,7 @@
                                         <div class="col-md-6">
                                             <label class="form-label fw-bold text-gray-800 mb-12">
                                                 Editorial Recommendation
-                                            </label>                                            <select name="recommendation" class="form-select" required {{ $existingReview ? 'disabled' : '' }}>
+                                            </label>                                            <select name="recommendation" class="form-select" required {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
                                                 <option value="">Select Recommendation</option>
                                                 <option value="accept" {{ ($existingReview->recommendation ?? '') === 'accept' ? 'selected' : '' }}>Accept for Publication</option>
                                                 <option value="minor_revision" {{ ($existingReview->recommendation ?? '') === 'minor_revision' ? 'selected' : '' }}>Accept with Minor Revisions</option>
@@ -368,7 +357,7 @@
                                             Comments for Author
                                         </label>                                        <textarea name="comment" class="form-control" rows="8" 
                                                   placeholder="Provide detailed, constructive feedback for the author. Include specific comments on strengths, weaknesses, and suggestions for improvement. Be professional and helpful in your critique."
-                                                  required {{ $existingReview ? 'readonly' : '' }}>{{ $existingReview->comment ?? '' }}</textarea>
+                                                  required {{ ($existingReview && $existingReview->review_submitted_at) ? 'readonly' : '' }}>{{ $existingReview->comment ?? '' }}</textarea>
                                         <small class="text-muted mt-8 d-block">
                                             These comments will be shared with the author to help improve their manuscript.
                                         </small>
@@ -378,22 +367,18 @@
                                         <label class="form-label fw-bold text-gray-800 mb-8">
                                             Confidential Comments for Editor
                                         </label>                                        <textarea name="confidential_comments" class="form-control" rows="4" 
-                                                  placeholder="Optional: Any confidential comments for the editor regarding manuscript handling, concerns about methodology, ethical issues, or recommendations for additional reviewers." {{ $existingReview ? 'readonly' : '' }}>{{ $existingReview->confidential_comments ?? '' }}</textarea><small class="text-muted mt-8 d-block">
+                                                  placeholder="Optional: Any confidential comments for the editor regarding manuscript handling, concerns about methodology, ethical issues, or recommendations for additional reviewers." {{ ($existingReview && $existingReview->review_submitted_at) ? 'readonly' : '' }}>{{ $existingReview->confidential_comments ?? '' }}</textarea><small class="text-muted mt-8 d-block">
                                             These comments are confidential and will only be visible to the editorial team.
                                         </small>
                                     </div>
                             </div>
                         </div>                        <!-- Submit Review -->
                         <div class="text-center py-20 border-top border-gray-200">
-                            @if($existingReview)
+                            @if($existingReview && $existingReview->review_submitted_at)
                                 <div class="alert alert-success">
                                     <i class="ph ph-check-circle me-8"></i>
-                                    <strong>Review Content Available:</strong> 
-                                    @if($existingReview->review_submitted_at)
-                                        Your review was submitted on {{ $existingReview->review_submitted_at->format('M j, Y \a\t g:i A') }}
-                                    @else
-                                        You have existing review content for this manuscript
-                                    @endif
+                                    <strong>Review Completed:</strong> 
+                                    Your review was submitted on {{ $existingReview->review_submitted_at->format('M j, Y \a\t g:i A') }}
                                 </div>
                             @else
                                 <button type="submit" class="btn btn-success px-32 py-12">
@@ -402,8 +387,8 @@
                             @endif
                             <div class="mt-12">
                                 <small class="text-muted">
-                                    @if($existingReview)
-                                        Your review content is displayed above and cannot be modified.
+                                    @if($existingReview && $existingReview->review_submitted_at)
+                                        Your review has been submitted and cannot be modified.
                                     @else
                                         <strong>Note:</strong> Once submitted, your review cannot be changed or updated.
                                     @endif
