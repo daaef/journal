@@ -3,7 +3,10 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class SendReviewerInvitationNotification extends Mailable
@@ -12,14 +15,15 @@ class SendReviewerInvitationNotification extends Mailable
 
     public $user;
     public $journal;
-
+    public $token;
     /**
      * Create a new message instance.
      */
-    public function __construct($user, $journal)
+    public function __construct($user, $journal, $token = null)
     {
         $this->user = $user;
         $this->journal = $journal;
+        $this->token = $token;
     }
 
     /**
@@ -29,10 +33,9 @@ class SendReviewerInvitationNotification extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.invite_reviewer')
-                    ->with([
-                        'user' => $this->user,
-                        'journal' => $this->journal,
-                    ]);
+        $user = $this->user;
+        $journal = $this->journal;
+        $token = $this->token;
+        return $this->view('emails.invite_reviewer', compact('user', 'journal', 'token'));
     }
 }

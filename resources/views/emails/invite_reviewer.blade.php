@@ -5,12 +5,12 @@ You have been invited to review a manuscript titled **{{ $journal->title }}**. P
 
 
 
-<a href="{{route('reviewer.accept', ['token' => 'token'])}}">
+<a href="{{route('reviewer.accept', ['token' => $token])}}">
     Accept
 </a>
 
 
-<a href="{{route('reviewer.decline', ['token' => 'token'])}}">
+<a href="{{route('reviewer.decline', ['token' => $token])}}">
     Decline
 </a>
 

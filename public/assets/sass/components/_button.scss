@@ -60,5 +60,65 @@
             color: hsl(var(--white)) !important;
         }
     }
+    // Warning Button
+    &-warning {
+        background-color: hsl(var(--warning)) !important;
+        border-color: hsl(var(--warning)) !important;
+        color: hsl(var(--white)) !important;
+        &:hover {
+            background-color: var(--warning-600) !important;
+            border-color: var(--warning-600) !important;
+        }
+    }
+    &-outline-warning {
+        background-color: transparent !important;
+        border-color: hsl(var(--warning)) !important;
+        color: hsl(var(--warning)) !important;
+        &:hover {
+            background-color: hsl(var(--warning)) !important;
+            border-color: hsl(var(--warning)) !important;
+            color: hsl(var(--white)) !important;
+        }
+    }
+    // Success Button
+    &-success {
+        background-color: hsl(var(--success)) !important;
+        border-color: hsl(var(--success)) !important;
+        color: hsl(var(--white)) !important;
+        &:hover {
+            background-color: var(--success-600) !important;
+            border-color: var(--success-600) !important;
+        }
+    }
+    &-outline-success {
+        background-color: transparent !important;
+        border-color: hsl(var(--success)) !important;
+        color: hsl(var(--success)) !important;
+        &:hover {
+            background-color: hsl(var(--success)) !important;
+            border-color: hsl(var(--success)) !important;
+            color: hsl(var(--white)) !important;
+        }
+    }
+    // Info Button
+    &-info {
+        background-color: hsl(var(--info)) !important;
+        border-color: hsl(var(--info)) !important;
+        color: hsl(var(--white)) !important;
+        &:hover {
+            background-color: var(--info-600) !important;
+            border-color: var(--info-600) !important;
+        }
+    }
+    &-outline-info {
+        background-color: transparent !important;
+        border-color: hsl(var(--info)) !important;
+        color: hsl(var(--info)) !important;
+        &:hover {
+            background-color: hsl(var(--info)) !important;
+            border-color: hsl(var(--info)) !important;
+            color: hsl(var(--white)) !important;
+        }
+    }
 }
 /* ================================= Button Css End =========================== */

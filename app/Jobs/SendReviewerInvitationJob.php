@@ -16,6 +16,10 @@ class SendReviewerInvitationJob implements ShouldQueue
 
     protected $details;
 
+    public $tries = 3;
+    public $maxExceptions = 3;
+    public $backoff = [60, 180, 360]; // Retry after 1 min, 3 mins, 6 mins
+
     /**
      * Create a new message instance.
      *
@@ -31,7 +35,8 @@ class SendReviewerInvitationJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $email = new SendReviewerInvitationNotification($this->details['user'], $this->details['journal']);
+        $token = $this->details['token'] ?? null;
+        $email = new SendReviewerInvitationNotification($this->details['user'], $this->details['journal'], $token);
         Mail::to($this->details['user']['email'])->send($email);
     }
 }

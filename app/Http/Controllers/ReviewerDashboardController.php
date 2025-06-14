@@ -24,20 +24,19 @@ class ReviewerDashboardController extends Controller
      * Display a listing of the resource.
      */
     public function index(){
-        // dd(auth()->user()->hasRole('Reviewer'));
-        $reviewer = auth()->user();
-        // $journals = $reviewer->reviews()->with('journal')->get();
-        $user = auth()->user();
-//        $journals = $this->repo->getJournalsForReviewer($user->id);
-        // dd($journals);
+        $reviewer = Auth::user();
+        $user = Auth::user();
         $reviewerId = Auth::id();
-        $pendingJournals = $this->repo->getPendingApprovedJournals()->count();
-        $approvedJournals = $this->repo->getApprovedJournals()->count();
-        $journalsInProgress = $this->repo->getJournalsInProgress()->count();
-        $declinedJournals = $this->repo->getRejectedJournals()->count();
+        
+        // Use reviewer-specific methods that filter by assigned manuscripts only
+        $pendingJournals = $this->repo->getPendingApprovedJournalsForReviewer()->total();
+        $approvedJournals = $this->repo->getApprovedJournalsForReviewer()->total();
+        $reviewedJournals = $this->repo->getReviewedJournalsForReviewer()->total();
+        $journalsInProgress = $this->repo->getInProgressJournalsForReviewer()->total();
+        $declinedJournals = $this->repo->getDeclinedJournalsForReviewer()->total();
         $journals = $this->repo->getPendingApprovedJournalsForReviewer($reviewerId);
         $allJournals = $this->repo->getJournalsForReviewer($reviewerId);
 
-        return view('dashboard.reviewer.dashboard', compact('pendingJournals', 'approvedJournals', 'journalsInProgress', 'declinedJournals', 'journals', 'allJournals'));
+        return view('dashboard.reviewer.dashboard', compact('pendingJournals', 'approvedJournals', 'reviewedJournals', 'journalsInProgress', 'declinedJournals', 'journals', 'allJournals'));
     }
 }

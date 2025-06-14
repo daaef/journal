@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'JAPR Website' }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -125,7 +126,14 @@
                     </li>
 
                     <li class="sidebar-menu__item">
-                        <a href="#" class="sidebar-menu__link">
+                        <a href="{{ route('admin.notifications.dashboard') }}" class="sidebar-menu__link">
+                            <span class="icon"><i class="ph ph-bell"></i></span>
+                            <span class="text">Notifications</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-menu__item">
+                        <a href="{{ route('admin.user.settings', auth()->user()->uuid) }}" class="sidebar-menu__link">
                             <span class="icon"><i class="ph ph-gear"></i></span>
                             <span class="text">Account Settings</span>
                         </a>
@@ -151,45 +159,7 @@
 
             <div class="flex-align gap-16">
                 <div class="flex-align gap-8">
-                    <!-- Notification Start -->
-                    <div class="dropdown">
-                        <button
-                            class="dropdown-btn shaking-animation text-gray-500 w-40 h-40 bg-main-50 hover-bg-main-100 transition-2 rounded-circle text-xl flex-center"
-                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <span class="position-relative">
-                                <i class="ph ph-bell"></i>
-                                <span class="alarm-notify position-absolute end-0"></span>
-                            </span>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu--lg border-0 bg-transparent p-0">
-                            <div class="card border border-gray-100 rounded-12 box-shadow-custom p-0 overflow-hidden">
-                                <div class="card-body p-0">
-                                    <div class="py-8 px-24 bg-main-600">
-                                        <div class="flex-between">
-                                            <h5 class="text-xl fw-semibold text-white mb-0">Notifications</h5>
-                                            <div class="flex-align gap-12">
-                                                <button type="button"
-                                                    class="bg-white rounded-6 text-sm px-8 py-2 hover-text-primary-600">
-                                                    New
-                                                </button>
-                                                <button type="button"
-                                                    class="close-dropdown hover-scale-1 text-xl text-white"><i
-                                                        class="ph ph-x"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <a href="#"
-                                        class="py-13 px-24 fw-bold text-center d-block text-primary-600 border-top border-gray-100 hover-text-decoration-underline">
-                                        View All </a>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Notification Start -->
-
-
+                    @include('components.notification-dropdown')
                 </div>
 
 
@@ -211,7 +181,7 @@
                                 </div>
                                 <ul class="max-h-270 overflow-y-auto scroll-sm pe-4">
                                     <li class="mb-4">
-                                        <a href=""
+                                        <a href="{{ route('admin.user.settings', auth()->user()->uuid) }}"
                                             class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">
                                             <span class="text-2xl text-primary-600 d-flex"><i
                                                     class="ph ph-gear"></i></span>

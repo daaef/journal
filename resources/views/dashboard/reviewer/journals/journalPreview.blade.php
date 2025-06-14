@@ -138,6 +138,14 @@
                                 <button type="submit" name="action" value="approve" class="btn btn-main rounded-pill py-11 w-100  mt-16">Approve</button>
                                 <button type="submit" name="action" value="decline" class="btn btn-danger rounded-pill py-11 w-100  mt-16 ml-4">Decline</button>
                             </div>
+                            
+                            <!-- Enhanced Review Link -->
+                            <div class="mt-16">
+                                <a href="{{ route('reviewer.journals.review', [$journal->uuid, $journal->slug]) }}" 
+                                   class="btn btn-outline-main rounded-pill py-11 w-100">
+                                    <i class="ph ph-star me-8"></i>Enhanced Review
+                                </a>
+                            </div>
                         </form>
                     </div>
                 </div>

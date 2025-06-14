@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+* {
+  font-family: "Montserrat", sans-serif;
+}
+
+.sidebar {
+  padding: 10px;
+}
+
+.tree {
+  list-style-type: none;
+  padding: 0;
+}
+
+.category-checkbox,
+.subcategory-checkbox,
+.subsubcategory-checkbox {
+  margin-right: 5px;
+}
+
+.category-label,
+.subcategory-label,
+.subsubcategory-label {
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.caret-icon {
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.subcategory {
+  margin-left: 20px;
+}
+
+.subsubcategory {
+  margin-left: 50px;
+}
+
+.collapsed .subcategories,
+.collapsed .subsubcategories {
+  display: none;
+}
+
+.category-label .caret-icon.down {
+  transform: rotate(90deg);
+}
+
+.collapsed > .caret-icon svg {
+  transform: rotate(0deg);
+}
+
+.caret-icon svg {
+  transform: rotate(90deg);
+}
+
+.masonry-item {
+  /* Space between items */
+}
+.masonry-item.active {
+  background: #762a1e;
+  color: #FAFAFA;
+}
+
+.checker + .hello {
+  display: none;
+}
+.checker:checked + .hello {
+  display: block;
+}

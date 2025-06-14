@@ -16,6 +16,10 @@ class UserManuscriptJob implements ShouldQueue
 
     protected $details;
 
+    public $tries = 3;
+    public $maxExceptions = 3;
+    public $backoff = [60, 180, 360]; // Retry after 1 min, 3 mins, 6 mins
+
     /**
      * Create a new job instance.
      */

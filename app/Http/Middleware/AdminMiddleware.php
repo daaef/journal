@@ -15,12 +15,18 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!auth()->user()->hasRole('Admin')){
+        // Check if user is authenticated
+        if (!auth()->check()) {
+            return redirect()->route('auth.login.get');
+        }
+
+        // Check if user has admin role
+        if (!auth()->user()->hasRole('Admin')) {
             $notification = array(
                 'message' => 'You are not authorized to access this page',
                 'alert-type' => 'error'
             );
-            return redirect()->back()->with($notification);
+            return redirect()->route('home')->with($notification);
         }
 
         return $next($request);

@@ -2,7 +2,7 @@
     <nav class="container w-full mx-auto px-4 flex flex-wrap basis-full items-center justify-between relative">
         <div class="flex gap-5 items-center">
             <a class="flex-none text-xl lg:static lg:translate-y-0 absolute top-[30px] left-[20px] translate-y-[-50%] font-semibold dark:text-white focus:outline-none focus:opacity-80"
-               href="#">
+               href="{{ route('home') }}">
                 <img class="h-14" src="{{ loadAssetFile('images/japr-logo.png') }}" alt="japr logo">
             </a>
             <div id="hs-navbar-alignment"
@@ -117,7 +117,7 @@
                             </a>
                         @endif
                         @if (auth()->user()->hasRole('Associate Editor') || auth()->user()->hasRole('Desk Editor'))
-                            <a class="@if (Route::is('dashboard')) text-primary-500 font-bold @else text-gray-800 font-medium @endif flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm  hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                            <a class="@if (Route::is('reviewer.dashboard')) text-primary-500 font-bold @else text-gray-800 font-medium @endif flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm  hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
                                href="{{ route('reviewer.dashboard') }}">
                                 Dashboard
                             </a>

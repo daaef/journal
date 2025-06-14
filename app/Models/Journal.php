@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Journal extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -36,15 +37,31 @@ class Journal extends Model
         'updated_by',
         'approved_by',
         'approval_comments',
-        'reveiwers',
+        'reviewers',
         'reviewers_ratings',
         'total_ratings',
         'rating_percentage',
         'is_draft',
         'change_requests',
         'accept',
-        'agree'
+        'agree',
+        'editor_decision_date',
+        'editor_decision_comment',
+        'declined_by'
         // 'dislikes',
+    ];
+
+    protected $casts = [
+        'created_by' => 'array',
+        'updated_by' => 'array',
+        'approved_by' => 'array',
+        'declined_by' => 'array',
+        'approval_comments' => 'array',
+        'reviewers' => 'array',
+        'reviewers_ratings' => 'array',
+        'license' => 'array',
+        'change_requests' => 'array',
+        'editor_decision_date' => 'datetime',
     ];
 
     public function user()
@@ -86,6 +103,11 @@ class Journal extends Model
     return $this->hasMany(Reviewer::class, 'journal_id');
 }
 
+    public function reviewerAssignments()
+    {
+        return $this->hasMany(Reviewer::class, 'journal_id');
+    }
+
     public function author()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -96,28 +118,15 @@ class Journal extends Model
         return $this->hasMany(Approval::class);
     }
 
-    /**
-     * Calculate and update the approval status.
-     */
-    // public function calculateApprovalStatus()
-    // {
-    //     $totalRatings = collect($this->reviewers_ratings)->sum('rating');
-    //     $totalReviewers = count($this->reviewers_ratings);
+    public function versions()
+    {
+        return $this->hasMany(ManuscriptVersion::class, 'journal_id')->orderBy('version_number', 'desc');
+    }
 
-    //     $this->total_ratings = $totalRatings;
-    //     $this->rating_percentage = $totalReviewers > 0
-    //         ? ($totalRatings / ($totalReviewers * 5)) * 100 // Assuming a 5-star rating
-    //         : 0;
-
-    //     // Automatic approval if percentage is greater than 65%
-    //     if ($this->rating_percentage >= 65) {
-    //         $this->approval_status = 'approved';
-    //     } else {
-    //         $this->approval_status = 'pending_review';
-    //     }
-
-    //     $this->save();
-    // }
+    public function latestVersion()
+    {
+        return $this->hasOne(ManuscriptVersion::class, 'journal_id')->latestOfMany('version_number');
+    }
 
     protected function cast()
     {

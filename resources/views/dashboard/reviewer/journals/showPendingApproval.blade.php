@@ -58,9 +58,19 @@
                                                     class="w-6 h-6 bg-warning-600 rounded-circle flex-shrink-0"></span>
                                                 Pending
                                             </span>
-                                            <a href="{{ route('reviewer.journals.preview', [$journal->uuid, $journal->slug]) }}"
-                                                class="text-gray-900 hover-text-main-600 text-md d-flex">
-                                                <i class="ph ph-caret-right"></i></a>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-main dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    Actions
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="{{ route('reviewer.journals.review', [$journal->uuid, $journal->slug]) }}">
+                                                        <i class="ph ph-eye me-8"></i>Preview
+                                                    </a></li>
+                                                    <li><a class="dropdown-item" href="{{ route('reviewer.journals.review', [$journal->uuid, $journal->slug]) }}">
+                                                        <i class="ph ph-star me-8"></i>Enhanced Review
+                                                    </a></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>

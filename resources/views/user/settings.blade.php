@@ -1,3 +1,49 @@
+@if(auth()->user()->hasRole('Associate Editor') || auth()->user()->hasRole('Reviewer'))
+<x-layouts.reviewer_layout>
+    <x-slot:title>
+        Welcome to JAPR : Settings
+    </x-slot:title>
+    
+    <!-- Breadcrumb -->
+    <div class="breadcrumb mb-24">
+        <ul class="flex-align gap-4">
+            <li><a href="{{ route('reviewer.dashboard') }}" class="text-gray-600 fw-normal text-15 hover-text-gray-800">Home</a></li>
+            <li><span class="text-gray-400 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
+            <li><span class="text-gray-800 fw-normal text-15">Account Settings</span></li>
+        </ul>
+    </div>
+
+@elseif(auth()->user()->hasAnyRole(['Editor in Chief', 'Managing Editor']))
+<x-layouts.editor_layout>
+    <x-slot:title>
+        Welcome to JAPR : Settings
+    </x-slot:title>
+    
+    <!-- Breadcrumb -->
+    <div class="breadcrumb mb-24">
+        <ul class="flex-align gap-4">
+            <li><a href="{{ route('editor.dashboard') }}" class="text-gray-600 fw-normal text-15 hover-text-gray-800">Home</a></li>
+            <li><span class="text-gray-400 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
+            <li><span class="text-gray-800 fw-normal text-15">Account Settings</span></li>
+        </ul>
+    </div>
+
+@elseif(auth()->user()->hasRole('Admin'))
+<x-layouts.admin_layout>
+    <x-slot:title>
+        Welcome to JAPR : Settings
+    </x-slot:title>
+    
+    <!-- Breadcrumb -->
+    <div class="breadcrumb mb-24">
+        <ul class="flex-align gap-4">
+            <li><a href="{{ route('admin.dashboard') }}" class="text-gray-600 fw-normal text-15 hover-text-gray-800">Home</a></li>
+            <li><span class="text-gray-400 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
+            <li><span class="text-gray-800 fw-normal text-15">Account Settings</span></li>
+        </ul>
+    </div>
+
+@else
 <x-layouts.layout>
     <x-slot:title>
         Welcome to JAPR : Settings
@@ -11,8 +57,34 @@
         </div>
         <hr class="">
     </x-slot:breadcrumb>
+@endif
 
-    <form class="py-5" method="post" action="{{ route('user.settings.update', $user->uuid) }}">
+@if(!auth()->user()->hasRole('Author') && !auth()->user()->hasRole('Publisher'))
+<!-- Page Header -->
+<div class="mb-24">
+    <h1 class="h2 text-gray-800 mb-8">Account Settings</h1>
+    <p class="text-gray-600 text-15">Manage your account information and preferences</p>
+</div>
+
+<!-- Settings Card -->
+<div class="card border">
+    <div class="card-header bg-gray-50 border-bottom">
+        <h5 class="mb-0 text-gray-800">
+            <i class="ph ph-gear me-12"></i>{{ Str::words(auth()->user()->fullname, 1, '') }}'s Settings
+        </h5>
+    </div>
+    <div class="card-body">
+@endif
+
+    <form class="@if(auth()->user()->hasRole('Author') || auth()->user()->hasRole('Publisher')) py-5 @endif" method="post" action="{{ 
+        auth()->user()->hasRole('Associate Editor') || auth()->user()->hasRole('Reviewer') 
+            ? route('reviewer.user.settings.update', $user->uuid) 
+            : (auth()->user()->hasAnyRole(['Editor in Chief', 'Managing Editor']) 
+                ? route('editor.user.settings.update', $user->uuid) 
+                : (auth()->user()->hasRole('Admin') 
+                    ? route('admin.user.settings.update', $user->uuid)
+                    : route('user.settings.update', $user->uuid)))
+    }}">
         @csrf
         <div class="space-y-12">
             <div class="">
@@ -176,9 +248,23 @@
 
         <div class="mt-6 flex items-center justify-end gap-x-6">
             <button type="submit"
-                class="rounded-md bg-green-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+                class="@if(auth()->user()->hasRole('Author') || auth()->user()->hasRole('Publisher')) rounded-md bg-green-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 @else btn btn-primary px-20 @endif">
                 Update Account
             </button>
         </div>
     </form>
+
+@if(!auth()->user()->hasRole('Author') && !auth()->user()->hasRole('Publisher'))
+    </div>
+</div>
+@endif
+
+@if(auth()->user()->hasRole('Associate Editor') || auth()->user()->hasRole('Reviewer'))
+</x-layouts.reviewer_layout>
+@elseif(auth()->user()->hasAnyRole(['Editor in Chief', 'Managing Editor']))
+</x-layouts.editor_layout>
+@elseif(auth()->user()->hasRole('Admin'))
+</x-layouts.admin_layout>
+@else
 </x-layouts.layout>
+@endif

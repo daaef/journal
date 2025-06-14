@@ -18,8 +18,15 @@ class DashboardController extends Controller
 
     public function index()
     {
-        // $journals = Journal::all();
-        $journals = auth()->user()->myJournalCollections()->get();
-        return view('user.dashboard', compact('journals'));
+        // Get user's published/collection journals and submitted manuscripts
+        $myCollections = auth()->user()->myJournalCollections()->get();
+        $mySubmissions = Journal::where('user_id', auth()->user()->id)
+            ->with(['reviewers', 'category'])
+            ->withCount('reviewers')
+            ->orderBy('updated_at', 'desc')
+            ->take(5)
+            ->get();
+        
+        return view('user.dashboard', compact('myCollections', 'mySubmissions'));
     }
 }

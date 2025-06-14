@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\ManuscriptSubmissionNotification;
-use App\Mail\SendReviewerInvitationNotification;
 use App\Models\User;
+use App\Models\ManuscriptVersion;
+use App\Notifications\ReviewSubmittedNotification;
 use App\Repositories\Category\CategoryContract;
 use App\Repositories\DislikeJournal\DislikeJournalContract;
 use App\Repositories\Journal\JournalContract;
@@ -13,7 +13,8 @@ use App\Repositories\Reviewer\ReviewerContract;
 use App\Repositories\SubCategory\SubCategoryContract;
 use App\Repositories\User\UserContract;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -29,15 +30,14 @@ class JournalController extends Controller
     protected $reviewerRepo;
 
     public function __construct(
-        JournalContract        $journalContract,
-        CategoryContract       $categoryContract,
-        SubCategoryContract    $subCategoryContract,
-        LikeJournalContract    $likeJournalContract,
+        JournalContract $journalContract,
+        CategoryContract $categoryContract,
+        SubCategoryContract $subCategoryContract,
+        LikeJournalContract $likeJournalContract,
         DislikeJournalContract $dislikeJournalContract,
-        UserContract           $userContract,
-        ReviewerContract       $reviewerContract
-    )
-    {
+        UserContract $userContract,
+        ReviewerContract $reviewerContract
+    ) {
         $this->repo = $journalContract;
         $this->categoryRepo = $categoryContract;
         $this->subCategoryRepo = $subCategoryContract;
@@ -74,7 +74,7 @@ class JournalController extends Controller
 
     public function likeJournal(Request $request)
     {
-        if (!auth()->check()) {
+        if (!Auth::check()) {
             $notification = array(
                 'message' => 'You need to login to download the journal.',
                 'alert-type' => 'warning'
@@ -123,7 +123,7 @@ class JournalController extends Controller
 
     public function dislikeJournal(Request $request)
     {
-        if (!auth()->check()) {
+        if (!Auth::check()) {
             $notification = array(
                 'message' => 'You need to login to download the journal.',
                 'alert-type' => 'error'
@@ -191,50 +191,93 @@ class JournalController extends Controller
 
     public function submitManuscript(Request $request)
     {
+        // Debug: Let's see what we're getting
         // dd($request->all());
-        $validator = Validator::make($request->all(), [
+
+        // Check if user has accepted review policy (either previously or in this request)
+        $userHasAcceptedPolicy = Auth::user()->review_policy_accepted || $request->has('review_policy_accepted');
+
+        if (!$userHasAcceptedPolicy) {
+            $notification = array(
+                'message' => 'Review policy acceptance is required. Please accept the JAPR Review Policy first.',
+                'alert-type' => 'warning'
+            );
+            return redirect()->back()->with($notification)->withInput();
+        }
+
+        // Build validation rules - review_policy_accepted is only required if user hasn't already accepted
+        $validationRules = [
             'title' => 'required',
             'author' => 'required',
             'country' => 'required',
             'journal_language' => 'required',
             'abstract' => 'required',
-            'manuscripts' => 'required',
-            'file' => 'required|mimes:pdf|max:10000',
-            'accept' => 'required'
-        ]);
+            'manuscripts' => 'required|mimes:pdf|max:10000',
+            'agree_japr_policy' => 'required|accepted'
+        ];
 
-
-//        if ($validator->fails()) {
-//            return redirect()->back()->withErrors($validator)->withInput();
-//        }
-
-        $journal = $this->repo->submitManuscript($request);
-
-        if ($journal) {
-            // Send email notification to the author
-            Mail::to(auth()->user()->email)->send(new ManuscriptSubmissionNotification(auth()->user(), $journal, 'Author'));
-
-            // Send email notification to the admin, editor in chief, and managing editor
-            $roles = ['Admin', 'Editor in Chief', 'Managing Editor', 'Desk Editor'];
-            $users = User::role($roles)->get();
-            foreach ($users as $user) {
-                Mail::to($user->email)->send(new ManuscriptSubmissionNotification($user, $journal, $user->getRoleNames()->first()));
-            }
-
-
-            $notification = array(
-                'message' => 'Manuscript Submitted successfully',
-                'alert-type' => 'success'
-            );
-            return redirect()->route('user.submissions')->with($notification);
+        // Only require review_policy_accepted if user hasn't already accepted it
+        if (!Auth::user()->review_policy_accepted) {
+            $validationRules['review_policy_accepted'] = 'required|accepted';
         }
 
-        $notification = array(
-            'message' => 'Error submitting Manuscript',
-            'alert-type' => 'error'
-        );
+        $validator = Validator::make($request->all(), $validationRules);
 
-        return redirect()->back()->with($notification);
+        if ($validator->fails()) {
+            $notification = array(
+                'message' => 'Please fill all required fields. ' . $validator->errors()->first(),
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->withErrors($validator)->with($notification)->withInput();
+        }
+
+        // Update user's review policy acceptance status if they're accepting it via the form
+        // Only update if user hasn't already accepted the policy in the database
+        if ($request->has('review_policy_accepted') && $request->review_policy_accepted) {
+            $user = Auth::user();
+
+            // Refresh user data to ensure we have the latest DB state
+            $user->refresh();
+
+            // Only update if user hasn't already accepted the policy
+            if (!$user->review_policy_accepted) {
+                $user->update([
+                    'review_policy_accepted' => true,
+                    'review_policy_accepted_at' => now()
+                ]);
+
+                // Optional: Log for debugging
+                Log::info('User ' . $user->id . ' accepted review policy via form submission');
+            }
+            // If already accepted, we ignore the update (no action needed)
+        }
+
+        try {
+            $journal = $this->repo->submitManuscript($request);
+
+            if ($journal) {
+                $notification = array(
+                    'message' => 'Manuscript Submitted successfully',
+                    'alert-type' => 'success'
+                );
+                return redirect()->route('user.submissions')->with($notification);
+            }
+
+            $notification = array(
+                'message' => 'Error submitting Manuscript - Repository returned null',
+                'alert-type' => 'error'
+            );
+
+            return redirect()->back()->with($notification);
+
+        } catch (\Exception $e) {
+            $notification = array(
+                'message' => 'Error submitting Manuscript: ' . $e->getMessage(),
+                'alert-type' => 'error'
+            );
+
+            return redirect()->back()->with($notification);
+        }
     }
 
     /**
@@ -261,7 +304,7 @@ class JournalController extends Controller
 
     public function userSubmissions()
     {
-        $journals = $this->repo->getUserSubmissions(auth()->user()->id);
+        $journals = $this->repo->getUserSubmissionsWithDetails(Auth::id());
         return view('user.submissions', compact('journals'));
     }
 
@@ -273,7 +316,7 @@ class JournalController extends Controller
 
         $journal = $this->repo->findBySlug($slug);
         $comments = $journal->comments()->with('user')->get();
-        return view('view-abstract', compact('journal', 'comments'));
+        return view('view-abstract', compact('journal','comments'));
     }
 
     /**
@@ -283,6 +326,51 @@ class JournalController extends Controller
     {
         $journal = $this->repo->findById($id);
         return view('journals.show', compact('journal'));
+    }
+
+    /**
+     * Show the enhanced review form for Associate Editors (serves as both review and preview)
+     */
+    public function showEnhancedReviewForm(string $uuid, string $slug = null)
+    {
+        $journal = $this->repo->findByUUID($uuid);
+
+        if (!$journal) {
+            abort(404, 'Journal not found');
+        }
+
+        // Check if the current user is authorized to review this journal
+        $user = Auth::user();
+        if (!$user->hasRole(['Associate Editor', 'Desk Editor'])) {
+            abort(403, 'Unauthorized to access enhanced review');
+        }
+
+        // Load relationships for the enhanced review view
+        $journal->load(['author', 'category', 'sub_category', 'versions', 'reviewerAssignments.reviewer']);
+
+        // Get the current user's existing review for this journal
+        $existingReview = $journal->reviewerAssignments()
+            ->where('user_id', Auth::id())
+            ->first();
+
+        // Get other reviewers' reviews for collaborative viewing (excluding current user)
+        $otherReviews = $journal->reviewerAssignments()
+            ->where('user_id', '!=', Auth::id())
+            ->whereNotNull('comment')
+            ->with('reviewer')
+            ->get();
+
+        // Define review criteria for structured assessment
+        $reviewCriteria = [
+            'originality' => 'Originality and Innovation',
+            'methodology' => 'Methodology and Research Design',
+            'significance' => 'Significance and Impact',
+            'clarity' => 'Clarity and Presentation',
+            'literature_review' => 'Literature Review',
+            'data_analysis' => 'Data Analysis and Results'
+        ];
+
+        return view('dashboard.reviewer.journals.enhanced-review', compact('journal', 'existingReview', 'otherReviews', 'reviewCriteria'));
     }
 
     /**
@@ -323,6 +411,13 @@ class JournalController extends Controller
     }
 
 
+    public function reviewerPendingApproval()
+    {
+        // Use reviewer-specific method that filters by assigned manuscripts only
+        $journals = $this->repo->getPendingApprovedJournalsForReviewer();
+        return view('dashboard.reviewer.journals.showPendingApproval', compact('journals'));
+    }
+
     public function previewJournal(string $uuid)
     {
         // return "dsdsds";
@@ -346,24 +441,49 @@ class JournalController extends Controller
 
     public function SaveJournalReviewers(Request $request, string $uuid)
     {
+        // Validate that Associate Editors (reviewers) array exists and has 2-4 Associate Editors
+        $validator = Validator::make($request->all(), [
+            'reviewers' => 'required|array|min:2|max:4',
+            'reviewers.*' => 'required|string|exists:users,uuid'
+        ]);
+
+        if ($validator->fails()) {
+            $notification = array(
+                'message' => 'Please select between 2-4 Associate Editors. ' . $validator->errors()->first(),
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        // Check for minimum and maximum limits with custom messages
+        $reviewerCount = count($request->reviewers);
+        if ($reviewerCount < 2) {
+            $notification = array(
+                'message' => 'Minimum of 2 Associate Editors required. Currently selected: ' . $reviewerCount,
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        if ($reviewerCount > 4) {
+            $notification = array(
+                'message' => 'Maximum of 4 Associate Editors allowed. Currently selected: ' . $reviewerCount,
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
 
         $journal = $this->reviewerRepo->SaveJournalReviewers($request, $uuid);
         if ($journal) {
-            // Send email notification to each reviewer
-            foreach ($request->reviewers as $reviewerUuid) {
-                $reviewer = User::where('uuid', $reviewerUuid)->first();
-                Mail::to($reviewer->email)->send(new SendReviewerInvitationNotification($reviewer, $journal));
-            }
-
             $notification = array(
-                'message' => 'Reviewers saved successfully and email notifications sent',
+                'message' => 'Associate Editors assigned successfully (' . $reviewerCount . ' Associate Editor' . ($reviewerCount > 1 ? 's' : '') . ' assigned)',
                 'alert-type' => 'success'
             );
             return redirect()->back()->with($notification);
         }
 
         $notification = array(
-            'message' => 'Error saving reviewers',
+            'message' => 'Error assigning Associate Editors. Please try again.',
             'alert-type' => 'error'
         );
         return redirect()->back()->with($notification);
@@ -421,48 +541,6 @@ class JournalController extends Controller
         return redirect()->back()->with($notification);
     }
 
-    /**
-     * Request changes to a journal by an editor
-     */
-    public function requestChange(Request $request, $journal_id)
-    {
-        $validated = $request->validate([
-            'changes' => 'required|array',
-            'changes.*.field' => 'required|string',
-            'changes.*.suggested_change' => 'required|string',
-            'changes.*.comment' => 'nullable|string',
-        ]);
-
-        $editorId = auth()->id();
-
-        $journal = $this->repo->requestChange($journal_id, $validated['changes'], $editorId);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Change requests submitted successfully.',
-            'data' => $journal,
-        ], 200);
-    }
-
-    /**
-     * Update a journal by the author based on change requests.
-     */
-    public function authorUpdate(Request $request, $journalId)
-    {
-        $validated = $request->validate([
-            'updated_fields' => 'required|array',
-        ]);
-
-        $authorId = auth()->id();
-
-        $journal = $this->repo->authorUpdate($journalId, $validated['updated_fields'], $authorId);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Journal updated successfully based on change requests.',
-            'data' => $journal,
-        ], 200);
-    }
 
     public function approvedJournals()
     {
@@ -470,75 +548,398 @@ class JournalController extends Controller
         return view('dashboard.editor.journals.showApprovedJournals', compact('journals'));
     }
 
-    public function inProgressJournals()
+    public function reviewerApprovedJournals()
     {
-        $journals = $this->repo->getJournalsInProgress();
-        return view('dashboard.editor.journals.showInProgressJournals', compact('journals'));
+        // Use reviewer-specific method that filters by assigned manuscripts only
+        $journals = $this->repo->getApprovedJournalsForReviewer();
+        return view('dashboard.reviewer.journals.showApprovedJournals', compact('journals'));
     }
 
-    public function rejectedJournals()
+    /**
+     * Accept journal invitation (reviewer response)
+     */
+    public function acceptJournal(Request $request)
     {
-        $journals = $this->repo->getRejectedJournals();
-        return view('dashboard.editor.journals.showRejectedJournals', compact('journals'));
+        try {
+            $token = $request->get('token');
+
+            if (!$token) {
+                $notification = array(
+                    'message' => 'Invalid invitation token.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('home')->with($notification);
+            }
+
+            // Find the reviewer by token
+            $reviewer = \App\Models\Reviewer::where('token', $token)->first();
+
+            if (!$reviewer) {
+                $notification = array(
+                    'message' => 'Invalid or expired invitation token.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('home')->with($notification);
+            }
+
+            // Update reviewer acceptance status
+            $reviewer->is_accepted = true;
+            $reviewer->token = null; // Clear token after use
+            $reviewer->save();
+
+            $notification = array(
+                'message' => 'You have successfully accepted the review invitation.',
+                'alert-type' => 'success'
+            );
+
+            // Redirect based on user authentication
+            if (Auth::check() && Auth::user()->hasRole('Associate Editor')) {
+                return redirect()->route('reviewer.dashboard')->with($notification);
+            }
+
+            return redirect()->route('home')->with($notification);
+
+        } catch (\Exception $e) {
+            $notification = array(
+                'message' => 'An error occurred while processing your request.',
+                'alert-type' => 'error'
+            );
+            return redirect()->route('home')->with($notification);
+        }
     }
 
-    public function declineJournalWithComment(Request $request)
+    /**
+     * Decline journal invitation (reviewer response)
+     */
+    public function declineJournal(Request $request)
+    {
+        try {
+            $token = $request->get('token');
+
+            if (!$token) {
+                $notification = array(
+                    'message' => 'Invalid invitation token.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('home')->with($notification);
+            }
+
+            // Find the reviewer by token
+            $reviewer = \App\Models\Reviewer::where('token', $token)->first();
+
+            if (!$reviewer) {
+                $notification = array(
+                    'message' => 'Invalid or expired invitation token.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('home')->with($notification);
+            }
+
+            // Update reviewer acceptance status
+            $reviewer->is_accepted = false;
+            $reviewer->token = null; // Clear token after use
+            $reviewer->save();
+
+            $notification = array(
+                'message' => 'You have declined the review invitation.',
+                'alert-type' => 'info'
+            );
+
+            return redirect()->route('home')->with($notification);
+
+        } catch (\Exception $e) {
+            $notification = array(
+                'message' => 'An error occurred while processing your request.',
+                'alert-type' => 'error'
+            );
+            return redirect()->route('home')->with($notification);
+        }
+    }
+
+    /**
+     * Approve manuscript for publication (final editor decision)
+     */
+    public function approveForPublication(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'comment' => 'required',
+            'journal_uuid' => 'required',
+            'comment' => 'nullable|string|max:1000'
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $uuid = $request->journal_uuid;
+        try {
+            $journal = $this->repo->approveForPublication($request->journal_uuid, $request->comment);
 
-        $journal = $this->repo->declineJournalWithComment($uuid, $request);
-
-        if ($journal) {
-            $notification = array(
-                'message' => 'Journal Declined successfully',
-                'alert-type' => 'success'
-            );
+            if ($journal) {
+                $notification = [
+                    'message' => 'Manuscript approved for publication successfully',
+                    'alert-type' => 'success'
+                ];
+                return redirect()->back()->with($notification);
+            }
+        } catch (\Exception $e) {
+            $notification = [
+                'message' => $e->getMessage(),
+                'alert-type' => 'error'
+            ];
             return redirect()->back()->with($notification);
         }
-        $notification = array(
-            'message' => 'Error Declining Journal',
+
+        $notification = [
+            'message' => 'Error approving manuscript for publication',
             'alert-type' => 'error'
-        );
+        ];
         return redirect()->back()->with($notification);
     }
 
+    /**
+     * Reject manuscript (final editor decision)
+     */
+    public function rejectManuscript(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'journal_uuid' => 'required',
+            'reason' => 'required|string|max:1000'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            $journal = $this->repo->rejectManuscript($request->journal_uuid, $request->reason);
+
+            if ($journal) {
+                $notification = [
+                    'message' => 'Manuscript rejected successfully',
+                    'alert-type' => 'success'
+                ];
+                return redirect()->back()->with($notification);
+            }
+        } catch (\Exception $e) {
+            $notification = [
+                'message' => $e->getMessage(),
+                'alert-type' => 'error'
+            ];
+            return redirect()->back()->with($notification);
+        }
+
+        $notification = [
+            'message' => 'Error rejecting manuscript',
+            'alert-type' => 'error'
+        ];
+        return redirect()->back()->with($notification);
+    }
+
+    /**
+     * Request revisions from author (editor decision)
+     */
+    public function requestRevisions(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'journal_uuid' => 'required',
+            'changes' => 'required|string|max:2000'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            $journal = $this->repo->requestRevisions($request->journal_uuid, $request->changes);
+
+            if ($journal) {
+                $notification = [
+                    'message' => 'Revision request sent to author successfully',
+                    'alert-type' => 'success'
+                ];
+                return redirect()->back()->with($notification);
+            }
+        } catch (\Exception $e) {
+            $notification = [
+                'message' => $e->getMessage(),
+                'alert-type' => 'error'
+            ];
+            return redirect()->back()->with($notification);
+        }
+
+        $notification = [
+            'message' => 'Error requesting revisions',
+            'alert-type' => 'error'
+        ];
+        return redirect()->back()->with($notification);
+    }
+
+    /**
+     * Get journals reviewed by current user (for Associate Editors)
+     */
     public function reviewedJournals()
     {
         $journals = $this->repo->getJournalsReviewed();
         return view('dashboard.editor.journals.showReviewedJournals', compact('journals'));
     }
 
-    public function reviewerApprovedJournals()
+    /**
+     * Get in-progress journals (for Managing Editors/Editor in Chief)
+     */
+    public function inProgressJournals()
     {
-        $journals = $this->repo->getApprovedJournalsForReviewer();
-        return view('dashboard.reviewer.journals.showApprovedJournals', compact('journals'));
+        $journals = $this->repo->getJournalsInProgress();
+        return view('dashboard.editor.journals.showInProgressJournals', compact('journals'));
     }
 
-    public function reviewerPendingApproval()
+    /**
+     * Get rejected journals
+     */
+    public function rejectedJournals()
     {
-        $journals = $this->repo->getPendingApprovedJournalsForReviewer();
-        // dd($journals);
-        return view('dashboard.reviewer.journals.showPendingApproval', compact('journals'));
+        $journals = $this->repo->getRejectedJournals();
+        return view('dashboard.editor.journals.showRejectedJournals', compact('journals'));
     }
 
-    public function reviewerInProgressJournals()
+    /**
+     * Get journals assigned to current Associate Editor for review
+     */
+    public function myAssignedReviews()
     {
-        $journals = $this->repo->getInProgressJournalsForReviewer();
-        return view('dashboard.reviewer.journals.showInProgressJournals', compact('journals'));
+        if (!Auth::user()->hasRole('Associate Editor')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $journals = $this->repo->getJournalsForReviewer(Auth::user()->id);
+        return view('dashboard.reviewer.journals.myAssignedReviews', compact('journals'));
     }
 
-    public function reviewerRejectedJournals()
+    /**
+     * Submit review comments and rating (Enhanced version for Associate Editors)
+     */
+    public function submitReview(Request $request)
     {
-        $journals = $this->repo->getDeclinedJournalsForReviewer();
-        return view('dashboard.reviewer.journals.showRejectedJournals', compact('journals'));
+        $validator = Validator::make($request->all(), [
+            'journal_uuid' => 'required',
+            'comment' => 'required|string|max:5000',
+            'rating' => 'required|integer|between:1,5',
+            'recommendation' => 'required|in:accept,minor_revision,major_revision,reject',
+            'criteria_ratings' => 'nullable|array',
+            'criteria_ratings.*' => 'integer|between:0,5',
+            'confidential_comments' => 'nullable|string|max:2000'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Check if user has already submitted a review
+        $journal = $this->repo->findByUUID($request->journal_uuid);
+        $existingReview = $journal->reviewerAssignments()
+            ->where('user_id', Auth::id())
+            ->whereNotNull('review_submitted_at')
+            ->first();
+
+        if ($existingReview) {
+            $notification = [
+                'message' => 'You have already submitted a review for this manuscript.',
+                'alert-type' => 'error'
+            ];
+            return redirect()->back()->with($notification);
+        }
+
+        // Always finalize the review (no draft system)
+        $result = $this->repo->submitReview(
+            $request->journal_uuid,
+            Auth::id(),
+            $request->comment,
+            $request->rating,
+            $request->recommendation,
+            $request->criteria_ratings ?? [],
+            $request->confidential_comments,
+            true // Always finalize
+        );
+
+        if ($result) {
+            // Get the author User model safely
+            $author = null;
+            
+            // Try to get the User model through relationship or direct lookup
+            if ($journal->user_id) {
+                $author = User::find($journal->user_id);
+            }
+            
+            $reviewer = Auth::user();
+
+            // Send notifications only if we have a valid User object
+            try {
+                if ($author && $author instanceof User && $author->email) {
+                    $author->notify(new ReviewSubmittedNotification(
+                        $journal,
+                        $reviewer,
+                        $request->rating,
+                        $request->recommendation
+                    ));
+                } else {
+                    Log::warning('Could not send review notification: Invalid author object', [
+                        'journal_id' => $journal->id,
+                        'user_id' => $journal->user_id,
+                        'author_type' => gettype($journal->author ?? 'null')
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::error('Failed to send review notification: ' . $e->getMessage());
+            }
+
+            $notification = [
+                'message' => 'Review submitted successfully and author has been notified',
+                'alert-type' => 'success'
+            ];
+
+            return redirect()->route('reviewer.dashboard')->with($notification);
+        }
+
+        $notification = [
+            'message' => 'Error submitting review',
+            'alert-type' => 'error'
+        ];
+        return redirect()->back()->with($notification);
+    }
+
+    /**
+     * Upload revised manuscript version (for Authors)
+     */
+    public function uploadRevision(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'journal_uuid' => 'required',
+            'revision_file' => 'required|mimes:pdf|max:10000',
+            'revision_notes' => 'required|string|max:1000'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $result = $this->repo->uploadRevision(
+            $request->journal_uuid,
+            $request->file('revision_file'),
+            $request->revision_notes,
+            Auth::id()
+        );
+
+        if ($result) {
+            $notification = [
+                'message' => 'Revised manuscript uploaded successfully',
+                'alert-type' => 'success'
+            ];
+            return redirect()->back()->with($notification);
+        }
+
+        $notification = [
+            'message' => 'Error uploading revised manuscript',
+            'alert-type' => 'error'
+        ];
+        return redirect()->back()->with($notification);
     }
 
     /**
@@ -547,5 +948,260 @@ class JournalController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Show version history for a manuscript
+     */
+    public function versionHistory($uuid)
+    {
+        $journal = $this->repo->findByUUID($uuid);
+
+        if (!$journal) {
+            abort(404, 'Manuscript not found');
+        }
+
+        // Check access permissions
+        if (!$this->canAccessManuscript($journal)) {
+            abort(403, 'Unauthorized access');
+        }
+
+        $versionHistory = $this->repo->getVersionHistory($uuid);
+
+        return view('dashboard.shared.version-history', compact('journal', 'versionHistory'));
+    }
+
+    /**
+     * Compare two versions of a manuscript
+     */
+    public function compareVersions(Request $request, $uuid)
+    {
+        $validator = Validator::make($request->all(), [
+            'version1' => 'required|integer|exists:manuscript_versions,id',
+            'version2' => 'required|integer|exists:manuscript_versions,id|different:version1'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $journal = $this->repo->findByUUID($uuid);
+
+        if (!$journal) {
+            abort(404, 'Manuscript not found');
+        }
+
+        // Check access permissions
+        if (!$this->canAccessManuscript($journal)) {
+            abort(403, 'Unauthorized access');
+        }
+
+        $comparison = $this->repo->compareVersions($uuid, $request->version1, $request->version2);
+
+        return view('dashboard.shared.version-comparison', compact('journal', 'comparison'));
+    }
+
+    /**
+     * Show detailed view of a specific version
+     */
+    public function showVersion($uuid, $versionId)
+    {
+        $journal = $this->repo->findByUUID($uuid);
+
+        if (!$journal) {
+            abort(404, 'Manuscript not found');
+        }
+
+        // Check access permissions
+        if (!$this->canAccessManuscript($journal)) {
+            abort(403, 'Unauthorized access');
+        }
+
+        $versionDetails = $this->repo->getVersionDetails($versionId);
+
+        // Verify this version belongs to the journal
+        if ($versionDetails['journal']['uuid'] !== $uuid) {
+            abort(404, 'Version not found for this manuscript');
+        }
+
+        return view('dashboard.shared.version-details', compact('journal', 'versionDetails'));
+    }
+
+    /**
+     * Revert manuscript to a previous version
+     */
+    public function revertToVersion(Request $request, $uuid)
+    {
+        $validator = Validator::make($request->all(), [
+            'version_id' => 'required|integer|exists:manuscript_versions,id',
+            'confirm' => 'required|accepted'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $journal = $this->repo->findByUUID($uuid);
+
+        if (!$journal) {
+            abort(404, 'Manuscript not found');
+        }
+
+        // Check if user can revert (typically only authors and senior editors)
+        if (!Auth::user()->hasAnyRole(['Editor in Chief', 'Managing Editor']) &&
+            $journal->user_id !== Auth::id()) {
+            abort(403, 'You do not have permission to revert this manuscript');
+        }
+
+        try {
+            $newVersion = $this->repo->revertToVersion($uuid, $request->version_id, Auth::id());
+
+            $notification = [
+                'message' => 'Manuscript successfully reverted to previous version',
+                'alert-type' => 'success'
+            ];
+
+            return redirect()->route(
+                Auth::user()->hasAnyRole(['Editor in Chief', 'Managing Editor'])
+                    ? 'editor.journals.preview'
+                    : 'user.manuscripts.versions',
+                [$uuid, $journal->slug ?? 'manuscript']
+            )->with($notification);
+
+        } catch (\Exception $e) {
+            $notification = [
+                'message' => 'Error reverting manuscript: ' . $e->getMessage(),
+                'alert-type' => 'error'
+            ];
+
+            return redirect()->back()->with($notification);
+        }
+    }
+
+    /**
+     * Helper method to check if user can access manuscript
+     */
+    private function canAccessManuscript($journal)
+    {
+        $user = Auth::user();
+
+        // Authors can access their own manuscripts
+        if ($journal->user_id === $user->id) {
+            return true;
+        }
+
+        // Editors can access manuscripts
+        if ($user->hasAnyRole(['Editor in Chief', 'Managing Editor', 'Associate Editor'])) {
+            return true;
+        }
+
+        // Reviewers can access assigned manuscripts
+        if ($journal->reviewers()->where('user_id', $user->id)->exists()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Show the review policy document
+     */
+    public function showReviewPolicy()
+    {
+        return view('policies.review-policy');
+    }
+
+    /**
+     * Accept the review policy
+     */
+    public function acceptReviewPolicy(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            $user->update([
+                'review_policy_accepted' => true,
+                'review_policy_accepted_at' => now(),
+            ]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Review policy accepted successfully'
+                ]);
+            }
+
+            $notification = array(
+                'message' => 'Review policy accepted successfully',
+                'alert-type' => 'success'
+            );
+
+            return redirect()->back()->with($notification);
+
+        } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error accepting review policy: ' . $e->getMessage()
+                ], 500);
+            }
+
+            $notification = array(
+                'message' => 'Error accepting review policy: ' . $e->getMessage(),
+                'alert-type' => 'error'
+            );
+
+            return redirect()->back()->with($notification);
+        }
+    }
+
+    /**
+     * Decline the review policy
+     */
+    public function declineReviewPolicy(Request $request)
+    {
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You must accept the review policy to submit manuscripts'
+            ]);
+        }
+
+        $notification = array(
+            'message' => 'You must accept the review policy to submit manuscripts',
+            'alert-type' => 'warning'
+        );
+
+        return redirect()->back()->with($notification);
+    }
+
+    /**
+     * Get rejected journals for current reviewer (Associate Editor)
+     */
+    public function reviewerRejectedJournals()
+    {
+        // Use reviewer-specific method that filters by assigned manuscripts only
+        $journals = $this->repo->getDeclinedJournalsForReviewer();
+        return view('dashboard.reviewer.journals.showRejectedJournals', compact('journals'));
+    }
+
+    /**
+     * Get in-progress journals for current reviewer (Associate Editor)
+     */
+    public function reviewerInProgressJournals()
+    {
+        // Use reviewer-specific method that filters by assigned manuscripts only
+        $journals = $this->repo->getInProgressJournalsForReviewer();
+        return view('dashboard.reviewer.journals.showInProgressJournals', compact('journals'));
+    }
+
+    /**
+     * Get reviewed journals for current reviewer (Associate Editor)
+     */
+    public function reviewerReviewedJournals()
+    {
+        // Use reviewer-specific method that filters by assigned manuscripts only
+        $journals = $this->repo->getReviewedJournalsForReviewer();
+        return view('dashboard.reviewer.journals.showReviewedJournals', compact('journals'));
     }
 }

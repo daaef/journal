@@ -9,6 +9,7 @@ use App\Repositories\User\UserContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -94,7 +95,7 @@ class UserController extends Controller
     public function edit(string $uuid)
     {
         $user = $this->repo->findByUUID($uuid);
-        $userInterests = UserInterest::where('user_id', auth()->user()->id)->first();
+        $userInterests = UserInterest::where('user_id', Auth::user()->id)->first();
         $interests = '';
 
         if ($userInterests && is_string($userInterests->interests)) {
@@ -108,9 +109,69 @@ class UserController extends Controller
         return view('user.settings', compact('user', 'interests'));
     }
 
+    /**
+     * Show the reviewer-specific settings page.
+     */
+    public function reviewerSettings(string $uuid)
+    {
+        $user = $this->repo->findByUUID($uuid);
+        $userInterests = UserInterest::where('user_id', Auth::user()->id)->first();
+        $interests = '';
+
+        if ($userInterests && is_string($userInterests->interests)) {
+            $decodedInterests = json_decode($userInterests->interests, true);
+            if (is_array($decodedInterests)) {
+                $interestsArray = Category::whereIn('uuid', $decodedInterests)->pluck('name')->toArray();
+                $interests = implode(", ", $interestsArray);
+            }
+        }
+
+        return view('dashboard.reviewer.settings', compact('user', 'interests'));
+    }
+
+    /**
+     * Show the admin-specific settings page.
+     */
+    public function adminSettings(string $uuid)
+    {
+        $user = $this->repo->findByUUID($uuid);
+        $userInterests = UserInterest::where('user_id', Auth::user()->id)->first();
+        $interests = '';
+
+        if ($userInterests && is_string($userInterests->interests)) {
+            $decodedInterests = json_decode($userInterests->interests, true);
+            if (is_array($decodedInterests)) {
+                $interestsArray = Category::whereIn('uuid', $decodedInterests)->pluck('name')->toArray();
+                $interests = implode(", ", $interestsArray);
+            }
+        }
+
+        return view('dashboard.admin.settings', compact('user', 'interests'));
+    }
+
+    /**
+     * Show the editor-specific settings page.
+     */
+    public function editorSettings(string $uuid)
+    {
+        $user = $this->repo->findByUUID($uuid);
+        $userInterests = UserInterest::where('user_id', Auth::user()->id)->first();
+        $interests = '';
+
+        if ($userInterests && is_string($userInterests->interests)) {
+            $decodedInterests = json_decode($userInterests->interests, true);
+            if (is_array($decodedInterests)) {
+                $interestsArray = Category::whereIn('uuid', $decodedInterests)->pluck('name')->toArray();
+                $interests = implode(", ", $interestsArray);
+            }
+        }
+
+        return view('dashboard.editor.settings', compact('user', 'interests'));
+    }
+
     public function interests()
     {
-        $userInterests = UserInterest::where('user_id', auth()->user()->id)->first();
+        $userInterests = UserInterest::where('user_id', Auth::user()->id)->first();
         $interests = [];
 
         if ($userInterests && is_string($userInterests->interests)) {
@@ -130,21 +191,7 @@ class UserController extends Controller
      */
     public function update(Request $request, string $uuid)
     {
-        // Validate request
-        $validator = Validator::make($request->all(), [
-            'fullname' => 'required|max:255',
-            'username' => 'required|unique:users',
-            'email' => 'required|unique:users',
-            'country' => 'required',
-            'password' => 'nullable|between:8,20',
-            'confirm_password' => 'nullable|same:password',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        // Find user
+        // Find user first
         $user = $this->repo->findByUUID($uuid);
 
         if (!$user) {
@@ -155,24 +202,46 @@ class UserController extends Controller
             return redirect()->back()->with($notification)->withInput();
         }
 
-        // check if password is not empty
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'fullname' => 'required|max:255',
+            'username' => 'required|unique:users,username,' . $user->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'country' => 'required',
+            'institution' => 'nullable|max:255',
+            'old_password' => 'nullable|required_with:password',
+            'password' => 'nullable|between:8,20|confirmed',
+            'confirm_password' => 'nullable|same:password',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Check password if provided
         if (!empty($request->password)) {
-            //check if password is not the same as the old password
-            if (!Hash::check($request->old_password, $user->password)) {
+            if (empty($request->old_password)) {
                 $notification = array(
-                    'message' => 'Password did not match',
+                    'message' => 'Current password is required when setting a new password',
                     'alert-type' => 'error'
                 );
                 return redirect()->back()->with($notification)->withInput();
             }
-
+            
+            if (!Hash::check($request->old_password, $user->password)) {
+                $notification = array(
+                    'message' => 'Current password is incorrect',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification)->withInput();
+            }
         }
 
         $user = $this->repo->update($request, $uuid);
 
         if (!$user) {
             $notification = array(
-                'message' => 'User creation failed',
+                'message' => 'User update failed',
                 'alert-type' => 'error'
             );
             return redirect()->back()->with($notification)->withInput();
@@ -183,8 +252,16 @@ class UserController extends Controller
             'alert-type' => 'success'
         );
 
-        return redirect()->route('users.index')->with($notification);
-
+        // Redirect based on user role
+        if (Auth::user()->hasRole('Admin')) {
+            return redirect()->route('admin.user.settings', $uuid)->with($notification);
+        } elseif (Auth::user()->hasAnyRole(['Editor in Chief', 'Managing Editor'])) {
+            return redirect()->route('editor.user.settings', $uuid)->with($notification);
+        } elseif (Auth::user()->hasRole('Associate Editor') || Auth::user()->hasRole('Reviewer')) {
+            return redirect()->route('reviewer.user.settings', $uuid)->with($notification);
+        } else {
+            return redirect()->route('user.settings', $uuid)->with($notification);
+        }
     }
 
     /**

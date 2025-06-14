@@ -18,6 +18,7 @@ use App\Http\Controllers\ReviewerDashboardController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserInterestController;
+use App\Http\Controllers\NotificationController;
 use App\Models\Category;
 use App\Models\Journal;
 use App\Models\UserInterest;
@@ -58,6 +59,10 @@ Route::prefix('journals')->group(function () {
     Route::match(['get', 'post'], '/remove-from-collection/', [MyJournalCollectionController::class, 'removeFromCollection'])->name('journals.remove-from-collection')->middleware('auth');
 });
 
+// Review Policy Route
+Route::get('/review-policy', [JournalController::class, 'showReviewPolicy'])->name('review-policy.show');
+Route::post('/review-policy/accept', [JournalController::class, 'acceptReviewPolicy'])->name('review-policy.accept')->middleware('auth');
+Route::post('/review-policy/decline', [JournalController::class, 'declineReviewPolicy'])->name('review-policy.decline')->middleware('auth');
 
 Route::group(['prefix' => 'auth'], function () {
     Route::get('/login', [AuthController::class, 'getLogin'])->name('auth.login.get');
@@ -99,6 +104,28 @@ Route::group(['prefix' => 'auth'], function () {
 // Admin Routes
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
+    // Admin Notifications
+    Route::group(['prefix' => 'notifications'], function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('admin.notifications.index');
+        Route::get('/dashboard', [NotificationController::class, 'dashboard'])->name('admin.notifications.dashboard');
+        Route::get('/dropdown', [NotificationController::class, 'getDropdownNotifications'])->name('admin.notifications.dropdown');
+        Route::get('/unread-count', [NotificationController::class, 'getUnreadCount'])->name('admin.notifications.unread-count');
+        Route::get('/count', [NotificationController::class, 'getDetailedCounts'])->name('admin.notifications.count');
+        Route::get('/export', [NotificationController::class, 'export'])->name('admin.notifications.export');
+        Route::get('/preferences', [NotificationController::class, 'preferences'])->name('admin.notifications.preferences');
+        Route::post('/preferences', [NotificationController::class, 'updatePreferences'])->name('admin.notifications.preferences.update');
+        Route::get('/stats', [NotificationController::class, 'getRealTimeStats'])->name('admin.notifications.stats');
+        Route::post('/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('admin.notifications.mark-as-read');
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('admin.notifications.read');
+        Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('admin.notifications.mark-all-read');
+        Route::post('/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('admin.notifications.mark-all-as-read');
+        Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('admin.notifications.destroy');
+    });
+
+    // Admin Settings
+    Route::get('/settings/{uuid}', [UserController::class, 'adminSettings'])->name('admin.user.settings');
+    Route::post('/settings/{uuid}', [UserController::class, 'update'])->name('admin.user.settings.update');
 
     Route::group(['prefix' => 'categories'], function () {
         Route::get('/', [CategoryController::class, 'index'])->name('categories.index');
@@ -171,8 +198,31 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
 Route::group(['prefix' => 'editor', 'middleware' => ['auth', 'editor']], function () {
     Route::get('/', [EditorDashboardController::class, 'index'])->name('editor.dashboard');
 
+    // Editor Notifications
+    Route::group(['prefix' => 'notifications'], function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('editor.notifications.index');
+        Route::get('/dashboard', [NotificationController::class, 'dashboard'])->name('editor.notifications.dashboard');
+        Route::get('/dropdown', [NotificationController::class, 'getDropdownNotifications'])->name('editor.notifications.dropdown');
+        Route::get('/unread-count', [NotificationController::class, 'getUnreadCount'])->name('editor.notifications.unread-count');
+        Route::get('/count', [NotificationController::class, 'getDetailedCounts'])->name('editor.notifications.count');
+        Route::get('/export', [NotificationController::class, 'export'])->name('editor.notifications.export');
+        Route::get('/preferences', [NotificationController::class, 'preferences'])->name('editor.notifications.preferences');
+        Route::post('/preferences', [NotificationController::class, 'updatePreferences'])->name('editor.notifications.preferences.update');
+        Route::get('/stats', [NotificationController::class, 'getRealTimeStats'])->name('editor.notifications.stats');
+        Route::post('/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('editor.notifications.mark-as-read');
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('editor.notifications.read');
+        Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('editor.notifications.mark-all-read');
+        Route::post('/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('editor.notifications.mark-all-as-read');
+        Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('editor.notifications.destroy');
+    });
+
+    // Editor Settings
+    Route::get('/settings/{uuid}', [UserController::class, 'editorSettings'])->name('editor.user.settings');
+    Route::post('/settings/{uuid}', [UserController::class, 'update'])->name('editor.user.settings.update');
+
     Route::group(['prefix' => 'journals'], function () {
         Route::get('/preview/{uuid}/{slug}', [JournalController::class, 'previewJournal'])->name('editor.journals.preview');
+        Route::get('/enhanced-review-details/{uuid}', [JournalController::class, 'showEnhancedReviewDetails'])->name('editor.journals.enhancedReviewDetails');
         Route::get('/pending', [JournalController::class, 'pendingApproval'])->name('editor.journals.pendingApproval');
         Route::get('/approved', [JournalController::class, 'approvedJournals'])->name('editor.journals.approved');
         Route::get('/in-progress', [JournalController::class, 'inProgressJournals'])->name('editor.journals.inProgress');
@@ -180,8 +230,23 @@ Route::group(['prefix' => 'editor', 'middleware' => ['auth', 'editor']], functio
         Route::get('/reviewed', [JournalController::class, 'reviewedJournals'])->name('editor.journals.reviewed');
         Route::post('/approve-journal', [JournalController::class, 'approveJournal'])->name('editor.journals.approveJournal');
 
+        // Editor Final Decision Routes
+        Route::post('/approve-for-publication', [JournalController::class, 'approveForPublication'])->name('editor.journals.approveForPublication');
+        Route::post('/reject-manuscript', [JournalController::class, 'rejectManuscript'])->name('editor.journals.rejectManuscript');
+        Route::post('/request-revisions', [JournalController::class, 'requestRevisions'])->name('editor.journals.requestRevisions');
+
         // Manage  Journal Reveiwers
         Route::post('/reviewers/{journal_uuid}', [JournalController::class, 'SaveJournalReviewers'])->name('editor.journals.reviewers.save');
+
+        // Version Control Routes for Editors
+        Route::get('/{uuid}/versions', [JournalController::class, 'versionHistory'])
+            ->name('editor.journals.versions');
+        Route::get('/{uuid}/version/{versionId}', [JournalController::class, 'showVersion'])
+            ->name('editor.journals.version.show');
+        Route::get('/{uuid}/compare', [JournalController::class, 'compareVersions'])
+            ->name('editor.journals.version.compare');
+        Route::post('/{uuid}/revert', [JournalController::class, 'revertToVersion'])
+            ->name('editor.journals.version.revert');
 
         // Accept or decline Journal
         Route::match(['get', 'post'], '/accept-journal', [JournalController::class, 'acceptJournal'])->name('reviewer.accept');
@@ -192,15 +257,49 @@ Route::group(['prefix' => 'editor', 'middleware' => ['auth', 'editor']], functio
 Route::group(['prefix' => 'reviewer', 'middleware' => ['auth', 'reviewer']], function () {
     Route::get('/', [ReviewerDashboardController::class, 'index'])->name('reviewer.dashboard');
 
+    // Reviewer Notifications
+    Route::group(['prefix' => 'notifications'], function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('reviewer.notifications.index');
+        Route::get('/dashboard', [NotificationController::class, 'dashboard'])->name('reviewer.notifications.dashboard');
+        Route::get('/dropdown', [NotificationController::class, 'getDropdownNotifications'])->name('reviewer.notifications.dropdown');
+        Route::get('/unread-count', [NotificationController::class, 'getUnreadCount'])->name('reviewer.notifications.unread-count');
+        Route::get('/count', [NotificationController::class, 'getDetailedCounts'])->name('reviewer.notifications.count');
+        Route::get('/export', [NotificationController::class, 'export'])->name('reviewer.notifications.export');
+        Route::get('/preferences', [NotificationController::class, 'preferences'])->name('reviewer.notifications.preferences');
+        Route::post('/preferences', [NotificationController::class, 'updatePreferences'])->name('reviewer.notifications.preferences.update');
+        Route::get('/stats', [NotificationController::class, 'getRealTimeStats'])->name('reviewer.notifications.stats');
+        Route::post('/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('reviewer.notifications.mark-as-read');
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('reviewer.notifications.read');
+        Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('reviewer.notifications.mark-all-read');
+        Route::post('/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('reviewer.notifications.mark-all-as-read');
+        Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('reviewer.notifications.destroy');
+    });
+
+    // Reviewer Settings
+    Route::get('/settings/{uuid}', [UserController::class, 'reviewerSettings'])->name('reviewer.user.settings');
+    Route::post('/settings/{uuid}', [UserController::class, 'update'])->name('reviewer.user.settings.update');
+
     Route::group(['prefix' => 'journals'], function () {
-        Route::get('/review/{uuid}/{slug}', [JournalController::class, 'reviewerPreviewJournal'])->name('reviewer.journals.preview');
+        // Primary reviewer route - Enhanced Review (serves as both review and preview)
+        Route::get('/review/{uuid}/{slug}', [JournalController::class, 'showEnhancedReviewForm'])->name('reviewer.journals.review');
+        
+        // Legacy preview route - redirect to enhanced review
+        Route::get('/preview/{uuid}/{slug}', function($uuid, $slug) {
+            return redirect()->route('reviewer.journals.review', [$uuid, $slug]);
+        })->name('reviewer.journals.preview');
+        
+        // Enhanced review form (same as review route for consistency)
+        Route::get('/enhanced-review/{uuid}', [JournalController::class, 'showEnhancedReviewForm'])->name('reviewer.journals.enhancedReview');
         Route::get('/pending', [JournalController::class, 'reviewerPendingApproval'])->name('reviewer.journals.pendingApproval');
         Route::get('/approved', [JournalController::class, 'reviewerApprovedJournals'])->name('reviewer.journals.approved');
+        Route::get('/reviewed', [JournalController::class, 'reviewerReviewedJournals'])->name('reviewer.journals.reviewed');
         Route::get('/declined', [JournalController::class, 'reviewerRejectedJournals'])->name('reviewer.journals.rejected');
         Route::get('/in-progress', [JournalController::class, 'reviewerInProgressJournals'])->name('reviewer.journals.inProgress');
+        Route::get('/my-assigned-reviews', [JournalController::class, 'myAssignedReviews'])->name('reviewer.journals.myAssignedReviews');
         Route::post('/approve-journal', [JournalController::class, 'approveJournal'])->name('reviewer.journals.approveJournal');
         Route::post('/approve-journal-with-comment', [JournalController::class, 'approveJournalWithComment'])->name('reviewer.journals.approveJournalWithComment');
         Route::post('/decline-with-comment', [JournalController::class, 'declineJournalWithComment'])->name('reviewer.journals.declineWithComment');
+        Route::post('/submit-review', [JournalController::class, 'submitReview'])->name('reviewer.journals.submitReview');
         /**!SECTION
          * Request change for journals
          */
@@ -210,10 +309,28 @@ Route::group(['prefix' => 'reviewer', 'middleware' => ['auth', 'reviewer']], fun
 });
 
 Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'publisher']], function () {
-
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/submit-manuscript', [JournalController::class, 'creatManuscript'])->name('submit-manuscript');
-    Route::post('/submit-manuscript', [JournalController::class, 'submitManuscript'])->name('submit-manuscript.post');
+
+    // Author/Publisher Notifications  
+    Route::group(['prefix' => 'notifications'], function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('author.notifications.index');
+        Route::get('/dashboard', [NotificationController::class, 'dashboard'])->name('author.notifications.dashboard');
+        Route::get('/dropdown', [NotificationController::class, 'getDropdownNotifications'])->name('author.notifications.dropdown');
+        Route::get('/unread-count', [NotificationController::class, 'getUnreadCount'])->name('author.notifications.unread-count');
+        Route::get('/count', [NotificationController::class, 'getDetailedCounts'])->name('author.notifications.count');
+        Route::get('/export', [NotificationController::class, 'export'])->name('author.notifications.export');
+        Route::get('/preferences', [NotificationController::class, 'preferences'])->name('author.notifications.preferences');
+        Route::post('/preferences', [NotificationController::class, 'updatePreferences'])->name('author.notifications.preferences.update');
+        Route::get('/stats', [NotificationController::class, 'getRealTimeStats'])->name('author.notifications.stats');
+        Route::post('/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('author.notifications.mark-as-read');
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('author.notifications.read');
+        Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('author.notifications.mark-all-read');
+        Route::post('/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('author.notifications.mark-all-as-read');
+        Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('author.notifications.destroy');
+    });
+
+    Route::get('/submit-manuscript', [JournalController::class, 'creatManuscript'])->name('submit-manuscript');    Route::post('/submit-manuscript', [JournalController::class, 'submitManuscript'])->name('submit-manuscript.post');
+
     Route::get('/settings/{uuid}', [UserController::class, 'edit'])->name('user.settings');
     Route::post('/settings/{uuid}', [UserController::class, 'update'])->name('user.settings.update');
     Route::get('/submissions', [JournalController::class, 'userSubmissions'])->name('user.submissions');
@@ -225,6 +342,25 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'publisher']], f
     Route::post('/journals/{journalId}/author-update', [JournalController::class, 'authorUpdate'])
         ->name('journals.author-update');
 
+    // Author revision upload route
+    Route::post('/journals/upload-revision', [JournalController::class, 'uploadRevision'])
+        ->name('journals.uploadRevision');
+
+    // Manuscript version history
+    Route::get('/manuscript/{uuid}/versions', [JournalController::class, 'versionHistory'])
+        ->name('manuscript.versions');
+
+    // Manuscript detailed view with feedback
+    Route::get('/manuscript/{uuid}/feedback', [JournalController::class, 'manuscriptFeedback'])
+        ->name('manuscript.feedback');
+
+    // Version Control Routes
+    Route::get('/manuscript/{uuid}/version/{versionId}', [JournalController::class, 'showVersion'])
+        ->name('manuscript.version.show');
+    Route::get('/manuscript/{uuid}/compare', [JournalController::class, 'compareVersions'])
+        ->name('manuscript.version.compare');
+    Route::post('/manuscript/{uuid}/revert', [JournalController::class, 'revertToVersion'])
+        ->name('manuscript.version.revert');
 
 
     // Journal Routes

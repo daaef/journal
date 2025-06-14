@@ -2,11 +2,11 @@
     <x-slot:title>
         Register your JAPR account
     </x-slot>
-    <header class="lg:grid grid-cols-2 h-screen">
-        <div class="flex justify-center px-4 h-full overflow-y-auto sm:px-6 lg:flex-none lg:px-20 xl:px-24">
-            <div class="mx-auto w-full max-w-sm lg:w-96 py-12 ">
+    <header class="h-screen grid-cols-2 lg:grid">
+        <div class="flex justify-center h-full px-4 overflow-y-auto sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+            <div class="w-full max-w-sm py-12 mx-auto lg:w-96 ">
                 <div>
-                    <img class="h-20 w-auto" src="{{ loadAssetFile('images/japr-logo.png') }}" alt="Your Company">
+                    <img class="w-auto h-20" src="{{ loadAssetFile('images/japr-logo.png') }}" alt="Your Company">
                     <h2 class="mt-8 text-2xl font-bold leading-9 tracking-tight text-gray-900">Welcome back!</h2>
                 </div>
 
@@ -14,7 +14,7 @@
                     <form action="{{ route('auth.register.post') }}" method="post" class="space-y-6">
                         @if (isset($errors) && count($errors) > 0)
                             @foreach ($errors->all() as $error)
-                                <div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert"
+                                <div class="p-4 mt-2 text-sm text-white bg-red-500 rounded-lg" role="alert"
                                      tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
                                     {{ $error }}
                                 </div>
@@ -58,12 +58,12 @@
                                        class="block w-full bg-[#F9FAFB] rounded-md border-0 px-3 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 @if ($errors->has('email')) text-red-600 ring-red-600 @endif">
                             </div>
                             @if ($errors->has('email'))
-                                <p class="text-sm text-red-600 mt-2" id="hs-validation-name-error-helper">
+                                <p class="mt-2 text-sm text-red-600" id="hs-validation-name-error-helper">
                                     {{ $errors->first('email') }}</p>
                             @endif
                         </div>
                         <div>
-                            <label for="country" class="form-label mb-8 h6"> Country</label>
+                            <label for="country" class="mb-8 form-label h6"> Country</label>
                             <div class="position-relative">
                                 <select name="country" id="country"
                                         class="block w-full bg-[#F9FAFB] rounded-md border-0 px-3 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
@@ -144,7 +144,7 @@
                                    class="block @if ($errors->has('password')) text-red-600 @endif text-sm font-medium leading-6 text-gray-900">Password</label>
                             <div class="max-w-sm">
                                 <div class="flex mb-2">
-                                    <div class="flex-1 relative">
+                                    <div class="relative flex-1">
                                         <input type="password" id="hs-strong-password-with-indicator-and-hint" required
                                                name="password"
                                                class="block w-full bg-[#F9FAFB] rounded-md border-0 px-3 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 @if ($errors->has('password')) text-red-600 ring-red-600 @endif"
@@ -187,16 +187,16 @@
                             <label for="confirm_password"
                                    class="block text-sm font-medium leading-6 text-gray-900">Confirm
                                 Password</label>
-                            <div class="max-w-sm relative">
+                            <div class="relative max-w-sm">
                                 <div class="flex mb-2">
                                     <div class="flex-1">
                                         <input type="password" id="confirm_password" required name="confirm_password"
-                                               class="block w-full bg-[#F9FAFB] rounded-md border-0 px-3 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6endif"
+                                               class="block w-full bg-[#F9FAFB] rounded-md border-0 px-3 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 @if ($errors->has('confirm_password')) text-red-600 ring-red-600 @endif"
                                                placeholder="••••••••••">
                                     </div>
                                 </div>
                                 <button type="button" data-hs-toggle-password='{ "target": "#confirm_password" }'
-                                        class="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-gray-400 rounded-e-md focus:outline-none focus:text-secondary-700">
+                                        class="absolute inset-y-0 z-20 flex items-center px-3 text-gray-400 cursor-pointer end-0 rounded-e-md focus:outline-none focus:text-secondary-700">
                                     <svg class="shrink-0 size-3.5" width="24" height="24" viewBox="0 0 24 24"
                                          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                          stroke-linejoin="round">
@@ -222,8 +222,8 @@
                         <div class="flex items-center justify-between">
                             {{-- <div class="flex items-center">
                                 <input id="remember-me" name="remember-me" type="checkbox"
-                                       class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                                <label for="remember-me" class="ml-3 block text-sm leading-6 text-gray-700">Remember
+                                       class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-600">
+                                <label for="remember-me" class="block ml-3 text-sm leading-6 text-gray-700">Remember
                                     me</label>
                             </div> --}}
 
@@ -244,7 +244,7 @@
                             <div class="text-center">
                                 <p class="mt-2 text-sm text-gray-600 dark:text-neutral-400">
                                     Already have an account?
-                                    <a class="text-secondary-900 decoration-2 hover:underline focus:outline-none focus:underline font-medium"
+                                    <a class="font-medium text-secondary-900 decoration-2 hover:underline focus:outline-none focus:underline"
                                        href="{{ route('auth.login.get') }}">
                                         Sign in
                                     </a>
@@ -255,8 +255,8 @@
                 </div>
             </div>
         </div>
-        <div class="relative hidden w-full flex-1 lg:block">
-            <img class="absolute inset-0 h-full w-full object-cover" src="{{ loadAssetFile('images/registerImg.png') }}"
+        <div class="relative flex-1 hidden w-full lg:block">
+            <img class="absolute inset-0 object-cover w-full h-full" src="{{ loadAssetFile('images/registerImg.png') }}"
                  alt="">
         </div>
     </header>

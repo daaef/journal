@@ -27,6 +27,9 @@ class User extends Authenticatable
         'password',
         'avatar',
         'uuid',
+        'notification_preferences',
+        'review_policy_accepted',
+        'review_policy_accepted_at',
     ];
 
     public function activation()
@@ -100,6 +103,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
             'password' => 'hashed',
+            'notification_preferences' => 'array',
+            'review_policy_accepted_at' => 'datetime',
         ];
     }
 }
