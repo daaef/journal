@@ -16,16 +16,28 @@ class SubSubCategoriesSeeder extends Seeder
         // get all subcategories and create subsubcategories for each subcategory
         $subcategories = \App\Models\SubCategory::all();
         foreach ($subcategories as $subcategory) {
-            \App\Models\SubSubCategory::create([
-                'sub_category_id' => $subcategory->id,
-                'name' => $subcategory->name,
-                'slug' => Str::slug($subcategory->name, '-'),
-                'uuid' => Str::uuid(),
-                'description' => fake()->sentence(),
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            
+            // Check if subsubcategory already exists for this subcategory
+            $existingSubSubCategory = \App\Models\SubSubCategory::where('sub_category_id', $subcategory->id)
+                ->where('slug', Str::slug($subcategory->name, '-'))
+                ->first();
+                
+            if (!$existingSubSubCategory) {
+                \App\Models\SubSubCategory::create([
+                    'sub_category_id' => $subcategory->id,
+                    'name' => $subcategory->name,
+                    'slug' => Str::slug($subcategory->name, '-'),
+                    'uuid' => Str::uuid(),
+                    'description' => 'Sub-subcategory for ' . $subcategory->name . ' related submissions.',
+                    'is_active' => true,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                
+                echo "Created sub-subcategory: {$subcategory->name}\n";
+            } else {
+                echo "Sub-subcategory already exists: {$subcategory->name}\n";
+            }
         }
     }
 }
