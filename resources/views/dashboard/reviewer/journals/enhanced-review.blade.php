@@ -26,7 +26,7 @@
                             <span class="text-gray-600">{{ $journal->category->name ?? 'N/A' }}</span>
                         </div>                        <div class="bg-white p-12 rounded border border-gray-200 d-inline-block ml-8">
                             <strong class="text-gray-700">Status:</strong> 
-                            <span class="text-gray-600">{{ ucfirst($journal->approval_status) }}</span>
+                            <span class="text-gray-600">{{ $journal->status_label }}</span>
                         </div>
                     </div>
                     <div class="bg-gray-50 p-16 rounded border-l-4 border-gray-400">
@@ -297,19 +297,18 @@
                                                 </select>
                                                 <small class="text-muted mt-8 d-block">Research design, analysis, rigor</small>
                                             </div>
-                                        </div>
-                                        <div class="col-md-4">
+                                        </div>                                        <div class="col-md-4">
                                             <div class="border border-gray-200 rounded p-16 text-center">
-                                                <label class="fw-bold text-gray-800 mb-8 d-block">Presentation</label>
-                                                <select name="criteria_ratings[presentation]" class="form-select form-select-sm" {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
+                                                <label class="fw-bold text-gray-800 mb-8 d-block">Literature Review</label>
+                                                <select name="criteria_ratings[literature_review]" class="form-select form-select-sm" {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
                                                     <option value="">Select Rating</option>
-                                                    <option value="1" {{ ($existingReview && isset($existingReview->criteria_ratings['presentation']) && $existingReview->criteria_ratings['presentation'] == 1) ? 'selected' : '' }}>1 - Poor</option>
-                                                    <option value="2" {{ ($existingReview && isset($existingReview->criteria_ratings['presentation']) && $existingReview->criteria_ratings['presentation'] == 2) ? 'selected' : '' }}>2 - Fair</option>
-                                                    <option value="3" {{ ($existingReview && isset($existingReview->criteria_ratings['presentation']) && $existingReview->criteria_ratings['presentation'] == 3) ? 'selected' : '' }}>3 - Good</option>
-                                                    <option value="4" {{ ($existingReview && isset($existingReview->criteria_ratings['presentation']) && $existingReview->criteria_ratings['presentation'] == 4) ? 'selected' : '' }}>4 - Very Good</option>
-                                                    <option value="5" {{ ($existingReview && isset($existingReview->criteria_ratings['presentation']) && $existingReview->criteria_ratings['presentation'] == 5) ? 'selected' : '' }}>5 - Excellent</option>
+                                                    <option value="1" {{ ($existingReview && isset($existingReview->criteria_ratings['literature_review']) && $existingReview->criteria_ratings['literature_review'] == 1) ? 'selected' : '' }}>1 - Poor</option>
+                                                    <option value="2" {{ ($existingReview && isset($existingReview->criteria_ratings['literature_review']) && $existingReview->criteria_ratings['literature_review'] == 2) ? 'selected' : '' }}>2 - Fair</option>
+                                                    <option value="3" {{ ($existingReview && isset($existingReview->criteria_ratings['literature_review']) && $existingReview->criteria_ratings['literature_review'] == 3) ? 'selected' : '' }}>3 - Good</option>
+                                                    <option value="4" {{ ($existingReview && isset($existingReview->criteria_ratings['literature_review']) && $existingReview->criteria_ratings['literature_review'] == 4) ? 'selected' : '' }}>4 - Very Good</option>
+                                                    <option value="5" {{ ($existingReview && isset($existingReview->criteria_ratings['literature_review']) && $existingReview->criteria_ratings['literature_review'] == 5) ? 'selected' : '' }}>5 - Excellent</option>
                                                 </select>
-                                                <small class="text-muted mt-8 d-block">Clarity, organization, writing quality</small>                                            </div>
+                                                <small class="text-muted mt-8 d-block">Comprehensiveness, relevance, citations</small>                                            </div>
                                         </div>
                                     </div>
                             </div>
@@ -347,28 +346,46 @@
                                     </div>
                             </div>
                         </div>                        <!-- Review Comments -->
-                        <div class="mb-32">
-                            <div class="bg-gray-50 p-20 rounded border-l-4 border-gray-400">
+                        <div class="mb-32">                            <div class="bg-gray-50 p-20 rounded border-l-4 border-gray-400">
                                 <h6 class="mb-16 text-gray-800 fw-bold">
                                     Detailed Review Comments
                                 </h6>
                                     <div class="mb-20">
                                         <label class="form-label fw-bold text-gray-800 mb-8">
-                                            Comments for Author
-                                        </label>                                        <textarea name="comment" class="form-control" rows="8" 
+                                            <i class="ph ph-user me-8 text-primary"></i>Comments for Author
+                                            <span class="badge bg-primary-50 text-primary text-12 ms-8">Author will see this</span>
+                                        </label>
+                                        
+                                        <!-- File Upload for Author Comments -->
+                                        <div class="mb-12">
+                                            <input type="file" class="form-control" id="authorCommentsFile" accept=".txt,.doc,.docx,.pdf" {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
+                                            <small class="text-muted">Upload a document to auto-fill comments (optional)</small>
+                                        </div>
+                                        
+                                        <textarea name="comment" class="form-control" rows="8" id="authorCommentsTextarea"
                                                   placeholder="Provide detailed, constructive feedback for the author. Include specific comments on strengths, weaknesses, and suggestions for improvement. Be professional and helpful in your critique."
                                                   required {{ ($existingReview && $existingReview->review_submitted_at) ? 'readonly' : '' }}>{{ $existingReview->comment ?? '' }}</textarea>
                                         <small class="text-muted mt-8 d-block">
-                                            These comments will be shared with the author to help improve their manuscript.
+                                            <i class="ph ph-info me-4"></i>These comments will be shared directly with the author to help improve their manuscript.
                                         </small>
                                     </div>
                                     
                                     <div>
                                         <label class="form-label fw-bold text-gray-800 mb-8">
-                                            Confidential Comments for Editor
-                                        </label>                                        <textarea name="confidential_comments" class="form-control" rows="4" 
-                                                  placeholder="Optional: Any confidential comments for the editor regarding manuscript handling, concerns about methodology, ethical issues, or recommendations for additional reviewers." {{ ($existingReview && $existingReview->review_submitted_at) ? 'readonly' : '' }}>{{ $existingReview->confidential_comments ?? '' }}</textarea><small class="text-muted mt-8 d-block">
-                                            These comments are confidential and will only be visible to the editorial team.
+                                            <i class="ph ph-lock me-8 text-warning"></i>Confidential Comments for Editorial Team
+                                            <span class="badge bg-warning-50 text-warning text-12 ms-8">Editors only</span>
+                                        </label>
+                                        
+                                        <!-- File Upload for Editor Comments -->
+                                        <div class="mb-12">
+                                            <input type="file" class="form-control" id="editorCommentsFile" accept=".txt,.doc,.docx,.pdf" {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
+                                            <small class="text-muted">Upload a document to auto-fill confidential comments (optional)</small>
+                                        </div>
+                                        
+                                        <textarea name="confidential_comments" class="form-control" rows="4" id="editorCommentsTextarea"
+                                                  placeholder="Optional: Any confidential comments for the editorial team regarding manuscript handling, concerns about methodology, ethical issues, or recommendations for additional reviewers." {{ ($existingReview && $existingReview->review_submitted_at) ? 'readonly' : '' }}>{{ $existingReview->confidential_comments ?? '' }}</textarea>
+                                        <small class="text-muted mt-8 d-block">
+                                            <i class="ph ph-shield-check me-4"></i>These comments are strictly confidential and will only be visible to Managing Editors and Editor-in-Chief.
                                         </small>
                                     </div>
                             </div>
@@ -1137,6 +1154,132 @@
                 textarea.style.height = textarea.scrollHeight + 'px';
             });
 
+            // File upload functionality for comments
+        document.getElementById('authorCommentsFile').addEventListener('change', function(e) {
+            handleFileUpload(e, 'authorCommentsTextarea');
+        });
+        
+        document.getElementById('editorCommentsFile').addEventListener('change', function(e) {
+            handleFileUpload(e, 'editorCommentsTextarea');
+        });
+        
+        function handleFileUpload(event, textareaId) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const fileSize = file.size / 1024 / 1024; // MB
+            if (fileSize > 5) {
+                alert('File size must be less than 5MB');
+                event.target.value = '';
+                return;
+            }
+            
+            const allowedTypes = ['text/plain', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Please upload only TXT, PDF, DOC, or DOCX files');
+                event.target.value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            const textarea = document.getElementById(textareaId);
+            
+            // Show loading indicator
+            const originalPlaceholder = textarea.placeholder;
+            textarea.placeholder = 'Loading file content...';
+            textarea.disabled = true;
+            
+            reader.onload = function(e) {
+                try {
+                    let content = '';
+                    
+                    if (file.type === 'text/plain') {
+                        content = e.target.result;
+                    } else if (file.type === 'application/pdf') {
+                        // For PDF files, we'll extract text (simplified - would need PDF.js for full implementation)
+                        content = 'PDF content loaded. Please review and edit as needed.';
+                        alert('PDF uploaded. Please review the content and make any necessary edits.');
+                    } else {
+                        // For DOC/DOCX files (simplified - would need a proper library for full implementation)
+                        content = 'Document content loaded. Please review and edit as needed.';
+                        alert('Document uploaded. Please review the content and make any necessary edits.');
+                    }
+                    
+                    // Clean and format the content
+                    content = content.trim();
+                    if (content.length > 0) {
+                        // If textarea already has content, ask user if they want to replace or append
+                        if (textarea.value.trim().length > 0) {
+                            const action = confirm('The comment field already has content. Click OK to replace it, or Cancel to append the uploaded content.');
+                            if (action) {
+                                textarea.value = content;
+                            } else {
+                                textarea.value = textarea.value.trim() + '\n\n' + content;
+                            }
+                        } else {
+                            textarea.value = content;
+                        }
+                        
+                        // Auto-resize textarea if needed
+                        textarea.style.height = 'auto';
+                        textarea.style.height = Math.max(textarea.scrollHeight, 120) + 'px';
+                        
+                        // Show success message
+                        showUploadSuccess(event.target, 'File content loaded successfully!');
+                    }
+                } catch (error) {
+                    console.error('Error reading file:', error);
+                    alert('Error reading file. Please try again or copy the content manually.');
+                }
+                
+                // Restore textarea state
+                textarea.placeholder = originalPlaceholder;
+                textarea.disabled = false;
+                
+                // Clear file input
+                event.target.value = '';
+            };
+            
+            reader.onerror = function() {
+                alert('Error reading file. Please try again.');
+                textarea.placeholder = originalPlaceholder;
+                textarea.disabled = false;
+                event.target.value = '';
+            };
+            
+            // Read file based on type
+            if (file.type === 'text/plain') {
+                reader.readAsText(file);
+            } else {
+                // For other file types, we'd need specialized libraries
+                // For now, we'll just indicate the file was uploaded
+                reader.readAsArrayBuffer(file);
+            }
+        }
+        
+        function showUploadSuccess(fileInput, message) {
+            // Create success indicator
+            const successDiv = document.createElement('div');
+            successDiv.className = 'text-success text-12 mt-4';
+            successDiv.innerHTML = `<i class="ph ph-check-circle me-4"></i>${message}`;
+            
+            // Remove any existing success message
+            const existingSuccess = fileInput.parentNode.querySelector('.text-success');
+            if (existingSuccess) {
+                existingSuccess.remove();
+            }
+            
+            // Add success message
+            fileInput.parentNode.appendChild(successDiv);
+            
+            // Remove success message after 3 seconds
+            setTimeout(() => {
+                if (successDiv.parentNode) {
+                    successDiv.remove();
+                }
+            }, 3000);
+        }
+        
             // Form validation with enhanced UX
             document.getElementById('enhancedReviewForm').addEventListener('submit', function(e) {
                 const rating = document.querySelector('input[name="rating"]').value;

@@ -13,7 +13,7 @@
         <hr class="">
     </x-slot:breadcrumb>
     <div class="grid lg:grid-cols-[400px_1fr] gap-4 w-full">
-        <div class="grid items-start gap-4">
+        <div class="flex flex-col justify-start gap-4">
             @if($journal->approval_status === 'approved')
                 <a class="font-bold text-gray-100 flex gap-4 justify-center items-center rounded-[8px] py-1 px-6 bg-primary-500"
                    href="{{ route('download-journal', $journal->uuid) }}">
@@ -86,7 +86,7 @@
                         Status
                     </div>
                     <div class="p-4 md:p-5 capitalize">
-                        {{ $journal->approval_status }}
+                        {{ $journal->status_label }}
                     </div>
                 </div>
             @endif
@@ -114,32 +114,144 @@
                     Copyright for articles published in this journal is retained by the author.
                 </div>
             </div>
-        </div>
-        <div class="grid gap-y-2">
-            @if($journal->approval_status !== 'approved')
-            <div class="border p-8 rounded-[8px]">
-                <h4 class="text-3xl text-secondary-800 font-bold mb-4">
-                    Comments
-                </h4>
-                <hr class="mb-5">
 
-                <ul class="list-none">
-                    @forelse ($comments as $comment)
-                        <li class="flex-align gap-6 text-gray-800 text-15 mb-12">
-                                <span class="flex-shrink-0 text-22 d-flex text-main-600"><i class="ph ph-notepad"></i>
-                                </span>
-                            {{ $comment->comment }}
-                        </li>
-                    @empty
-                        <li class="flex-align gap-6 text-gray-800 text-15 mb-12">
-                                <span class="flex-shrink-0 text-22 d-flex text-main-600"><i class="ph ph-pen"></i>
-                                </span>
-                            No comments yet
-                        </li>
-                    @endforelse
-                </ul>
+            <!-- Author Review Comments Section (For Authors Only) - In Sidebar -->
+            @if(Auth::check() && Auth::user()->id === $journal->user_id && $authorReviewComments->isNotEmpty())
+            <div class="flex flex-col border border-gray-200 rounded-xl overflow-hidden">
+                <div class="px-4 py-2 md:px-5 bg-green-600 text-gray-100">
+                    <div class="flex items-center gap-2">
+                        Review Comments
+                    </div>
+                </div>
+                <div class="p-4 md:p-5">
+                    <div class="space-y-4">
+                        @foreach ($authorReviewComments as $review)
+                            <div class="bg-gray-50 border border-gray-200 rounded-lg">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <div>
+                                            <h6 class="font-medium text-gray-800 text-sm">
+                                                {{ $review->reviewer->fullname ?? 'Anonymous Reviewer' }}
+                                            </h6>
+                                            <p class="text-xs text-gray-500">
+                                                {{ $review->review_submitted_at ? $review->review_submitted_at->format('M j, Y') : 'Recently' }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    @if($review->rating)
+                                    <div class="flex items-center gap-1">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <i class="ph {{ $i <= $review->rating ? 'ph-star-fill text-yellow-400' : 'ph-star text-gray-300' }} text-xs"></i>
+                                        @endfor
+                                        <span class="ml-1 text-xs text-gray-600">({{ $review->rating }})</span>
+                                    </div>
+                                    @endif
+                                </div>
+                                <div class="bg-white rounded p-3">
+                                    <div class="text-gray-700 text-sm leading-relaxed">
+                                        {!! nl2br(e($review->comment)) !!}
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
             </div>
             @endif
+        </div>
+        <div class="grid gap-y-2">
+            <!-- Manuscript Preview Section (For Authors Only) -->
+            @if(Auth::check() && Auth::user()->id === $journal->user_id && $journal->journal_url)
+            <div id="manuscriptPreview" class="border rounded-lg overflow-hidden mb-6">
+                <div class="bg-blue-50 border-b border-blue-200 px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-lg font-bold text-blue-800 mb-1">
+                                <i class="ph ph-file-pdf mr-2"></i>Your Manuscript Preview
+                            </h4>
+                            <p class="text-sm text-blue-600">Preview your submitted manuscript</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="resizeManuscriptViewer('expand')" 
+                                    class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                                    title="Expand viewer">
+                                <i class="ph ph-arrows-out"></i>
+                            </button>
+                            <button type="button" onclick="resizeManuscriptViewer('shrink')" 
+                                    class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                                    title="Shrink viewer">
+                                <i class="ph ph-arrows-in"></i>
+                            </button>
+                            <a href="{{ asset('storage/' . $journal->journal_url) }}" target="_blank"
+                               class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
+                               title="Open in new tab">
+                                <i class="ph ph-arrow-square-out"></i>
+                            </a>
+                            <a href="{{ asset('storage/' . $journal->journal_url) }}" download
+                               class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                               title="Download PDF">
+                                <i class="ph ph-download-simple"></i>
+                            </a>
+                            <button type="button" onclick="toggleManuscriptPreview()" 
+                                    class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                                    title="Hide preview">
+                                <i class="ph ph-eye-slash mr-1"></i>Hide
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-0">
+                    <div class="bg-gray-100 px-4 py-2 border-b flex justify-between items-center text-sm">
+                        <span class="text-gray-600">
+                            <i class="ph ph-lightbulb mr-1"></i>
+                            <strong>Tip:</strong> Use Ctrl+F to search within the document
+                        </span>
+                        <span class="text-gray-500">
+                            <i class="ph ph-info mr-1"></i>
+                            File: {{ basename($journal->journal_url) }}
+                        </span>
+                    </div>
+                    
+                    <!-- Loading Indicator -->
+                    <div id="manuscriptLoading" class="text-center py-8" style="display: none;">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        <p class="mt-2 text-gray-600">Loading manuscript...</p>
+                    </div>
+                    
+                    <!-- PDF Viewer -->
+                    <iframe id="manuscriptViewer" 
+                            src="{{ asset('storage/' . $journal->journal_url) }}#toolbar=1&navpanes=1&scrollbar=1" 
+                            style="width: 100%; height: 600px; border: none; background: #f8f9fa;"
+                            loading="lazy"
+                            title="Manuscript PDF Viewer"
+                            onload="hideManuscriptLoading()"
+                            onerror="showManuscriptError()">
+                    </iframe>
+                    
+                    <!-- Error Fallback -->
+                    <div id="manuscriptError" class="p-6 text-center" style="display: none;">
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                            <i class="ph ph-warning-circle text-yellow-600 text-xl"></i>
+                            <div class="mt-2">
+                                <strong class="text-yellow-800">PDF Preview Not Available</strong>
+                                <p class="text-yellow-700 mt-2">Your browser does not support embedded PDFs or the document could not be loaded.</p>
+                                <div class="flex gap-2 justify-center mt-4">
+                                    <a href="{{ asset('storage/' . $journal->journal_url) }}" target="_blank" 
+                                       class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                                        <i class="ph ph-arrow-square-out mr-1"></i>Open in New Tab
+                                    </a>
+                                    <a href="{{ asset('storage/' . $journal->journal_url) }}" download
+                                       class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                        <i class="ph ph-download-simple mr-1"></i>Download PDF
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <div class="border p-8 rounded-[8px]">
                 <h4 class="text-3xl text-primary-500 font-bold mb-4">
                     {{ $journal->title }}
@@ -149,4 +261,65 @@
             </div>
         </div>
     </div>
+
+    <script>
+    // Manuscript Preview Functions
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show loading initially for manuscript
+        const manuscriptLoading = document.getElementById('manuscriptLoading');
+        if (manuscriptLoading) manuscriptLoading.style.display = 'block';
+    });
+
+    // Manuscript preview toggle
+    window.toggleManuscriptPreview = function() {
+        const preview = document.getElementById('manuscriptPreview');
+        const toggleBtn = document.querySelector('button[onclick="toggleManuscriptPreview()"]');
+        
+        if (preview.style.display === 'none') {
+            preview.style.display = 'block';
+            preview.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (toggleBtn) {
+                toggleBtn.innerHTML = '<i class="ph ph-eye-slash mr-1"></i>Hide';
+                toggleBtn.title = 'Hide preview';
+            }
+        } else {
+            preview.style.display = 'none';
+            if (toggleBtn) {
+                toggleBtn.innerHTML = '<i class="ph ph-eye mr-1"></i>Show';
+                toggleBtn.title = 'Show preview';
+            }
+        }
+    };
+
+    // Manuscript viewer resize functionality
+    window.resizeManuscriptViewer = function(action) {
+        const viewer = document.getElementById('manuscriptViewer');
+        if (!viewer) return;
+        
+        const currentHeight = parseInt(viewer.style.height) || 600;
+        
+        if (action === 'expand' && currentHeight < 1000) {
+            viewer.style.height = (currentHeight + 100) + 'px';
+        } else if (action === 'shrink' && currentHeight > 400) {
+            viewer.style.height = (currentHeight - 100) + 'px';
+        }
+    };
+
+    // Manuscript Loading and Error Handling
+    window.hideManuscriptLoading = function() {
+        const loading = document.getElementById('manuscriptLoading');
+        if (loading) loading.style.display = 'none';
+    };
+
+    window.showManuscriptError = function() {
+        const loading = document.getElementById('manuscriptLoading');
+        const viewer = document.getElementById('manuscriptViewer');
+        const error = document.getElementById('manuscriptError');
+        
+        if (loading) loading.style.display = 'none';
+        if (viewer) viewer.style.display = 'none';
+        if (error) error.style.display = 'block';
+    };
+    </script>
+
 </x-layouts.layout>

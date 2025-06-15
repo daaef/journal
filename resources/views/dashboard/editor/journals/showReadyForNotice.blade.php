@@ -89,13 +89,13 @@
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li>
                                                     <button type="button" class="dropdown-item text-success" 
-                                                            onclick="openApprovalModal('{{ $journal->uuid }}', '{{ $journal->title }}')">
+                                                            onclick="showApprovalForm('{{ $journal->uuid }}', '{{ $journal->title }}')">
                                                         <i class="ph ph-check-circle me-2"></i>Send Approval Notice
                                                     </button>
                                                 </li>
                                                 <li>
                                                     <button type="button" class="dropdown-item text-danger" 
-                                                            onclick="openDeclineModal('{{ $journal->uuid }}', '{{ $journal->title }}')">
+                                                            onclick="showDeclineForm('{{ $journal->uuid }}', '{{ $journal->title }}')">
                                                         <i class="ph ph-x-circle me-2"></i>Send Decline Notice
                                                     </button>
                                                 </li>
@@ -127,35 +127,48 @@
     </div>
 
     <!-- Approval Notice Modal -->
-    <div class="modal fade" id="approvalNoticeModal" tabindex="-1" aria-labelledby="approvalNoticeModalLabel" aria-hidden="true">
+    <div class="modal fade" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="approvalNoticeModalLabel">Send Approval Notice</h5>
+                    <h5 class="modal-title" id="approvalModalLabel">
+                        <i class="ph ph-check-circle text-success me-2"></i>Send Approval Notice
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="post" action="{{ route('editor.journals.sendApprovalNotice') }}">
+                <form id="approvalForm" method="POST" action="{{ route('editor.journals.sendApprovalNotice') }}">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" name="journal_uuid" id="approval_journal_uuid" />
+                        <input type="hidden" id="approval-journal-uuid" name="journal_uuid" value="">
                         
                         <div class="mb-3">
-                            <p class="fw-semibold">Manuscript: <span id="approval_manuscript_title"></span></p>
-                            <p class="text-muted">
-                                You are about to send an approval notice to the author, with copies to the Editor-in-Chief and Desk Editor.
-                                The manuscript will proceed to copy editing stage.
-                            </p>
+                            <label class="form-label fw-semibold">Manuscript</label>
+                            <p id="approval-manuscript-title" class="text-muted"></p>
                         </div>
-
+                        
                         <div class="mb-3">
-                            <label for="notice_comment" class="form-label">Comments to Author (Optional)</label>
-                            <textarea name="notice_comment" id="notice_comment" class="form-control" rows="4"
-                                      placeholder="Add any comments for the author about the approval..."></textarea>
+                            <label for="approval-comment" class="form-label fw-semibold">Comments (Optional)</label>
+                            <textarea name="comment" id="approval-comment" class="form-control" rows="4" 
+                                      placeholder="Add any comments for the author regarding the approval..."></textarea>
+                            <div class="form-text">This message will be sent to the author along with the approval notice.</div>
+                        </div>
+                        
+                        <div class="alert alert-success">
+                            <i class="ph ph-info me-2"></i>
+                            <strong>This action will:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Approve the manuscript for publication</li>
+                                <li>Send notification to the author</li>
+                                <li>Notify Editor-in-Chief and other editors</li>
+                                <li>Change manuscript status to "Approved"</li>
+                            </ul>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success">Send Approval Notice</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="ph ph-paper-plane me-2"></i>Send Approval Notice
+                        </button>
                     </div>
                 </form>
             </div>
@@ -163,35 +176,48 @@
     </div>
 
     <!-- Decline Notice Modal -->
-    <div class="modal fade" id="declineNoticeModal" tabindex="-1" aria-labelledby="declineNoticeModalLabel" aria-hidden="true">
+    <div class="modal fade" id="declineModal" tabindex="-1" aria-labelledby="declineModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="declineNoticeModalLabel">Send Decline Notice</h5>
+                    <h5 class="modal-title" id="declineModalLabel">
+                        <i class="ph ph-x-circle text-danger me-2"></i>Send Decline Notice
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="post" action="{{ route('editor.journals.sendDeclineNotice') }}">
+                <form id="declineForm" method="POST" action="{{ route('editor.journals.sendDeclineNotice') }}">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" name="journal_uuid" id="decline_journal_uuid" />
+                        <input type="hidden" id="decline-journal-uuid" name="journal_uuid" value="">
                         
                         <div class="mb-3">
-                            <p class="fw-semibold">Manuscript: <span id="decline_manuscript_title"></span></p>
-                            <p class="text-muted">
-                                You are about to send a decline notice to the author, with copies to the Editor-in-Chief and Desk Editor.
-                                This action cannot be undone.
-                            </p>
+                            <label class="form-label fw-semibold">Manuscript</label>
+                            <p id="decline-manuscript-title" class="text-muted"></p>
                         </div>
-
+                        
                         <div class="mb-3">
-                            <label for="decline_reason" class="form-label">Reason for Decline <span class="text-danger">*</span></label>
-                            <textarea name="decline_reason" id="decline_reason" class="form-control" rows="4"
-                                      placeholder="Provide a clear reason for declining the manuscript..." required></textarea>
+                            <label for="decline-reason" class="form-label fw-semibold">Reason for Decline <span class="text-danger">*</span></label>
+                            <textarea name="reason" id="decline-reason" class="form-control" rows="4" 
+                                      placeholder="Provide a clear reason for declining this manuscript..." required></textarea>
+                            <div class="form-text">This message will be sent to the author explaining the decline decision.</div>
+                        </div>
+                        
+                        <div class="alert alert-warning">
+                            <i class="ph ph-warning me-2"></i>
+                            <strong>This action will:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Decline the manuscript for publication</li>
+                                <li>Send notification to the author with reason</li>
+                                <li>Notify Editor-in-Chief and other editors</li>
+                                <li>Change manuscript status to "Declined"</li>
+                            </ul>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger">Send Decline Notice</button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="ph ph-paper-plane me-2"></i>Send Decline Notice
+                        </button>
                     </div>
                 </form>
             </div>
@@ -199,19 +225,21 @@
     </div>
 
     <script>
-        function openApprovalModal(journalUuid, manuscriptTitle) {
-            document.getElementById('approval_journal_uuid').value = journalUuid;
-            document.getElementById('approval_manuscript_title').textContent = manuscriptTitle;
+        function showApprovalForm(journalUuid, journalTitle) {
+            document.getElementById('approval-journal-uuid').value = journalUuid;
+            document.getElementById('approval-manuscript-title').textContent = journalTitle;
+            document.getElementById('approval-comment').value = '';
             
-            const modal = new bootstrap.Modal(document.getElementById('approvalNoticeModal'));
+            const modal = new bootstrap.Modal(document.getElementById('approvalModal'));
             modal.show();
         }
 
-        function openDeclineModal(journalUuid, manuscriptTitle) {
-            document.getElementById('decline_journal_uuid').value = journalUuid;
-            document.getElementById('decline_manuscript_title').textContent = manuscriptTitle;
+        function showDeclineForm(journalUuid, journalTitle) {
+            document.getElementById('decline-journal-uuid').value = journalUuid;
+            document.getElementById('decline-manuscript-title').textContent = journalTitle;
+            document.getElementById('decline-reason').value = '';
             
-            const modal = new bootstrap.Modal(document.getElementById('declineNoticeModal'));
+            const modal = new bootstrap.Modal(document.getElementById('declineModal'));
             modal.show();
         }
     </script>

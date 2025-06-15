@@ -223,11 +223,16 @@ Route::group(['prefix' => 'editor', 'middleware' => ['auth', 'editor']], functio
     Route::group(['prefix' => 'journals'], function () {
         Route::get('/preview/{uuid}/{slug}', [JournalController::class, 'previewJournal'])->name('editor.journals.preview');
         Route::get('/enhanced-review-details/{uuid}', [JournalController::class, 'showEnhancedReviewDetails'])->name('editor.journals.enhancedReviewDetails');
+        
+        // Status-based manuscript views
         Route::get('/pending', [JournalController::class, 'pendingApproval'])->name('editor.journals.pendingApproval');
-        Route::get('/approved', [JournalController::class, 'approvedJournals'])->name('editor.journals.approved');
+        Route::get('/under-peer-review', [JournalController::class, 'underPeerReview'])->name('editor.journals.underPeerReview');
         Route::get('/in-progress', [JournalController::class, 'inProgressJournals'])->name('editor.journals.inProgress');
-        Route::get('/declined', [JournalController::class, 'rejectedJournals'])->name('editor.journals.rejected');
         Route::get('/reviewed', [JournalController::class, 'reviewedJournals'])->name('editor.journals.reviewed');
+        Route::get('/approved', [JournalController::class, 'approvedJournals'])->name('editor.journals.approved');
+        Route::get('/declined', [JournalController::class, 'rejectedJournals'])->name('editor.journals.rejected');
+        Route::get('/revision-requested', [JournalController::class, 'revisionRequested'])->name('editor.journals.revisionRequested');
+        
         Route::post('/approve-journal', [JournalController::class, 'approveJournal'])->name('editor.journals.approveJournal');
 
         // Managing Editor Notice Routes (New JAPR Workflow)

@@ -29,15 +29,8 @@
                     <p class="text-sm text-gray-600 mt-1">{{ $journal->title }}</p>
                 </div>
                 <div class="mt-3 sm:mt-0">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                        @if($journal->approval_status === 'approved') bg-green-100 text-green-800
-                        @elseif($journal->approval_status === 'rejected') bg-red-100 text-red-800
-                        @elseif($journal->approval_status === 'pending') bg-yellow-100 text-yellow-800
-                        @elseif($journal->approval_status === 'in_progress') bg-blue-100 text-blue-800
-                        @elseif($journal->approval_status === 'reviewed') bg-purple-100 text-purple-800
-                        @elseif($journal->approval_status === 'revision_requested') bg-orange-100 text-orange-800
-                        @endif">
-                        {{ ucfirst(str_replace('_', ' ', $journal->approval_status)) }}
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $journal->status_class }}">
+                        {{ $journal->status_label }}
                     </span>
                 </div>
             </div>

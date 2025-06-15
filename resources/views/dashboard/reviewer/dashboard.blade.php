@@ -118,9 +118,9 @@
                                                 <span class="badge bg-{{
                                                     $journal->approval_status === 'pending' ? 'warning' :
                                                     ($journal->approval_status === 'reviewed' ? 'success' :
-                                                    ($journal->approval_status === 'in-progress' ? 'info' : 'secondary'))
+                                                    ($journal->approval_status === 'in-progress' || $journal->approval_status === 'under_peer_review' ? 'info' : 'secondary'))
                                                 }} rounded-pill">
-                                                    {{ ucwords(str_replace('-', ' ', $journal->approval_status)) }}
+                                                    {{ $journal->status_label }}
                                                 </span>
                                             </div>
                                             @if($journal->created_at)

@@ -47,7 +47,10 @@ class Journal extends Model
         'agree',
         'editor_decision_date',
         'editor_decision_comment',
-        'declined_by'
+        'declined_by',
+        'approved_at',
+        'managing_editor_notice',
+        'managing_editor_notice_sent_at'
         // 'dislikes',
     ];
 
@@ -61,7 +64,10 @@ class Journal extends Model
         'reviewers_ratings' => 'array',
         'license' => 'array',
         'change_requests' => 'array',
+        'managing_editor_notice' => 'array',
         'editor_decision_date' => 'datetime',
+        'approved_at' => 'datetime',
+        'managing_editor_notice_sent_at' => 'datetime',
     ];
 
     public function user()
@@ -148,5 +154,57 @@ class Journal extends Model
             'rating_percentage' => 'float',
             // 'author' => 'json',
         ];
+    }
+
+    /**
+     * Get user-friendly status label for approval_status
+     */
+    public function getStatusLabelAttribute()
+    {
+        $statusLabels = [
+            'pending' => 'Pending Review',
+            'in-progress' => 'In Progress',
+            'in_progress' => 'In Progress',
+            'approved' => 'Approved',
+            'approved_with_comment' => 'Approved with Comments',
+            'declined' => 'Declined',
+            'rejected' => 'Rejected',
+            'changes_requested' => 'Changes Requested',
+            'revision_requested' => 'Revision Requested',
+            'reviewed' => 'Reviewed',
+            'under_peer_review' => 'Under Peer Review',
+            'ready_for_managing_editor_notice' => 'Ready for Managing Editor Review',
+            'awaiting_editor_decision' => 'Awaiting Editor Decision',
+            'editor_approved' => 'Editor Approved',
+            'editor_declined' => 'Editor Declined',
+        ];
+
+        return $statusLabels[$this->approval_status] ?? ucfirst(str_replace(['_', '-'], ' ', $this->approval_status));
+    }
+
+    /**
+     * Get CSS class for status badge styling
+     */
+    public function getStatusClassAttribute()
+    {
+        $statusClasses = [
+            'pending' => 'bg-yellow-100 text-yellow-800',
+            'in-progress' => 'bg-blue-100 text-blue-800',
+            'in_progress' => 'bg-blue-100 text-blue-800',
+            'approved' => 'bg-green-100 text-green-800',
+            'approved_with_comment' => 'bg-green-100 text-green-800',
+            'declined' => 'bg-red-100 text-red-800',
+            'rejected' => 'bg-red-100 text-red-800',
+            'changes_requested' => 'bg-orange-100 text-orange-800',
+            'revision_requested' => 'bg-orange-100 text-orange-800',
+            'reviewed' => 'bg-purple-100 text-purple-800',
+            'under_peer_review' => 'bg-indigo-100 text-indigo-800',
+            'ready_for_managing_editor_notice' => 'bg-teal-100 text-teal-800',
+            'awaiting_editor_decision' => 'bg-gray-100 text-gray-800',
+            'editor_approved' => 'bg-emerald-100 text-emerald-800',
+            'editor_declined' => 'bg-rose-100 text-rose-800',
+        ];
+
+        return $statusClasses[$this->approval_status] ?? 'bg-gray-100 text-gray-800';
     }
 }

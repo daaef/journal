@@ -313,10 +313,24 @@ class JournalController extends Controller
      */
     public function showJournal(string $slug)
     {
-
         $journal = $this->repo->findBySlug($slug);
+        
+        // Get general comments
         $comments = $journal->comments()->with('user')->get();
-        return view('view-abstract', compact('journal','comments'));
+        
+        // Get review comments specifically for the author (if user is the author)
+        $authorReviewComments = collect();
+        if (Auth::check() && Auth::user()->id === $journal->user_id) {
+            $authorReviewComments = $journal->reviewers()
+                ->whereNotNull('review_submitted_at')
+                ->whereNotNull('comment')
+                ->where('comment', '!=', '')
+                ->with(['reviewer:id,fullname,email'])
+                ->orderBy('review_submitted_at', 'desc')
+                ->get();
+        }
+        
+        return view('view-abstract', compact('journal', 'comments', 'authorReviewComments'));
     }
 
     /**
@@ -371,6 +385,48 @@ class JournalController extends Controller
         ];
 
         return view('dashboard.reviewer.journals.enhanced-review', compact('journal', 'existingReview', 'otherReviews', 'reviewCriteria'));
+    }
+
+    /**
+     * Show enhanced review details for editors (Managing Editor and Editor-in-Chief)
+     */
+    public function showEnhancedReviewDetails(string $uuid)
+    {
+        $journal = $this->repo->findByUUID($uuid);
+        
+        if (!$journal) {
+            abort(404, 'Journal not found');
+        }
+
+        // Check if user has permission to view review details
+        if (!Auth::user()->hasAnyRole(['Managing Editor', 'Editor in Chief', 'Super Admin'])) {
+            abort(403, 'Unauthorized to view review details');
+        }
+
+        // Load relationships for the review details view
+        $journal->load([
+            'reviewers' => function($query) {
+                $query->whereNotNull('review_submitted_at')
+                      ->with('user')
+                      ->orderBy('review_submitted_at', 'desc');
+            },
+            'user',
+            'category',
+            'subCategory'
+        ]);
+
+        // Determine if current user can view confidential comments
+        // Only Managing Editor, Editor in Chief, and Super Admin can see confidential comments
+        $canViewConfidential = Auth::user()->hasAnyRole(['Managing Editor', 'Editor in Chief', 'Super Admin']);
+
+        // Get all submitted reviews
+        $reviews = $journal->reviewers()
+            ->whereNotNull('review_submitted_at')
+            ->with('user')
+            ->orderBy('review_submitted_at', 'desc')
+            ->get();
+
+        return view('dashboard.editor.journals.enhanced-review-details', compact('journal', 'reviews', 'canViewConfidential'));
     }
 
     /**
@@ -1215,13 +1271,13 @@ class JournalController extends Controller
     }
 
     /**
-     * Send approval notice to author (JAPR Workflow)
+     * Send approval notice (Managing Editor)
      */
     public function sendApprovalNotice(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'journal_uuid' => 'required',
-            'notice_comment' => 'nullable|string|max:1000'
+            'comment' => 'nullable|string|max:1000'
         ]);
 
         if ($validator->fails()) {
@@ -1229,14 +1285,11 @@ class JournalController extends Controller
         }
 
         try {
-            $journal = $this->repo->sendApprovalNotice(
-                $request->journal_uuid, 
-                $request->notice_comment
-            );
+            $journal = $this->repo->sendApprovalNotice($request->journal_uuid, $request->comment);
 
             if ($journal) {
                 $notification = [
-                    'message' => 'Approval notice sent successfully to author, Editor-in-Chief, and Desk Editor',
+                    'message' => 'Approval notice sent successfully',
                     'alert-type' => 'success'
                 ];
                 return redirect()->back()->with($notification);
@@ -1257,13 +1310,13 @@ class JournalController extends Controller
     }
 
     /**
-     * Send decline notice to author (JAPR Workflow)
+     * Send decline notice (Managing Editor)
      */
     public function sendDeclineNotice(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'journal_uuid' => 'required',
-            'decline_reason' => 'required|string|max:1000'
+            'reason' => 'required|string|max:1000'
         ]);
 
         if ($validator->fails()) {
@@ -1271,14 +1324,11 @@ class JournalController extends Controller
         }
 
         try {
-            $journal = $this->repo->sendDeclineNotice(
-                $request->journal_uuid, 
-                $request->decline_reason
-            );
+            $journal = $this->repo->sendDeclineNotice($request->journal_uuid, $request->reason);
 
             if ($journal) {
                 $notification = [
-                    'message' => 'Decline notice sent successfully to author, Editor-in-Chief, and Desk Editor',
+                    'message' => 'Decline notice sent successfully',
                     'alert-type' => 'success'
                 ];
                 return redirect()->back()->with($notification);

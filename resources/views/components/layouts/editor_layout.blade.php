@@ -70,25 +70,57 @@
                         <ul class="sidebar-submenu">
                             <li class="sidebar-submenu__item">
                                 <a href="{{ route('editor.journals.pendingApproval') }}" class="sidebar-submenu__link">
-                                    Pending </a>
+                                    <span class="d-flex align-items-center">
+                                        Pending Review
+                                        @php
+                                            $pendingCount = \App\Models\Journal::where('approval_status', 'pending')->count();
+                                        @endphp
+                                        @if($pendingCount > 0)
+                                            <span class="badge bg-warning text-dark ms-2">{{ $pendingCount }}</span>
+                                        @endif
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu__item">
+                                <a href="{{ route('editor.journals.underPeerReview') }}" class="sidebar-submenu__link">
+                                    <span class="d-flex align-items-center">
+                                        Under Peer Review
+                                        @php
+                                            $underReviewCount = \App\Models\Journal::where('approval_status', 'under_peer_review')->count();
+                                        @endphp
+                                        @if($underReviewCount > 0)
+                                            <span class="badge bg-indigo text-white ms-2">{{ $underReviewCount }}</span>
+                                        @endif
+                                    </span>
+                                </a>
                             </li>
                             <li class="sidebar-submenu__item">
                                 <a href="{{ route('editor.journals.inProgress') }}" class="sidebar-submenu__link">
-                                    In Progress </a>
-                            </li>
-                            <li class="sidebar-submenu__item">
-                                <a href="{{ route('editor.journals.approved') }}" class="sidebar-submenu__link">
-                                    Approved </a>
-                            </li>
-                            <li class="sidebar-submenu__item">
-                                <a href="{{ route('editor.journals.rejected') }}" class="sidebar-submenu__link">
-                                    Declined </a>
+                                    <span class="d-flex align-items-center">
+                                        In Progress
+                                        @php
+                                            $inProgressCount = \App\Models\Journal::whereIn('approval_status', ['in-progress', 'in_progress'])->count();
+                                        @endphp
+                                        @if($inProgressCount > 0)
+                                            <span class="badge bg-blue text-white ms-2">{{ $inProgressCount }}</span>
+                                        @endif
+                                    </span>
+                                </a>
                             </li>
                             <li class="sidebar-submenu__item">
                                 <a href="{{ route('editor.journals.reviewed') }}" class="sidebar-submenu__link">
-                                    Reviewed </a>
+                                    <span class="d-flex align-items-center">
+                                        Reviewed
+                                        @php
+                                            $reviewedCount = \App\Models\Journal::where('approval_status', 'reviewed')->count();
+                                        @endphp
+                                        @if($reviewedCount > 0)
+                                            <span class="badge bg-purple text-white ms-2">{{ $reviewedCount }}</span>
+                                        @endif
+                                    </span>
+                                </a>
                             </li>
-                            @if(auth()->user()->hasRole('Managing Editor'))
+                            @if(auth()->user()->hasAnyRole(['Managing Editor', 'Editor in Chief']))
                             <li class="sidebar-submenu__item">
                                 <a href="{{ route('editor.journals.readyForNotice') }}" class="sidebar-submenu__link">
                                     <span class="d-flex align-items-center">
@@ -103,6 +135,45 @@
                                 </a>
                             </li>
                             @endif
+                            <li class="sidebar-submenu__item">
+                                <a href="{{ route('editor.journals.approved') }}" class="sidebar-submenu__link">
+                                    <span class="d-flex align-items-center">
+                                        Approved
+                                        @php
+                                            $approvedCount = \App\Models\Journal::whereIn('approval_status', ['approved', 'approved_with_comment'])->count();
+                                        @endphp
+                                        @if($approvedCount > 0)
+                                            <span class="badge bg-success text-white ms-2">{{ $approvedCount }}</span>
+                                        @endif
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu__item">
+                                <a href="{{ route('editor.journals.revisionRequested') }}" class="sidebar-submenu__link">
+                                    <span class="d-flex align-items-center">
+                                        Revision Requested
+                                        @php
+                                            $revisionCount = \App\Models\Journal::whereIn('approval_status', ['changes_requested', 'revision_requested'])->count();
+                                        @endphp
+                                        @if($revisionCount > 0)
+                                            <span class="badge bg-orange text-white ms-2">{{ $revisionCount }}</span>
+                                        @endif
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="sidebar-submenu__item">
+                                <a href="{{ route('editor.journals.rejected') }}" class="sidebar-submenu__link">
+                                    <span class="d-flex align-items-center">
+                                        Declined/Rejected
+                                        @php
+                                            $rejectedCount = \App\Models\Journal::whereIn('approval_status', ['declined', 'rejected'])->count();
+                                        @endphp
+                                        @if($rejectedCount > 0)
+                                            <span class="badge bg-danger text-white ms-2">{{ $rejectedCount }}</span>
+                                        @endif
+                                    </span>
+                                </a>
+                            </li>
                         </ul>
                         <!-- Submenu End -->
                     </li>

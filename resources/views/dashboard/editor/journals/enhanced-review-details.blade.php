@@ -39,16 +39,16 @@
                             </p>                        </div>
                         <div class="col-md-4 text-end">
                             <div class="mb-12">
-                                <span class="text-gray-600">Status:</span>
-                                <span class="badge 
+                                <span class="text-gray-600">Status:</span>                                <span class="badge 
                                     @if($journal->approval_status === 'approved') bg-success
                                     @elseif($journal->approval_status === 'reviewed') bg-info
-                                    @elseif($journal->approval_status === 'in-progress') bg-warning
+                                    @elseif($journal->approval_status === 'in-progress' || $journal->approval_status === 'under_peer_review') bg-warning
                                     @elseif($journal->approval_status === 'pending') bg-secondary
+                                    @elseif($journal->approval_status === 'ready_for_managing_editor_notice') bg-info
                                     @else bg-danger
                                     @endif
                                     text-white ms-8">
-                                    {{ ucfirst(str_replace('-', ' ', $journal->approval_status)) }}
+                                    {{ $journal->status_label }}
                                 </span>
                             </div>
                             <a href="{{ route('editor.journals.preview', [$journal->uuid, $journal->slug]) }}" 
@@ -263,23 +263,44 @@
                                             @endforeach
                                         </div>
                                     </div>
-                                @endif
-
-                                <!-- Public Comments -->
+                                @endif                                <!-- Public Comments -->
                                 <div class="mb-16">
-                                    <h6 class="text-14 mb-8">Public Comments</h6>
-                                    <div class="bg-white p-12 rounded-8 border">
-                                        <p class="mb-0 text-14">{{ $review->comment }}</p>
+                                    <h6 class="text-14 mb-8">
+                                        <i class="ph ph-user me-8 text-primary"></i>Comments for the Author
+                                        <span class="badge bg-primary-50 text-primary text-12 ms-8">For User/Author</span>
+                                    </h6>
+                                    <div class="bg-primary-50 p-12 rounded-8 border border-primary-200">
+                                        @if(!empty($review->comment))
+                                            <p class="mb-0 text-14">{{ $review->comment }}</p>
+                                            <small class="text-muted d-block mt-8">
+                                                <i class="ph ph-info me-4"></i>This feedback is visible to the author of the manuscript
+                                            </small>
+                                        @else
+                                            <p class="mb-0 text-14 text-muted fst-italic">No comments provided for the author</p>
+                                        @endif
                                     </div>
                                 </div>
 
                                 <!-- Confidential Comments (only for senior editors) -->
-                                @if($canViewConfidential && !empty($review->confidential_comments))
-                                    <div class="bg-warning-50 p-12 rounded-8 border border-warning">
-                                        <h6 class="text-14 mb-8 text-warning">
-                                            <i class="ph ph-lock me-8"></i>Confidential Comments (Editor Only)
-                                        </h6>
-                                        <p class="mb-0 text-14">{{ $review->confidential_comments }}</p>
+                                @if($canViewConfidential)
+                                    <div class="mb-16">
+                                        <div class="bg-warning-50 p-12 rounded-8 border border-warning">
+                                            <h6 class="text-14 mb-8 text-warning">
+                                                <i class="ph ph-lock me-8"></i>Confidential Comments for Editorial Team
+                                                <span class="badge bg-warning text-white text-12 ms-8">For Editors Only</span>
+                                            </h6>
+                                            @if(!empty($review->confidential_comments))
+                                                <p class="mb-0 text-14">{{ $review->confidential_comments }}</p>
+                                                <small class="text-muted d-block mt-8">
+                                                    <i class="ph ph-shield-check me-4"></i>This content is only visible to Managing Editors and Editor-in-Chief
+                                                </small>
+                                            @else
+                                                <p class="mb-0 text-14 text-muted fst-italic">No confidential comments provided</p>
+                                                <small class="text-muted d-block mt-8">
+                                                    <i class="ph ph-shield-check me-4"></i>Confidential comments are only visible to Managing Editors and Editor-in-Chief
+                                                </small>
+                                            @endif
+                                        </div>
                                     </div>
                                 @endif
                             </div>

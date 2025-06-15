@@ -82,3 +82,9 @@
         display: block;
     }
 }
+
+.dashboard-body {
+    .card-body {
+        min-height: 30vh;
+    }
+}

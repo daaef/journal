@@ -1049,7 +1049,7 @@ protected function sendManuscriptSubmissionNotifications($journal)
     }
 
     /**
-     * Send approval notice to author (JAPR Workflow)
+     * Send approval notice from Managing Editor (JAPR Workflow)
      */
     public function sendApprovalNotice($uuid, $comment = null)
     {
@@ -1060,38 +1060,38 @@ protected function sendManuscriptSubmissionNotifications($journal)
             throw new \Exception('Manuscript is not ready for Managing Editor notice. Current status: ' . $journal->approval_status);
         }
 
-        // Check minimum review requirement (at least 2 reviews)
-        $completedReviews = $journal->reviewerAssignments()
-            ->whereNotNull('review_submitted_at')
-            ->count();
-
-        if ($completedReviews < 2) {
-            throw new \Exception('At least 2 reviews must be completed before sending notice. Currently ' . $completedReviews . ' review(s) completed.');
-        }
-
         $oldStatus = $journal->approval_status;
 
-        // Update journal status to approved for copy desk editing
-        $journal->approval_status = 'approved_for_copy_editing';
+        $journal->approval_status = 'approved';
         $user = Auth::user();
-        $journal->managing_editor_notice = [
-            'sent_by' => ['id' => Auth::id(), 'name' => $user ? $user->fullname : 'System'],
-            'sent_at' => now(),
-            'type' => 'approval',
-            'comment' => $comment
+        $journal->approved_by = [
+            'id' => Auth::id() ?? 1, 
+            'name' => $user ? $user->fullname : 'Managing Editor'
         ];
-        $journal->managing_editor_notice_sent_at = now();
+        $journal->editor_decision_date = now();
+
+        if ($comment) {
+            $journal->editor_decision_comment = $comment;
+        }
 
         $journal->save();
 
-        // Send comprehensive notifications to Author, Editor-in-Chief, and Desk Editor
+        // Create journal comment for tracking
+        JournalComment::create([
+            'journal_id' => $journal->id,
+            'user_id' => Auth::id(),
+            'comment' => $comment ?? 'Manuscript approved by Managing Editor',
+            'comment_type' => 'managing_editor_approval'
+        ]);
+
+        // Send comprehensive notifications
         $this->sendApprovalNoticeNotifications($journal, $comment, $oldStatus);
 
         return $journal;
     }
 
     /**
-     * Send decline notice to author (JAPR Workflow)
+     * Send decline notice from Managing Editor (JAPR Workflow)
      */
     public function sendDeclineNotice($uuid, $reason)
     {
@@ -1102,61 +1102,58 @@ protected function sendManuscriptSubmissionNotifications($journal)
             throw new \Exception('Manuscript is not ready for Managing Editor notice. Current status: ' . $journal->approval_status);
         }
 
-        // Check minimum review requirement (at least 2 reviews)
-        $completedReviews = $journal->reviewerAssignments()
-            ->whereNotNull('review_submitted_at')
-            ->count();
-
-        if ($completedReviews < 2) {
-            throw new \Exception('At least 2 reviews must be completed before sending notice. Currently ' . $completedReviews . ' review(s) completed.');
-        }
-
         $oldStatus = $journal->approval_status;
 
-        // Update journal status to declined
         $journal->approval_status = 'declined';
         $user = Auth::user();
-        $journal->managing_editor_notice = [
-            'sent_by' => ['id' => Auth::id(), 'name' => $user ? $user->fullname : 'System'],
-            'sent_at' => now(),
-            'type' => 'decline',
-            'reason' => $reason
+        $journal->declined_by = [
+            'id' => Auth::id() ?? 1,
+            'name' => $user ? $user->fullname : 'Managing Editor'
         ];
-        $journal->managing_editor_notice_sent_at = now();
+        $journal->editor_decision_date = now();
+        $journal->editor_decision_comment = $reason;
 
         $journal->save();
 
-        // Send comprehensive notifications to Author, Editor-in-Chief, and Desk Editor
+        // Create journal comment for tracking
+        JournalComment::create([
+            'journal_id' => $journal->id,
+            'user_id' => Auth::id(),
+            'comment' => $reason,
+            'comment_type' => 'managing_editor_decline'
+        ]);
+
+        // Send comprehensive notifications
         $this->sendDeclineNoticeNotifications($journal, $reason, $oldStatus);
 
         return $journal;
     }
 
     /**
-     * Send comprehensive notifications for Managing Editor approval notice
+     * Send notifications for approval notice
      */
     private function sendApprovalNoticeNotifications($journal, $comment, $oldStatus)
     {
         $author = User::find($journal->user_id);
-        $actionUrl = route('dashboard');
+        $actionUrl = route('journals.view', [$journal->slug]);
 
         // Notify author
         if ($author) {
             $author->notify(new ManuscriptStatusChangedNotification(
                 $journal,
                 $oldStatus,
-                'approved_for_copy_editing',
-                $comment ?? 'Your manuscript has been approved by the peer review process and will proceed to copy editing.',
+                'approved',
+                $comment ?? 'Your manuscript has been approved for publication by the Managing Editor.',
                 $actionUrl
             ));
         }
 
-        // Notify Editor-in-Chief and Desk Editor
-        $this->notifyEditorsAndDeskEditor($journal, 'approved', "Manuscript \"{$journal->title}\" has been approved by Managing Editor and is ready for copy editing.");
+        // Notify Editor in Chief and other editors
+        $this->notifyEditorsOfDecision($journal, 'approved', "Manuscript \"{$journal->title}\" has been approved by the Managing Editor.");
     }
 
     /**
-     * Send comprehensive notifications for Managing Editor decline notice
+     * Send notifications for decline notice
      */
     private function sendDeclineNoticeNotifications($journal, $reason, $oldStatus)
     {
@@ -1169,108 +1166,76 @@ protected function sendManuscriptSubmissionNotifications($journal)
                 $journal,
                 $oldStatus,
                 'declined',
-                "Your manuscript has been declined after peer review. Reason: {$reason}",
+                "Your manuscript has been declined by the Managing Editor. Reason: {$reason}",
                 $actionUrl
             ));
         }
 
-        // Notify Editor-in-Chief and Desk Editor
-        $this->notifyEditorsAndDeskEditor($journal, 'declined', "Manuscript \"{$journal->title}\" has been declined by Managing Editor.");
+        // Notify Editor in Chief and other editors
+        $this->notifyEditorsOfDecision($journal, 'declined', "Manuscript \"{$journal->title}\" has been declined by the Managing Editor.");
     }
 
     /**
-     * Notify Editor-in-Chief and Desk Editor (JAPR Workflow)
+     * Helper method to get current version of a journal
      */
-    private function notifyEditorsAndDeskEditor($journal, $status, $message)
+    private function getCurrentVersion($journal_id)
     {
-        $roles = ['Editor in Chief', 'Desk Editor'];
-        $users = User::whereHas('roles', function($query) use ($roles) {
-            $query->whereIn('name', $roles);
-        })->get();
-
-        $actionUrl = route('editor.journals.preview', [$journal->uuid, $journal->slug]);
-
-        foreach ($users as $user) {
-            $user->notify(new ManuscriptStatusChangedNotification(
-                $journal,
-                $journal->approval_status,
-                $status,
-                $message,
-                $actionUrl
-            ));
-        }
+        return \App\Models\ManuscriptVersion::where('journal_id', $journal_id)
+            ->orderBy('created_at', 'desc')
+            ->first();
     }
 
-    public function getUserSubmissionsWithDetails($user_id) {
+    /**
+     * Get journals by specific status
+     */
+    public function getJournalsByStatus($status)
+    {
+        return Journal::where('approval_status', $status)
+            ->with(['user', 'category', 'reviewers'])
+            ->orderBy('updated_at', 'desc')
+            ->get();
+    }
+
+    /**
+     * Get journals with revision requested (multiple statuses)
+     */
+    public function getJournalsWithRevisionRequested()
+    {
+        return Journal::whereIn('approval_status', ['changes_requested', 'revision_requested'])
+            ->with(['user', 'category', 'reviewers'])
+            ->orderBy('updated_at', 'desc')
+            ->get();
+    }
+
+    /**
+     * Get user submissions with detailed information
+     */
+    public function getUserSubmissionsWithDetails($user_id) 
+    {
         return Journal::where('user_id', $user_id)
             ->with([
-                'reviewers:id,journal_id,user_id,comment,rating,recommendation,created_at',
-                'reviewers.user:id,fullname,email',
-                'category:id,name',
-                'sub_category:id,name'
-            ])
-            ->withCount('reviewers')
-            ->orderBy('updated_at', 'desc')
-            ->get()
-            ->map(function ($journal) {
-                // Get latest version info if exists
-                $latestVersion = ManuscriptVersion::where('journal_id', $journal->id)
-                    ->orderBy('version_number', 'desc')
-                    ->first();
-
-                $journal->latest_version = $latestVersion;
-                $journal->version_count = ManuscriptVersion::where('journal_id', $journal->id)->count();
-
-                // Get review summary
-                $reviews = $journal->reviewers ?? collect();
-                $journal->review_summary = [
-                    'total_reviews' => $reviews->count(),
-                    'average_rating' => $reviews->avg('rating'),
-                    'recommendations' => $reviews->pluck('recommendation')->countBy(),
-                    'completed_reviews' => $reviews->where('comment', '!=', null)->count()
-                ];
-
-                // Parse change requests if they exist
-                if ($journal->change_requests) {
-                    $journal->formatted_change_requests = collect($journal->change_requests)
-                        ->map(function ($request) {
-                            return [
-                                'category' => $request['category'] ?? 'General',
-                                'description' => $request['description'] ?? $request,
-                                'status' => $request['status'] ?? 'pending',
-                                'requested_at' => $request['requested_at'] ?? now()
-                            ];
-                        });
+                'reviewerAssignments.user',
+                'category',
+                'comments.user',
+                'versions' => function($query) {
+                    $query->orderBy('created_at', 'desc');
                 }
-
-                return $journal;
-            });
+            ])
+            ->orderBy('updated_at', 'desc')
+            ->get();
     }
 
     /**
-     * Get complete version history for a journal
+     * Get version history for a journal
      */
     public function getVersionHistory($journal_uuid)
     {
         $journal = $this->findByUUID($journal_uuid);
-
+        
         return \App\Models\ManuscriptVersion::where('journal_id', $journal->id)
-            ->with(['author:id,fullname'])
+            ->with(['user'])
             ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($version) {
-                return [
-                    'id' => $version->id,
-                    'version_number' => $version->version_number,
-                    'changes_summary' => $version->changes_summary,
-                    'revision_notes' => $version->revision_notes,
-                    'created_at' => $version->created_at,
-                    'author' => $version->author->fullname ?? 'Unknown',
-                    'file_path' => $version->file_path,
-                    'status' => $version->status ?? 'submitted',
-                    'parent_version_id' => $version->parent_version_id
-                ];
-            });
+            ->get();
     }
 
     /**
@@ -1279,119 +1244,70 @@ protected function sendManuscriptSubmissionNotifications($journal)
     public function compareVersions($journal_uuid, $version1_id, $version2_id)
     {
         $journal = $this->findByUUID($journal_uuid);
-
+        
         $version1 = \App\Models\ManuscriptVersion::where('journal_id', $journal->id)
-            ->with('author:id,fullname')
-            ->findOrFail($version1_id);
-
+            ->where('id', $version1_id)
+            ->first();
+            
         $version2 = \App\Models\ManuscriptVersion::where('journal_id', $journal->id)
-            ->with('author:id,fullname')
-            ->findOrFail($version2_id);
+            ->where('id', $version2_id)
+            ->first();
 
-        // Ensure version2 is newer than version1 for consistent comparison
-        if ($version1->created_at > $version2->created_at) {
-            [$version1, $version2] = [$version2, $version1];
+        if (!$version1 || !$version2) {
+            throw new \Exception('One or both versions not found');
         }
 
-        $comparison = $version2->compareWith($version1);
-
-        // Add metadata
-        $comparison['metadata'] = [
-            'journal_title' => $journal->title,
-            'older_version' => [
-                'id' => $version1->id,
-                'version_number' => $version1->version_number,
-                'created_at' => $version1->created_at,
-                'author' => $version1->author->fullname ?? 'Unknown'
-            ],
-            'newer_version' => [
-                'id' => $version2->id,
-                'version_number' => $version2->version_number,
-                'created_at' => $version2->created_at,
-                'author' => $version2->author->fullname ?? 'Unknown'
-            ]
+        return [
+            'version1' => $version1,
+            'version2' => $version2,
+            'journal' => $journal
         ];
-
-        return $comparison;
     }
 
     /**
-     * Get detailed information about a specific version
+     * Get details of a specific version
      */
     public function getVersionDetails($version_id)
     {
-        $version = \App\Models\ManuscriptVersion::with(['author:id,fullname', 'journal:id,title,uuid'])
+        return \App\Models\ManuscriptVersion::with(['user', 'journal'])
             ->findOrFail($version_id);
-
-        // Get current version to determine if this is the current version
-        $currentVersion = $this->getCurrentVersion($version->journal_id);
-        $isCurrentVersion = $currentVersion && $currentVersion->id === $version->id;
-
-        return [
-            'id' => $version->id,
-            'version_number' => $version->version_number,
-            'title' => $version->title,
-            'abstract' => $version->abstract,
-            'content' => $version->content,
-            'changes_summary' => $version->changes_summary,
-            'revision_notes' => $version->revision_notes,
-            'created_at' => $version->created_at,
-            'author' => $version->author->fullname ?? 'Unknown',
-            'file_path' => $version->file_path,
-            'status' => $isCurrentVersion ? 'current' : ($version->status ?? 'submitted'),
-            'journal' => [
-                'id' => $version->journal->id,
-                'title' => $version->journal->title,
-                'uuid' => $version->journal->uuid,
-                'current_version_id' => $currentVersion ? $currentVersion->id : null
-            ],
-            'version_tree' => $version->getVersionTree()
-        ];
     }
 
     /**
-     * Revert manuscript to a previous version (creates new version based on old one)
+     * Revert manuscript to a previous version
      */
     public function revertToVersion($journal_uuid, $version_id, $user_id)
     {
         $journal = $this->findByUUID($journal_uuid);
         $targetVersion = \App\Models\ManuscriptVersion::where('journal_id', $journal->id)
-            ->findOrFail($version_id);
+            ->where('id', $version_id)
+            ->firstOrFail();
 
-        // Create new version based on the target version
-        $nextVersionNumber = \App\Models\ManuscriptVersion::getNextVersionNumber($journal->id, false); // Major version change for reverts
-
+        // Create a new version based on the target version
         $newVersion = \App\Models\ManuscriptVersion::create([
             'journal_id' => $journal->id,
-            'version_number' => $nextVersionNumber,
+            'user_id' => $user_id,
             'title' => $targetVersion->title,
             'abstract' => $targetVersion->abstract,
             'content' => $targetVersion->content,
-            'changes_summary' => "Reverted to version {$targetVersion->version_number}",
-            'revision_notes' => "This version reverts the manuscript to version {$targetVersion->version_number} as requested",
-            'created_by' => $user_id,
-            'uploaded_by' => $user_id,
-            'uploaded_at' => now(),
-            'file_path' => $targetVersion->file_path, // Copy file path or create new file
-            'parent_version_id' => $this->getCurrentVersion($journal->id)->id,
-            'status' => 'reverted'
+            'file_path' => $targetVersion->file_path,
+            'version_number' => $this->getNextVersionNumber($journal->id),
+            'change_summary' => "Reverted to version {$targetVersion->version_number}",
+            'is_current' => true
         ]);
 
-        // Update main journal fields to reflect the reverted content
+        // Update journal with reverted content
         $journal->update([
             'title' => $targetVersion->title,
             'abstract' => $targetVersion->abstract,
-            'content' => $targetVersion->content
+            'journal_url' => $targetVersion->file_path
         ]);
 
+        // Mark other versions as not current
+        \App\Models\ManuscriptVersion::where('journal_id', $journal->id)
+            ->where('id', '!=', $newVersion->id)
+            ->update(['is_current' => false]);
+
         return $newVersion;
-    }    /**
-     * Helper method to get current version of a journal
-     */
-    private function getCurrentVersion($journal_id)
-    {
-        return \App\Models\ManuscriptVersion::where('journal_id', $journal_id)
-            ->orderBy('created_at', 'desc')
-            ->first();
     }
 }

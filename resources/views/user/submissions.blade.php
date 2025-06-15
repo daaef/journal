@@ -27,15 +27,8 @@
                                     <p class="text-gray-600 mb-3">{!! Str::limit($journal->description, 200) !!}</p>
                                     
                                     <div class="flex flex-wrap gap-3 text-sm">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
-                                            @if($journal->approval_status === 'approved') bg-green-100 text-green-800
-                                            @elseif($journal->approval_status === 'rejected') bg-red-100 text-red-800
-                                            @elseif($journal->approval_status === 'pending') bg-yellow-100 text-yellow-800
-                                            @elseif($journal->approval_status === 'in_progress') bg-blue-100 text-blue-800
-                                            @elseif($journal->approval_status === 'reviewed') bg-purple-100 text-purple-800
-                                            @elseif($journal->approval_status === 'revision_requested') bg-orange-100 text-orange-800
-                                            @endif">
-                                            {{ ucfirst(str_replace('_', ' ', $journal->approval_status)) }}
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $journal->status_class }}">
+                                            {{ $journal->status_label }}
                                         </span>
                                         
                                         @if($journal->category)
@@ -92,6 +85,89 @@
                                         </div>
                                         <div class="text-gray-600">Recommendations</div>
                                     </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Review Comments for Author -->
+                        @if($journal->submitted_reviews && $journal->submitted_reviews->count() > 0)
+                            <div class="px-6 py-4 bg-blue-50 border-b border-blue-200">
+                                <h4 class="text-sm font-medium text-blue-900 mb-3 flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Reviewer Feedback
+                                    <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        {{ $journal->submitted_reviews->count() }} {{ Str::plural('Review', $journal->submitted_reviews->count()) }}
+                                    </span>
+                                </h4>
+                                
+                                <div class="space-y-3">
+                                    @foreach($journal->submitted_reviews as $index => $review)
+                                        <div class="bg-white p-4 rounded-lg border border-blue-200 shadow-sm">
+                                            <div class="flex justify-between items-start mb-3">
+                                                <div class="flex items-center space-x-3">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                        Reviewer {{ $index + 1 }}
+                                                    </span>
+                                                    @if($review->recommendation)
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                                            {{ $review->recommendation === 'accept' ? 'bg-green-100 text-green-800' : 
+                                                               ($review->recommendation === 'reject' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                                            {{ ucfirst(str_replace('_', ' ', $review->recommendation)) }}
+                                                        </span>
+                                                    @endif
+                                                    @if($review->rating)
+                                                        <div class="flex items-center">
+                                                            <span class="text-sm font-medium text-gray-700 mr-1">Rating:</span>
+                                                            <div class="flex items-center">
+                                                                @for($i = 1; $i <= 5; $i++)
+                                                                    <svg class="w-4 h-4 {{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                                                    </svg>
+                                                                @endfor
+                                                                <span class="ml-1 text-sm text-gray-600">({{ $review->rating }}/5)</span>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <span class="text-xs text-gray-500">
+                                                    {{ $review->review_submitted_at ? $review->review_submitted_at->format('M j, Y') : 'Recently submitted' }}
+                                                </span>
+                                            </div>
+                                                             @if($review->comment)
+                                <div class="border-l-4 border-blue-400 pl-4">
+                                    <h6 class="text-sm font-medium text-gray-900 mb-2">
+                                        <i class="ph ph-message-circle mr-1 text-blue-600"></i>Comments for You (Author)
+                                        <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                            Review Feedback
+                                        </span>
+                                    </h6>
+                                    <div class="prose prose-sm max-w-none text-gray-700 bg-blue-50 p-3 rounded">
+                                        {{ $review->comment }}
+                                    </div>
+                                    <small class="text-xs text-blue-600 mt-2 block">
+                                        <i class="ph ph-info mr-1"></i>This feedback is specifically for you to help improve your manuscript
+                                    </small>
+                                </div>
+                            @endif
+                                            
+                                            <!-- Criteria Ratings (if available) -->
+                                            @if($review->criteria_ratings)
+                                                <div class="mt-4 pt-3 border-t border-gray-200">
+                                                    <h6 class="text-sm font-medium text-gray-900 mb-2">Detailed Ratings</h6>
+                                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                                                        @foreach($review->criteria_ratings as $criterion => $rating)
+                                                            <div class="flex justify-between items-center">
+                                                                <span class="text-gray-600 capitalize">{{ str_replace('_', ' ', $criterion) }}:</span>
+                                                                <span class="font-medium text-gray-900">{{ $rating }}/5</span>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                         @endif
