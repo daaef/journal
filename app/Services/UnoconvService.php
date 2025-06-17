@@ -9,8 +9,7 @@ use Symfony\Component\Process\Process;
 use Exception;
 
 class UnoconvService
-{
-    /**
+{    /**
      * Convert a document to PDF using unoconv
      *
      * @param UploadedFile $file
@@ -20,6 +19,33 @@ class UnoconvService
      */
     public function convertToPdf(UploadedFile $file, string $targetPath, string $fileName): array
     {
+        // Log the parameters for debugging
+        Log::debug('UnoconvService convertToPdf called', [
+            'original_name' => $file->getClientOriginalName(),
+            'target_path' => $targetPath,
+            'file_name' => $fileName,
+            'extension' => $file->getClientOriginalExtension()
+        ]);
+        
+        // Validate parameters
+        if (empty($targetPath)) {
+            Log::error('Target path is empty in convertToPdf');
+            return [
+                'success' => false,
+                'path' => null,
+                'message' => 'Target path cannot be empty'
+            ];
+        }
+        
+        if (empty($fileName)) {
+            Log::error('File name is empty in convertToPdf');
+            return [
+                'success' => false,
+                'path' => null,
+                'message' => 'File name cannot be empty'
+            ];
+        }
+        
         $extension = strtolower($file->getClientOriginalExtension());
         
         // If it's already a PDF, just store it
@@ -43,8 +69,7 @@ class UnoconvService
             'message' => 'Unsupported file format: ' . $extension
         ];
     }
-    
-    /**
+      /**
      * Convert Word document to PDF using unoconv
      *
      * @param UploadedFile $file
@@ -71,15 +96,33 @@ class UnoconvService
                 mkdir($tempOutputDir, 0755, true);
             }
             
-            // Save uploaded file to temp location
+            // Save uploaded file to temp location (keep original for fallback)
             $originalExtension = $file->getClientOriginalExtension();
             $tempFileName = uniqid() . '.' . $originalExtension;
             $tempFilePath = $tempDir . '/' . $tempFileName;
             
-            $file->move($tempDir, $tempFileName);
+            // Copy file to temp location instead of moving to preserve original for fallback
+            if (!copy($file->getRealPath(), $tempFilePath)) {
+                return $this->fallbackToOriginalFile($file, $targetPath, $fileName, 'Failed to copy file to temporary location');
+            }            // Generate PDF filename with proper validation
+            $baseFilename = pathinfo($fileName, PATHINFO_FILENAME);
             
-            // Generate PDF filename
-            $pdfFileName = pathinfo($fileName, PATHINFO_FILENAME) . '.pdf';
+            if (empty($baseFilename)) {
+                Log::warning('Invalid filename provided, using fallback', [
+                    'original_filename' => $fileName,
+                    'file' => $file->getClientOriginalName()
+                ]);
+                // Generate a safe fallback filename
+                $baseFilename = 'converted-' . time() . '-' . uniqid();
+            }
+            
+            $pdfFileName = $baseFilename . '.pdf';
+            
+            Log::debug('PDF filename generated', [
+                'original_filename' => $fileName,
+                'base_filename' => $baseFilename,
+                'pdf_filename' => $pdfFileName
+            ]);
             
             // Run unoconv conversion
             $conversionResult = $this->runUnoconvConversion($tempFilePath, $tempOutputDir);
@@ -109,7 +152,7 @@ class UnoconvService
                 }
             }
             
-            // Clean up on failure
+            // Clean up temp file on failure
             $this->cleanupTempFiles([$tempFilePath]);
             
             return $this->fallbackToOriginalFile($file, $targetPath, $fileName, $conversionResult['message']);
@@ -122,7 +165,7 @@ class UnoconvService
             
             return $this->fallbackToOriginalFile($file, $targetPath, $fileName, 'Conversion failed due to an error: ' . $e->getMessage());
         }
-    }    /**
+    }/**
      * Check if unoconv is available
      *
      * @return bool
@@ -200,8 +243,7 @@ class UnoconvService
             ];
         }
     }
-    
-    /**
+      /**
      * Fallback to storing original file when conversion fails
      *
      * @param UploadedFile $file
@@ -214,8 +256,29 @@ class UnoconvService
     {
         Log::warning('PDF conversion failed, storing original file', [
             'file' => $file->getClientOriginalName(),
+            'target_path' => $targetPath,
+            'file_name' => $fileName,
             'reason' => $reason
         ]);
+        
+        // Validate parameters before attempting to store
+        if (empty($targetPath)) {
+            Log::error('Target path is empty in fallbackToOriginalFile');
+            return [
+                'success' => false,
+                'path' => null,
+                'message' => 'Failed to store file: Target path cannot be empty'
+            ];
+        }
+        
+        if (empty($fileName)) {
+            Log::error('File name is empty in fallbackToOriginalFile');
+            return [
+                'success' => false,
+                'path' => null,
+                'message' => 'Failed to store file: File name cannot be empty'
+            ];
+        }
         
         try {
             // Store original file
@@ -228,6 +291,12 @@ class UnoconvService
                 'conversion_failed' => true
             ];
         } catch (Exception $e) {
+            Log::error('Failed to store original file in fallback', [
+                'target_path' => $targetPath,
+                'file_name' => $fileName,
+                'error' => $e->getMessage()
+            ]);
+            
             return [
                 'success' => false,
                 'path' => null,

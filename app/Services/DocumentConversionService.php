@@ -23,9 +23,35 @@ class DocumentConversionService
      * @param string $targetPath
      * @param string $fileName
      * @return array ['success' => bool, 'path' => string|null, 'message' => string]
-     */
-    public function convertToPdf(UploadedFile $file, string $targetPath, string $fileName): array
+     */    public function convertToPdf(UploadedFile $file, string $targetPath, string $fileName): array
     {
+        // Log the parameters for debugging
+        Log::debug('DocumentConversionService convertToPdf called', [
+            'original_name' => $file->getClientOriginalName(),
+            'target_path' => $targetPath,
+            'file_name' => $fileName,
+            'extension' => $file->getClientOriginalExtension()
+        ]);
+        
+        // Validate parameters
+        if (empty($targetPath)) {
+            Log::error('Target path is empty in DocumentConversionService convertToPdf');
+            return [
+                'success' => false,
+                'path' => null,
+                'message' => 'Target path cannot be empty'
+            ];
+        }
+        
+        if (empty($fileName)) {
+            Log::error('File name is empty in DocumentConversionService convertToPdf');
+            return [
+                'success' => false,
+                'path' => null,
+                'message' => 'File name cannot be empty'
+            ];
+        }
+        
         $extension = strtolower($file->getClientOriginalExtension());
         
         // If it's already a PDF, just store it
@@ -95,9 +121,16 @@ class DocumentConversionService
             
             // Save uploaded file to temp location
             $file->move($tempDir, $tempFileName);
-            
-            // Generate PDF filename (replace original extension with .pdf)
-            $pdfFileName = pathinfo($fileName, PATHINFO_FILENAME) . '.pdf';
+              // Generate PDF filename (replace original extension with .pdf)
+            $baseFilename = pathinfo($fileName, PATHINFO_FILENAME);
+            if (empty($baseFilename)) {
+                Log::warning('Invalid filename in DocumentConversionService, using fallback', [
+                    'original_filename' => $fileName,
+                    'file' => $file->getClientOriginalName()
+                ]);
+                $baseFilename = 'converted-' . time() . '-' . uniqid();
+            }
+            $pdfFileName = $baseFilename . '.pdf';
             $tempPdfPath = $tempDir . '/' . uniqid() . '.pdf';
             
             // Try different conversion methods
@@ -127,12 +160,26 @@ class DocumentConversionService
             // Clean up temporary files on failure
             if (file_exists($tempFilePath)) unlink($tempFilePath);
             if (file_exists($tempPdfPath)) unlink($tempPdfPath);
-            
-            // Fallback: Store original file and notify user
+              // Fallback: Store original file and notify user
             Log::warning('PDF conversion failed, storing original file', [
                 'file' => $file->getClientOriginalName(),
+                'target_path' => $targetPath,
+                'file_name' => $fileName,
                 'error' => $conversionResult['message'] ?? 'Unknown error'
             ]);
+            
+            // Validate parameters before storing
+            if (empty($targetPath) || empty($fileName)) {
+                Log::error('Cannot store original file: empty path or filename', [
+                    'target_path' => $targetPath,
+                    'file_name' => $fileName
+                ]);
+                return [
+                    'success' => false,
+                    'path' => null,
+                    'message' => 'Failed to store file: path or filename is empty'
+                ];
+            }
             
             $storedPath = $file->storeAs($targetPath, $fileName, 'public');
             return [
@@ -141,12 +188,26 @@ class DocumentConversionService
                 'message' => 'Conversion failed, original file stored. Please consider uploading a PDF version.',
                 'conversion_failed' => true
             ];
-            
-        } catch (Exception $e) {
+              } catch (Exception $e) {
             Log::error('Document conversion error', [
                 'file' => $file->getClientOriginalName(),
+                'target_path' => $targetPath,
+                'file_name' => $fileName,
                 'error' => $e->getMessage()
             ]);
+
+            // Validate parameters before storing
+            if (empty($targetPath) || empty($fileName)) {
+                Log::error('Cannot store original file in exception handler: empty path or filename', [
+                    'target_path' => $targetPath,
+                    'file_name' => $fileName
+                ]);
+                return [
+                    'success' => false,
+                    'path' => null,
+                    'message' => 'Failed to store file: path or filename is empty'
+                ];
+            }
             
             // Fallback: Store original file
             $storedPath = $file->storeAs($targetPath, $fileName, 'public');

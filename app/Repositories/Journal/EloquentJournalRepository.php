@@ -150,6 +150,45 @@ class EloquentJournalRepository implements JournalContract {
             // Always use .pdf as the final extension since we convert everything to PDF
             $fileName = $baseFileName . '.pdf';
             
+            // Double-check that filename is valid (not just an extension)
+            $filenameWithoutExt = pathinfo($fileName, PATHINFO_FILENAME);
+            if (empty($filenameWithoutExt)) {
+                Log::warning('Generated filename is invalid, using fallback', [
+                    'title' => $request->title,
+                    'title_slug' => $titleSlug,
+                    'generated_filename' => $fileName
+                ]);
+                $fileName = 'manuscript-' . time() . '-' . Str::random(8) . '.pdf';
+            }
+            
+            // Validate parameters before conversion
+            if (empty($path)) {
+                Log::error('Path is empty before document conversion', [
+                    'title' => $request->title,
+                    'file' => $file->getClientOriginalName()
+                ]);
+                throw new \Exception('Document storage path cannot be empty');
+            }
+            
+            if (empty($fileName)) {
+                Log::error('Filename is empty before document conversion', [
+                    'title' => $request->title,
+                    'title_slug' => $titleSlug,
+                    'base_filename' => $baseFileName,
+                    'file' => $file->getClientOriginalName()
+                ]);
+                throw new \Exception('Document filename cannot be empty');
+            }
+            
+            // Log parameters for debugging
+            Log::debug('Document conversion parameters', [
+                'path' => $path,
+                'fileName' => $fileName,
+                'titleSlug' => $titleSlug,
+                'baseFileName' => $baseFileName,
+                'originalFile' => $file->getClientOriginalName()
+            ]);
+            
             // Ensure directory exists
             if (!Storage::disk('public')->exists($path)) {
                 Storage::disk('public')->makeDirectory($path);
