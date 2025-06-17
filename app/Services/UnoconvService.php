@@ -5,7 +5,6 @@ namespace App\Services;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Process\Factory as ProcessFactory;
 use Symfony\Component\Process\Process;
 use Exception;
 
@@ -254,8 +253,7 @@ class UnoconvService
                 }
             }
         }
-    }
-      /**
+    }    /**
      * Get unoconv version information
      *
      * @return string|null
@@ -264,12 +262,20 @@ class UnoconvService
     {
         try {
             $unoconvPath = config('document_conversion.paths.unoconv', 'unoconv');
-            $result = Process::run($unoconvPath . ' --version');
-            if ($result->successful()) {
-                return trim($result->output());
+            
+            // Ensure we have a valid command
+            if (empty($unoconvPath)) {
+                $unoconvPath = 'unoconv';
+            }
+            
+            $process = new Process([$unoconvPath, '--version']);
+            $process->run();
+            
+            if ($process->isSuccessful()) {
+                return trim($process->getOutput());
             }
         } catch (Exception $e) {
-            // Ignore
+            Log::debug('UnoconvService version check failed', ['error' => $e->getMessage()]);
         }
         
         return null;
