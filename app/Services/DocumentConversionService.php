@@ -114,13 +114,19 @@ class DocumentConversionService
             if (!file_exists($tempDir)) {
                 mkdir($tempDir, 0755, true);
             }
-            
-            $originalExtension = $file->getClientOriginalExtension();
+              $originalExtension = $file->getClientOriginalExtension();
             $tempFileName = uniqid() . '.' . $originalExtension;
             $tempFilePath = $tempDir . '/' . $tempFileName;
             
-            // Save uploaded file to temp location
-            $file->move($tempDir, $tempFileName);
+            // Copy file to temp location instead of moving to preserve original for fallback
+            if (!copy($file->getRealPath(), $tempFilePath)) {
+                Log::error('Failed to copy file to temporary location for legacy conversion');
+                return [
+                    'success' => false,
+                    'path' => null,
+                    'message' => 'Failed to copy file for conversion'
+                ];
+            }
               // Generate PDF filename (replace original extension with .pdf)
             $baseFilename = pathinfo($fileName, PATHINFO_FILENAME);
             if (empty($baseFilename)) {
@@ -166,9 +172,7 @@ class DocumentConversionService
                 'target_path' => $targetPath,
                 'file_name' => $fileName,
                 'error' => $conversionResult['message'] ?? 'Unknown error'
-            ]);
-            
-            // Validate parameters before storing
+            ]);            // Validate parameters before storing
             if (empty($targetPath) || empty($fileName)) {
                 Log::error('Cannot store original file: empty path or filename', [
                     'target_path' => $targetPath,
@@ -194,9 +198,7 @@ class DocumentConversionService
                 'target_path' => $targetPath,
                 'file_name' => $fileName,
                 'error' => $e->getMessage()
-            ]);
-
-            // Validate parameters before storing
+            ]);            // Validate parameters before storing
             if (empty($targetPath) || empty($fileName)) {
                 Log::error('Cannot store original file in exception handler: empty path or filename', [
                     'target_path' => $targetPath,
