@@ -195,7 +195,8 @@ class JournalController extends Controller
         // dd($request->all());
 
         // Check if user has accepted review policy (either previously or in this request)
-        $userHasAcceptedPolicy = Auth::user()->review_policy_accepted || $request->has('review_policy_accepted');
+        $userHasAcceptedPolicy = Auth::user()->review_policy_accepted || 
+                                ($request->has('review_policy_accepted') && $request->review_policy_accepted);
 
         if (!$userHasAcceptedPolicy) {
             $notification = array(
@@ -212,13 +213,14 @@ class JournalController extends Controller
             'country' => 'required',
             'journal_language' => 'required',
             'abstract' => 'required',
-            'manuscripts' => 'required|mimes:pdf|max:10000',
+            'manuscripts' => 'required|mimes:pdf,doc,docx|max:10000',
             'agree_japr_policy' => 'required|accepted'
         ];
 
         // Only require review_policy_accepted if user hasn't already accepted it
+        // Use 'required' instead of 'required|accepted' since the checkbox might be disabled
         if (!Auth::user()->review_policy_accepted) {
-            $validationRules['review_policy_accepted'] = 'required|accepted';
+            $validationRules['review_policy_accepted'] = 'required';
         }
 
         $validator = Validator::make($request->all(), $validationRules);
@@ -256,10 +258,22 @@ class JournalController extends Controller
             $journal = $this->repo->submitManuscript($request);
 
             if ($journal) {
-                $notification = array(
-                    'message' => 'Manuscript Submitted successfully',
-                    'alert-type' => 'success'
-                );
+                // Check if the file was a Word document that got converted
+                $uploadedFile = $request->file('manuscripts');
+                $originalExtension = strtolower($uploadedFile->getClientOriginalExtension());
+                
+                if (in_array($originalExtension, ['doc', 'docx'])) {
+                    $notification = array(
+                        'message' => 'Manuscript submitted successfully! Your Word document has been converted to PDF for processing.',
+                        'alert-type' => 'success'
+                    );
+                } else {
+                    $notification = array(
+                        'message' => 'Manuscript submitted successfully!',
+                        'alert-type' => 'success'
+                    );
+                }
+                
                 return redirect()->route('user.submissions')->with($notification);
             }
 
@@ -271,12 +285,26 @@ class JournalController extends Controller
             return redirect()->back()->with($notification);
 
         } catch (\Exception $e) {
-            $notification = array(
-                'message' => 'Error submitting Manuscript: ' . $e->getMessage(),
-                'alert-type' => 'error'
-            );
+            Log::error('Manuscript submission error', [
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+                'file' => $request->hasFile('manuscripts') ? $request->file('manuscripts')->getClientOriginalName() : 'No file'
+            ]);
 
-            return redirect()->back()->with($notification);
+            // Check if it's a conversion-related error
+            if (strpos($e->getMessage(), 'Failed to process manuscript file') !== false) {
+                $notification = array(
+                    'message' => 'Failed to process your document. Please ensure your file is not corrupted and try again, or upload a PDF version instead.',
+                    'alert-type' => 'error'
+                );
+            } else {
+                $notification = array(
+                    'message' => 'Error submitting manuscript: ' . $e->getMessage(),
+                    'alert-type' => 'error'
+                );
+            }
+
+            return redirect()->back()->with($notification)->withInput();
         }
     }
 

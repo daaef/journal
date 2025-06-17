@@ -15,15 +15,25 @@ use App\Models\JournalComment;
 use App\Models\ManuscriptVersion;
 use App\Models\Reviewer;
 use App\Models\User;
+use App\Services\DocumentConversionService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use PhpParser\Node\Stmt\TryCatch;
 
 class EloquentJournalRepository implements JournalContract {
+    
+    protected $documentConversionService;
+    
+    public function __construct(DocumentConversionService $documentConversionService)
+    {
+        $this->documentConversionService = $documentConversionService;
+    }
+    
     public function create($request) {
         // dd($request->all());
         $journal = new Journal();
@@ -124,22 +134,68 @@ class EloquentJournalRepository implements JournalContract {
         // if request has manuscripts, upload the file
         if ($request->hasFile('manuscripts')) {
             $path = 'journals'; // Define the path variable
-            $disk = 'public'; // Define the path variable
+            $disk = 'public'; // Define the disk variable
 
             $file = $request->file('manuscripts');
-            $fileName = Str::slug($request->title, '-'). '.'.$file->getClientOriginalExtension();
-            $journal->journal_format = '.' . $file->getClientOriginalExtension();
-
+            $originalExtension = $file->getClientOriginalExtension();
+            
+            // Create base filename from title, with fallback
+            $titleSlug = $request->title ? Str::slug($request->title, '-') : '';
+            if (empty($titleSlug)) {
+                // Fallback to timestamp and random string if title is empty or results in empty slug
+                $titleSlug = 'manuscript-' . time() . '-' . Str::random(8);
+            }
+            $baseFileName = $titleSlug;
+            
+            // Always use .pdf as the final extension since we convert everything to PDF
+            $fileName = $baseFileName . '.pdf';
+            
+            // Ensure directory exists
             if (!Storage::disk('public')->exists($path)) {
                 Storage::disk('public')->makeDirectory($path);
             }
 
-            $storedPath = $file->storeAs($path, $fileName, $disk);
-            $journal->journal_url = $storedPath;
+            // Convert document to PDF if needed
+            $conversionResult = $this->documentConversionService->convertToPdf($file, $path, $fileName);
+            
+            if ($conversionResult['success']) {
+                $journal->journal_url = $conversionResult['path'];
+                $journal->journal_format = '.pdf'; // Always PDF after conversion
+                
+                // Log conversion details for debugging
+                if (isset($conversionResult['conversion_failed'])) {
+                    Log::warning('Document conversion failed but file stored', [
+                        'journal_title' => $request->title,
+                        'original_file' => $file->getClientOriginalName(),
+                        'message' => $conversionResult['message'],
+                        'generated_filename' => $fileName
+                    ]);
+                    
+                    // Set original format if conversion failed
+                    $journal->journal_format = '.' . $originalExtension;
+                } else {
+                    Log::info('Document processed successfully', [
+                        'journal_title' => $request->title,
+                        'original_file' => $file->getClientOriginalName(),
+                        'converted' => !in_array(strtolower($originalExtension), ['pdf']),
+                        'message' => $conversionResult['message'],
+                        'generated_filename' => $fileName
+                    ]);
+                }
+            } else {
+                // If conversion completely fails, throw an exception
+                throw new \Exception('Failed to process manuscript file: ' . $conversionResult['message']);
+            }
         }
 
 
-        $journal->slug = Str::slug($request->title, '-');
+        // Create slug from title, with fallback
+        $titleSlugForJournal = $request->title ? Str::slug($request->title, '-') : '';
+        if (empty($titleSlugForJournal)) {
+            // Fallback to timestamp and random string if title is empty or results in empty slug
+            $titleSlugForJournal = 'journal-' . time() . '-' . Str::random(8);
+        }
+        $journal->slug = $titleSlugForJournal;
         $journal->description = $request->description ?: $request->abstract;
 
         // If request has cover_image, upload the file
@@ -147,11 +203,19 @@ class EloquentJournalRepository implements JournalContract {
             $path = 'cover_images'; // Define the path variable
             $disk = 'public'; // Define the path variable
             $coverFile = $request->file('cover_image');
-            $coverName = Str::slug($request->title, '-'). '.'.$coverFile->getClientOriginalExtension();
+            
+            // Create cover filename from title, with fallback
+            $coverTitleSlug = $request->title ? Str::slug($request->title, '-') : '';
+            if (empty($coverTitleSlug)) {
+                // Fallback to timestamp and random string if title is empty or results in empty slug
+                $coverTitleSlug = 'cover-' . time() . '-' . Str::random(8);
+            }
+            $coverName = $coverTitleSlug . '.' . $coverFile->getClientOriginalExtension();
+            
             if (!Storage::disk('public')->exists($path)) {
                 Storage::disk('public')->makeDirectory($path);
             }
-            $coverPath = $file->storeAs($path, $coverName, $disk);
+            $coverPath = $coverFile->storeAs($path, $coverName, $disk);
             $journal->cover_image = $coverPath;
         }
 

@@ -29,18 +29,19 @@
                 <div class="grid grid-cols-1 mt-10 gap-x-6 gap-y-8 sm:grid-cols-2">
 
                     <div>
-                        <label for="author" class="block text-sm font-medium leading-6 text-gray-900">Name of authors
-                            (Seperate with commas)</label>
+                        <label for="author" class="block text-sm font-medium leading-6 text-gray-900">Authors (separate with commas)</label>
                         <div class="mt-2">
                             <input id="author" name="author" type="text"
                                    value="{{ old('author') ?: auth()->user()->fullname }}" required
+                                   placeholder="John Smith, Jane Doe, Robert Johnson"
                                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
                     <div>
-                        <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title of manuscript</label>
+                        <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Manuscript title</label>
                         <div class="mt-2">
                             <input id="title" name="title" type="text" value="{{ old('title') }}" required
+                                placeholder="Enter your manuscript title"
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
@@ -48,9 +49,8 @@
                         <label for="abstract" class="block text-sm font-medium leading-6 text-gray-900">Abstract</label>
                         <div class="mt-2">
                             <textarea id="abstract" name="abstract" rows="3" value="{{ old('abstract') }}"
-                                      class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                {{ old('abstract') }}
-                            </textarea>
+                                      placeholder="Brief summary of your research (150-300 words)"
+                                      class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">{{ old('abstract') }}</textarea>
                         </div>
                     </div>
 
@@ -60,21 +60,23 @@
                         <div class="mt-2">
                             <input id="institution" name="institution" type="text" value="{{ old('institution') }}"
                                 required
+                                placeholder="Your institution or organization"
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
 
                     <div>
-                        <label for="keywords" class="block text-sm font-medium leading-6 text-gray-900">Keywords</label>
+                        <label for="keywords" class="block text-sm font-medium leading-6 text-gray-900">Keywords (3-6 keywords, comma separated)</label>
                         <div class="mt-2">
                             <input id="keywords" name="meta_keywords" type="text" value="{{ old('keywords') }}"
                                 required
+                                placeholder="renewable energy, sustainability, climate change"
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
                     <div class="col-span-full">
                         <label for="cover-photo"
-                               class="block text-sm font-medium leading-6 text-gray-900">Manuscript (Please attach manuscript: word doc and pdf)</label>
+                               class="block text-sm font-medium leading-6 text-gray-900">Manuscript (Word docs auto-converted to PDF)</label>
                         <div
                             class="flex justify-center px-6 py-10 mt-2 border border-dashed rounded-lg border-gray-900/25">
                             <div class="text-center">
@@ -85,28 +87,27 @@
                                     <path
                                         d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20" />
                                 </svg>
-                                <div class="flex mt-4 text-sm leading-6 text-gray-600">
+                                <div class="flex mt-4 text-sm justify-center leading-6 text-gray-600">
                                     <label for="file-upload"
                                            class="relative font-semibold text-indigo-600 bg-white rounded-md cursor-pointer focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
                                         <span>Upload Manuscript</span>
-                                        <input id="file-upload" name="manuscripts" type="file" class="sr-only">
+                                        <input id="file-upload" name="manuscripts" type="file" class="sr-only" accept=".pdf,.doc,.docx">
                                     </label>
                                     <p class="pl-1">or drag and drop</p>
                                 </div>
                                 <span id="file-name"
                                       class="px-4 py-2 text-sm font-medium text-gray-100 rounded-md bg-primary-600"
                                       style="display: none;"></span>
-                                <p class="text-xs leading-5 text-gray-600">PDF up to 10MB</p>
+                                <p class="text-xs leading-5 text-gray-600">PDF, DOC, or DOCX files up to 10MB</p>
                             </div>
                         </div>
                     </div>
                     <div class="w-full">
-                        <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country /
-                            Region</label>
+                        <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country</label>
                         <div class="mt-2">
                             <select name="country" id="country"
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
-                                <option value="" disabled selected>Select Country</option>
+                                <option value="" disabled selected>Select country</option>
                                 @foreach ($regions as $region => $countries)
                                     <optgroup label="{{ $region }}">
                                         @foreach ($countries as $country)
@@ -124,7 +125,7 @@
                         <div class="mt-2">
                             <select id="journal_language" name="journal_language" autocomplete="language-name"
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
-                                <option value="" disabled selected>Select Language</option>
+                                <option value="" disabled selected>Select language</option>
                                 @foreach ($languages as $language)
                                     <option value="{{ $language }}">{{ $language }}</option>
                                 @endforeach
@@ -139,7 +140,7 @@
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
                                 hx-get="/load-subcategories" hx-target="#subcategories"
                                 hx-params="category_id=${select.value}" hx-trigger="change">
-                                <option value="" disabled selected>Select Category</option>
+                                <option value="" disabled selected>Select category</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
@@ -156,93 +157,6 @@
                             </select>
                         </div>
                     </div> --}}
-                </div>
-            </div>
-            <div>
-                <label for="keywords" class="block text-sm font-medium leading-6 text-gray-900">Licensing</label>
-                <div class="pb-2 border-b border-gray-900/10"></div>
-                <div class="mt-2">
-                    <div class="relative flex gap-x-3">
-                        <div class="flex items-center h-6">
-                            <input id="cc-by" name="license[]" type="checkbox"
-                                class="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-600">
-                        </div>
-                        <div class="text-sm leading-6">
-                            <label for="cc-by" class="text-gray-500">CC BY</label>
-                        </div>
-                    </div>
-                    <div class="relative flex gap-x-3">
-                        <div class="flex items-center h-6">
-                            <input id="cc-by-sa" name="license[]" type="checkbox"
-                                class="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-600">
-                        </div>
-                        <div class="text-sm leading-6">
-                            <label for="cc-by-sa" class="text-gray-500">CC BY-SA</label>
-                        </div>
-                    </div>
-                    <div class="relative flex gap-x-3">
-                        <div class="flex items-center h-6">
-                            <input id="cc-by-nd" name="license[]" type="checkbox"
-                                class="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-600">
-                        </div>
-                        <div class="text-sm leading-6">
-                            <label for="cc-by-nd" class="text-gray-500">CC BY-ND</label>
-                        </div>
-                    </div>
-                    <div class="relative flex gap-x-3">
-                        <div class="flex items-center h-6">
-                            <input id="cc-by-nc" name="license[]" type="checkbox"
-                                class="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-600">
-                        </div>
-                        <div class="text-sm leading-6">
-                            <label for="cc-by-nc" class="text-gray-500">CC BY-NC</label>
-                        </div>
-                    </div>
-                    <div class="relative flex gap-x-3">
-                        <div class="flex items-center h-6">
-                            <input id="cc-by-nc-sa" name="license[]" type="checkbox"
-                                class="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-600">
-                        </div>
-                        <div class="text-sm leading-6">
-                            <label for="cc-by-nc-sa" class="text-gray-500">CC BY-NC-SA</label>
-                        </div>
-                    </div>
-                    <div class="relative flex gap-x-3">
-                        <div class="flex items-center h-6">
-                            <input id="cc-by-nc-nd" name="license[]" type="checkbox"
-                                class="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-600">
-                        </div>
-                        <div class="text-sm leading-6">
-                            <label for="cc-by-nc-nd" class="text-gray-500">CC BY-NC-ND</label>
-                        </div>
-                    </div>
-                    <div class="relative flex gap-x-3">
-                        <div class="flex items-center h-6">
-                            <input id="cc0" name="license[]" type="checkbox"
-                                class="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-600">
-                        </div>
-                        <div class="text-sm leading-6">
-                            <label for="cc0" class="text-gray-500">CC0</label>
-                        </div>
-                    </div>
-                    <div class="relative flex gap-x-3">
-                        <div class="flex items-center h-6">
-                            <input id="pub_domain" name="license[]" type="checkbox"
-                                class="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-600">
-                        </div>
-                        <div class="text-sm leading-6">
-                            <label for="pub_domain" class="text-gray-500">Public domain</label>
-                        </div>
-                    </div>
-                    <div class="relative flex gap-x-3">
-                        <div class="flex items-center h-6">
-                            <input id="own_license" name="license[]" type="checkbox"
-                                class="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-600">
-                        </div>
-                        <div class="text-sm leading-6">
-                            <label for="own_license" class="text-gray-500">Publisher's own license</label>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="pb-12 border-b border-gray-900/10">
@@ -268,17 +182,20 @@
                                     <input id="review_policy_accepted" name="review_policy_accepted" type="checkbox"
                                         class="w-4 h-4 border-gray-300 rounded text-primary-600 focus:ring-primary-600"
                                         value="1"
-                                        @if(auth()->user()->review_policy_accepted) checked @else disabled @endif>
+                                        @if(auth()->user()->review_policy_accepted) checked disabled @else disabled @endif>
                                 </div>
                                 <div class="text-sm leading-6">
                                     <label for="review_policy_accepted" class="text-gray-500">
                                         I accept the
                                         @if(!auth()->user()->review_policy_accepted)
-                                            <button type="button" onclick="showReviewPolicyModal()" class="p-0 text-blue-600 underline bg-transparent border-none cursor-pointer hover:text-blue-800">JAPR Review Policy</button>
+                                            <button type="button" onclick="showReviewPolicyModal()" class="p-0 text-blue-600 font-bold underline bg-transparent border-none cursor-pointer hover:text-blue-800">JAPR Review Policy</button>
                                         @else
-                                            <a href="{{ route('review-policy.show') }}" target="_blank" class="text-blue-600 underline hover:text-blue-800">JAPR Review Policy</a>
+                                            <a href="{{ route('review-policy.show') }}" target="_blank" class="text-blue-600 underline font-bold hover:text-blue-800">JAPR Review Policy</a>
                                         @endif
                                         and agree to comply with all review standards and procedures
+                                        @if(!auth()->user()->review_policy_accepted)
+                                            <br><small class="text-gray-400 italic">(Click policy link to accept before submitting)</small>
+                                        @endif
                                     </label>
                                 </div>
                             </div>
@@ -304,8 +221,9 @@
             <div class="p-6 bg-white rounded-lg shadow-lg">
                 <div class="flex items-center space-x-3">
                     <div class="w-6 h-6 border-b-2 border-green-600 rounded-full animate-spin"></div>
-                    <span class="text-gray-700">Processing...</span>
+                    <span class="text-gray-700">Processing and converting your document...</span>
                 </div>
+                <p class="mt-2 text-sm text-gray-500">This may take a moment for Word documents.</p>
             </div>
         </div>
     </div>
@@ -408,7 +326,21 @@
         fileInput.addEventListener('change', () => {
             const file = fileInput.files[0];
             if (file) {
-                fileNameSpan.textContent = `Uploading: ${file.name}`;
+                const extension = file.name.split('.').pop().toLowerCase();
+                let message = `Selected: ${file.name}`;
+                
+                // Add conversion notice for Word documents
+                if (extension === 'doc' || extension === 'docx') {
+                    message += ' (will be converted to PDF)';
+                    fileNameSpan.className = 'px-4 py-2 text-sm font-medium text-gray-100 rounded-md bg-blue-600';
+                } else if (extension === 'pdf') {
+                    fileNameSpan.className = 'px-4 py-2 text-sm font-medium text-gray-100 rounded-md bg-green-600';
+                } else {
+                    fileNameSpan.className = 'px-4 py-2 text-sm font-medium text-gray-100 rounded-md bg-red-600';
+                    message = `Unsupported file type: ${file.name}`;
+                }
+                
+                fileNameSpan.textContent = message;
                 fileNameSpan.style.display = 'inline-block';
             } else {
                 fileNameSpan.textContent = '';
@@ -457,10 +389,20 @@
             // Enable and check the checkbox locally (no server call needed)
             const checkbox = document.getElementById('review_policy_accepted');
             checkbox.checked = true;
-            checkbox.disabled = false;
+            checkbox.disabled = true; // Keep it disabled but checked
             checkbox.value = '1';
 
-            // Update the UI to show policy link instead of button
+            // Add a hidden input to ensure the value gets submitted since disabled inputs don't submit
+            let hiddenInput = document.querySelector('input[name="review_policy_accepted"][type="hidden"]');
+            if (!hiddenInput) {
+                hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'review_policy_accepted';
+                hiddenInput.value = '1';
+                checkbox.parentElement.appendChild(hiddenInput);
+            }
+
+            // Update the UI to show policy link instead of button and remove hint
             const label = checkbox.parentElement.nextElementSibling.querySelector('label');
             const policyLink = label.querySelector('button, a');
             if (policyLink && policyLink.tagName === 'BUTTON') {
@@ -468,9 +410,15 @@
                 const newLink = document.createElement('a');
                 newLink.href = '{{ route("review-policy.show") }}';
                 newLink.target = '_blank';
-                newLink.className = 'text-blue-600 hover:text-blue-800 underline';
+                newLink.className = 'text-blue-600 hover:text-blue-800 underline font-bold';
                 newLink.textContent = 'JAPR Review Policy';
                 policyLink.parentNode.replaceChild(newLink, policyLink);
+                
+                // Remove the hint text
+                const hintText = label.querySelector('small');
+                if (hintText) {
+                    hintText.remove();
+                }
             }
 
             // Close modal
@@ -488,24 +436,42 @@
             showNotification('You must accept the review policy to submit manuscripts.', 'warning');
         }
 
-        // Form submission with review policy validation
+        // Form submission with review policy validation and conversion notice
         const form = document.querySelector('form');
         const reviewPolicyCheckbox = document.getElementById('review_policy_accepted');
+        const loadingOverlay = document.getElementById('loadingOverlay');
 
         form.addEventListener('submit', function(e) {
             const submitValue = e.submitter.value;
 
             // Only check policy for actual submission, not drafts
             if (submitValue === 'submit') {
-                // Check if policy is accepted (either checkbox is checked or hidden input exists)
+                // Check if policy is accepted in multiple ways
                 const hiddenInput = document.querySelector('input[name="review_policy_accepted"][type="hidden"]');
-                const policyAccepted = reviewPolicyCheckbox.checked || hiddenInput;
+                const userAlreadyAccepted = {{ auth()->user()->review_policy_accepted ? 'true' : 'false' }};
+                const checkboxChecked = reviewPolicyCheckbox.checked;
+                const hiddenInputExists = hiddenInput && hiddenInput.value === '1';
+                
+                const policyAccepted = userAlreadyAccepted || checkboxChecked || hiddenInputExists;
 
                 if (!policyAccepted) {
                     e.preventDefault();
                     showNotification('Please accept the JAPR Review Policy before submitting your manuscript.', 'warning');
                     showReviewPolicyModal();
                     return false;
+                }
+                
+                // Check if we have a Word document that will need conversion
+                const fileInput = document.getElementById('file-upload');
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    const extension = file.name.split('.').pop().toLowerCase();
+                    
+                    if (extension === 'doc' || extension === 'docx') {
+                        // Show loading overlay for Word document conversion
+                        loadingOverlay.style.display = 'flex';
+                        showNotification('Processing your Word document... This may take a moment.', 'info');
+                    }
                 }
             }
         });
