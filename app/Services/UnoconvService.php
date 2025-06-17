@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Process\Factory as ProcessFactory;
 use Symfony\Component\Process\Process;
 use Exception;
 
@@ -122,9 +123,7 @@ class UnoconvService
             
             return $this->fallbackToOriginalFile($file, $targetPath, $fileName, 'Conversion failed due to an error: ' . $e->getMessage());
         }
-    }
-    
-    /**
+    }    /**
      * Check if unoconv is available
      *
      * @return bool
@@ -136,7 +135,7 @@ class UnoconvService
             
             // Ensure we have a valid command
             if (empty($unoconvPath)) {
-                return false;
+                $unoconvPath = 'unoconv';
             }
             
             // Try using Symfony Process directly for better compatibility
@@ -148,9 +147,7 @@ class UnoconvService
             Log::debug('UnoconvService availability check failed', ['error' => $e->getMessage()]);
             return false;
         }
-    }
-    
-    /**
+    }    /**
      * Run unoconv conversion
      *
      * @param string $inputPath
@@ -165,10 +162,7 @@ class UnoconvService
             
             // Ensure we have a valid command
             if (empty($unoconvPath)) {
-                return [
-                    'success' => false,
-                    'message' => 'Unoconv path is not configured'
-                ];
+                $unoconvPath = 'unoconv';
             }
             
             // Use Symfony Process for better control
@@ -261,8 +255,7 @@ class UnoconvService
             }
         }
     }
-    
-    /**
+      /**
      * Get unoconv version information
      *
      * @return string|null
@@ -271,20 +264,12 @@ class UnoconvService
     {
         try {
             $unoconvPath = config('document_conversion.paths.unoconv', 'unoconv');
-            
-            // Ensure we have a valid command
-            if (empty($unoconvPath)) {
-                return null;
-            }
-            
-            $process = new Process([$unoconvPath, '--version']);
-            $process->run();
-            
-            if ($process->isSuccessful()) {
-                return trim($process->getOutput());
+            $result = Process::run($unoconvPath . ' --version');
+            if ($result->successful()) {
+                return trim($result->output());
             }
         } catch (Exception $e) {
-            Log::debug('UnoconvService version check failed', ['error' => $e->getMessage()]);
+            // Ignore
         }
         
         return null;
