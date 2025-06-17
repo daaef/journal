@@ -84,11 +84,14 @@ Once you've installed the tools on your server, test from your Laravel applicati
 # SSH into your server and navigate to your Laravel project
 cd /path/to/your/laravel/project
 
-# Run the conversion test
+# Option 1: Run the Laravel Artisan test command
 php artisan conversion:test
+
+# Option 2: Run the detailed server test script (recommended)
+php test_unoconv_server.php
 ```
 
-You should see output like:
+You should see output like this from the Artisan command:
 ```
 Testing Document Conversion Service
 ====================================
@@ -107,6 +110,36 @@ Checking system conversion tools:
 
 ✓ 3 conversion tool(s) available.
 ✓ UnoconvService will be used as the primary conversion method.
+```
+
+Or this from the detailed test script:
+```
+Testing UnoconvService on Server
+================================
+
+1. Testing UnoconvService availability:
+   Available: ✓ YES
+2. Getting unoconv version:
+   Version: unoconv 0.x.x
+3. Testing installation:
+   Test Result: ✓ PASS
+   Message: unoconv is available and ready to use
+   Detected Version: unoconv 0.x.x
+4. Testing DocumentConversionService:
+   DocumentConversionService: ✓ Available
+5. Manual command tests:
+   unoconv: ✓ Available
+   LibreOffice: ✓ Available
+   pandoc: ✓ Available
+6. Configuration check:
+   Config loaded: ✓ YES
+   Timeout: 120 seconds
+   Unoconv path: System PATH
+
+Test Summary:
+=============
+✅ UnoconvService is working correctly!
+✅ Document conversion should work for manuscript submissions.
 ```
 
 ## Advanced Configuration
