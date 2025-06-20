@@ -12,7 +12,9 @@ use App\Repositories\LikeJournal\LikeJournalContract;
 use App\Repositories\Reviewer\ReviewerContract;
 use App\Repositories\SubCategory\SubCategoryContract;
 use App\Repositories\User\UserContract;
+use App\Services\PandocDocumentPreviewService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -28,6 +30,7 @@ class JournalController extends Controller
     protected $dislikeJournalRepo;
     protected $userRepo;
     protected $reviewerRepo;
+    protected $pandocService;
 
     public function __construct(
         JournalContract $journalContract,
@@ -36,7 +39,8 @@ class JournalController extends Controller
         LikeJournalContract $likeJournalContract,
         DislikeJournalContract $dislikeJournalContract,
         UserContract $userContract,
-        ReviewerContract $reviewerContract
+        ReviewerContract $reviewerContract,
+        PandocDocumentPreviewService $pandocService
     ) {
         $this->repo = $journalContract;
         $this->categoryRepo = $categoryContract;
@@ -45,6 +49,7 @@ class JournalController extends Controller
         $this->dislikeJournalRepo = $dislikeJournalContract;
         $this->userRepo = $userContract;
         $this->reviewerRepo = $reviewerContract;
+        $this->pandocService = $pandocService;
     }
 
     /**
@@ -359,6 +364,84 @@ class JournalController extends Controller
         }
         
         return view('view-abstract', compact('journal', 'comments', 'authorReviewComments'));
+    }
+
+    /**
+     * Preview document using Pandoc conversion
+     */
+    public function previewDocument(string $uuid)
+    {
+        try {
+            $journal = $this->repo->findByUUID($uuid);
+            
+            if (!$journal) {
+                abort(404, 'Journal not found');
+            }
+            
+            // Check if user is authorized to view this document
+            if (!Auth::check() || Auth::user()->id !== $journal->user_id) {
+                abort(403, 'Unauthorized to view this document');
+            }
+            
+            // Check if journal has a document
+            if (!$journal->journal_url) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No document attached to this journal'
+                ], 404);
+            }
+            
+            Log::info('Document preview requested', [
+                'journal_id' => $journal->id,
+                'user_id' => Auth::id(),
+                'document_path' => $journal->journal_url
+            ]);
+            
+            // Use Pandoc service to convert document
+            $result = $this->pandocService->convertToHtml($journal->journal_url);
+            
+            if (!$result['success']) {
+                Log::warning('Document preview failed', [
+                    'journal_id' => $journal->id,
+                    'error' => $result['message']
+                ]);
+                
+                return response()->json([
+                    'success' => false,
+                    'message' => $result['message']
+                ], 400);
+            }
+            
+            // For PDF files, return redirect URL
+            if (isset($result['type']) && $result['type'] === 'pdf') {
+                return response()->json([
+                    'success' => true,
+                    'type' => 'pdf',
+                    'url' => $result['url']
+                ]);
+            }
+            
+            // For HTML conversion, return the HTML content
+            return new Response($result['html'], 200, [
+                'Content-Type' => 'text/html',
+                'X-Frame-Options' => 'SAMEORIGIN',
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                'Pragma' => 'no-cache',
+                'Expires' => '0'
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Document preview error', [
+                'uuid' => $uuid,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while processing the document preview'
+            ], 500);
+        }
     }
 
     /**

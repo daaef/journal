@@ -207,4 +207,44 @@ class Journal extends Model
 
         return $statusClasses[$this->approval_status] ?? 'bg-gray-100 text-gray-800';
     }
+
+    /**
+     * Get review summary for the journal
+     */
+    public function getReviewSummaryAttribute()
+    {
+        // Get all reviewer assignments for this journal
+        $reviewerAssignments = $this->reviewerAssignments;
+        
+        $totalReviews = $reviewerAssignments->count();
+        $completedReviews = $reviewerAssignments->whereNotNull('review_submitted_at')->count();
+        
+        // Calculate average rating if there are completed reviews
+        $averageRating = null;
+        $recommendations = collect(['accept' => 0, 'reject' => 0, 'revise' => 0]);
+        
+        if ($completedReviews > 0) {
+            $completedAssignments = $reviewerAssignments->whereNotNull('review_submitted_at');
+            
+            // Calculate average rating
+            $ratings = $completedAssignments->whereNotNull('overall_rating')->pluck('overall_rating');
+            if ($ratings->count() > 0) {
+                $averageRating = $ratings->average();
+            }
+            
+            // Count recommendations
+            foreach ($completedAssignments as $assignment) {
+                if ($assignment->recommendation) {
+                    $recommendations[$assignment->recommendation] = $recommendations->get($assignment->recommendation, 0) + 1;
+                }
+            }
+        }
+        
+        return [
+            'total_reviews' => $totalReviews,
+            'completed_reviews' => $completedReviews,
+            'average_rating' => $averageRating,
+            'recommendations' => $recommendations,
+        ];
+    }
 }

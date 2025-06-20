@@ -99,6 +99,59 @@
                                       class="px-4 py-2 text-sm font-medium text-gray-100 rounded-md bg-primary-600"
                                       style="display: none;"></span>
                                 <p class="text-xs leading-5 text-gray-600">PDF, DOC, or DOCX files up to 10MB</p>
+                                
+                                <!-- Preview button -->
+                                <button type="button" id="preview-btn" 
+                                        class="hidden mt-3 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    Preview Document
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Document Preview Modal -->
+                        <div id="preview-modal" class="fixed inset-0 z-50 hidden bg-gray-600 bg-opacity-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                            <div class="flex items-center justify-center w-full min-h-screen p-4">
+                                <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-auto my-8 flex flex-col max-h-[calc(100vh-8rem)]">
+                                    <!-- Modal Header -->
+                                    <div class="flex items-center justify-between flex-shrink-0 p-6 border-b">
+                                        <h3 class="text-xl font-semibold text-gray-900" id="modal-title">
+                                            <svg class="w-6 h-6 inline-block mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                            </svg>
+                                            Document Preview
+                                        </h3>
+                                        <button type="button" id="close-preview" class="flex-shrink-0 text-2xl text-gray-400 hover:text-gray-600 transition-colors">
+                                            <span class="sr-only">Close</span>
+                                            ×
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Modal Content (Scrollable) -->
+                                    <div id="preview-content" class="flex-1 p-6 overflow-y-auto border rounded-lg m-4 bg-gray-50">
+                                        <div id="preview-loading" class="hidden text-center py-12">
+                                            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                                            <p class="mt-4 text-gray-600 text-lg">Generating preview...</p>
+                                            <p class="mt-2 text-gray-500 text-sm">This may take a moment depending on document size</p>
+                                        </div>
+                                        <div id="preview-html" class="prose max-w-none"></div>
+                                        <div id="preview-error" class="hidden text-center py-12">
+                                            <div class="text-red-600 text-lg">
+                                                <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                <p class="font-medium">Preview Generation Failed</p>
+                                                <p class="mt-2 text-sm text-gray-600">Please check your document format and try again</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Modal Footer -->
+                                    <div class="flex items-center justify-end flex-shrink-0 p-6 border-t bg-gray-50">
+                                        <button type="button" id="close-preview-footer" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                            Close Preview
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -342,9 +395,92 @@
                 
                 fileNameSpan.textContent = message;
                 fileNameSpan.style.display = 'inline-block';
+                
+                // Show/hide preview button
+                const previewBtn = document.getElementById('preview-btn');
+                if (extension === 'doc' || extension === 'docx' || extension === 'pdf' || extension === 'txt') {
+                    previewBtn.classList.remove('hidden');
+                } else {
+                    previewBtn.classList.add('hidden');
+                }
             } else {
                 fileNameSpan.textContent = '';
                 fileNameSpan.style.display = 'none';
+                document.getElementById('preview-btn').classList.add('hidden');
+            }
+        });
+
+        // Document Preview Functionality
+        const previewBtn = document.getElementById('preview-btn');
+        const previewModal = document.getElementById('preview-modal');
+        const closePreviewBtn = document.getElementById('close-preview');
+        const closePreviewFooterBtn = document.getElementById('close-preview-footer');
+        const previewLoading = document.getElementById('preview-loading');
+        const previewHtml = document.getElementById('preview-html');
+        const previewError = document.getElementById('preview-error');
+
+        function closePreviewModal() {
+            previewModal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        previewBtn.addEventListener('click', function() {
+            const file = fileInput.files[0];
+            if (!file) {
+                showNotification('Please select a file first', 'error');
+                return;
+            }
+
+            // Show modal
+            previewModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+
+            // Show loading state
+            previewLoading.classList.remove('hidden');
+            previewHtml.innerHTML = '';
+            previewError.classList.add('hidden');
+
+            // Create FormData for the preview request
+            const formData = new FormData();
+            formData.append('document', file);
+            formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+
+            // Make the preview request
+            fetch('/dashboard/document/preview', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                previewLoading.classList.add('hidden');
+                
+                if (data.success) {
+                    previewHtml.innerHTML = data.html;
+                    showNotification('Preview generated successfully', 'success');
+                } else {
+                    previewError.innerHTML = data.message || 'Failed to generate preview';
+                    previewError.classList.remove('hidden');
+                    showNotification('Preview generation failed: ' + (data.message || 'Unknown error'), 'error');
+                }
+            })
+            .catch(error => {
+                previewLoading.classList.add('hidden');
+                previewError.innerHTML = 'Error: ' + error.message;
+                previewError.classList.remove('hidden');
+                showNotification('Preview generation failed: ' + error.message, 'error');
+            });
+        });
+
+        closePreviewBtn.addEventListener('click', closePreviewModal);
+        closePreviewFooterBtn.addEventListener('click', closePreviewModal);
+
+        // Close modal when clicking outside
+        previewModal.addEventListener('click', function(e) {
+            if (e.target === previewModal) {
+                closePreviewModal();
             }
         });
 

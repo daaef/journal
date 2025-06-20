@@ -1,49 +1,7 @@
-@if(auth()->user()->hasRole('Associate Editor') || auth()->user()->hasRole('Reviewer'))
-<x-layouts.reviewer_layout>
-    <x-slot:title>
-        Welcome to JAPR : Settings
-    </x-slot:title>
-    
-    <!-- Breadcrumb -->
-    <div class="breadcrumb mb-24">
-        <ul class="flex-align gap-4">
-            <li><a href="{{ route('reviewer.dashboard') }}" class="text-gray-600 fw-normal text-15 hover-text-gray-800">Home</a></li>
-            <li><span class="text-gray-400 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
-            <li><span class="text-gray-800 fw-normal text-15">Account Settings</span></li>
-        </ul>
-    </div>
+@php
+    $user = auth()->user();
+@endphp
 
-@elseif(auth()->user()->hasAnyRole(['Editor in Chief', 'Managing Editor']))
-<x-layouts.editor_layout>
-    <x-slot:title>
-        Welcome to JAPR : Settings
-    </x-slot:title>
-    
-    <!-- Breadcrumb -->
-    <div class="breadcrumb mb-24">
-        <ul class="flex-align gap-4">
-            <li><a href="{{ route('editor.dashboard') }}" class="text-gray-600 fw-normal text-15 hover-text-gray-800">Home</a></li>
-            <li><span class="text-gray-400 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
-            <li><span class="text-gray-800 fw-normal text-15">Account Settings</span></li>
-        </ul>
-    </div>
-
-@elseif(auth()->user()->hasRole('Admin'))
-<x-layouts.admin_layout>
-    <x-slot:title>
-        Welcome to JAPR : Settings
-    </x-slot:title>
-    
-    <!-- Breadcrumb -->
-    <div class="breadcrumb mb-24">
-        <ul class="flex-align gap-4">
-            <li><a href="{{ route('admin.dashboard') }}" class="text-gray-600 fw-normal text-15 hover-text-gray-800">Home</a></li>
-            <li><span class="text-gray-400 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
-            <li><span class="text-gray-800 fw-normal text-15">Account Settings</span></li>
-        </ul>
-    </div>
-
-@else
 <x-layouts.layout>
     <x-slot:title>
         Welcome to JAPR : Settings
@@ -52,193 +10,155 @@
         <div class="border-b border-gray-200 pb-5 sm:flex w-full sm:items-center sm:justify-between">
             <h3 class="text-lg font-bold leading-6 text-gray-900">Settings</h3>
             <div>
-                <h4>{{ Str::words(auth()->user()->fullname, 1, '') }}'s Dashboard</h4>
+                <h4>{{ Str::words($user->fullname, 1, '') }}'s Dashboard</h4>
             </div>
         </div>
         <hr class="">
     </x-slot:breadcrumb>
-@endif
 
-@if(!auth()->user()->hasRole('Author') && !auth()->user()->hasRole('Publisher'))
-<!-- Page Header -->
-<div class="mb-24">
-    <h1 class="h2 text-gray-800 mb-8">Account Settings</h1>
-    <p class="text-gray-600 text-15">Manage your account information and preferences</p>
-</div>
-
-<!-- Settings Card -->
-<div class="card border">
-    <div class="card-header bg-gray-50 border-bottom">
-        <h5 class="mb-0 text-gray-800">
-            <i class="ph ph-gear me-12"></i>{{ Str::words(auth()->user()->fullname, 1, '') }}'s Settings
-        </h5>
-    </div>
-    <div class="card-body">
-@endif
-
-    <form class="@if(auth()->user()->hasRole('Author') || auth()->user()->hasRole('Publisher')) py-5 @endif" method="post" action="{{ 
-        auth()->user()->hasRole('Associate Editor') || auth()->user()->hasRole('Reviewer') 
-            ? route('reviewer.user.settings.update', $user->uuid) 
-            : (auth()->user()->hasAnyRole(['Editor in Chief', 'Managing Editor']) 
-                ? route('editor.user.settings.update', $user->uuid) 
-                : (auth()->user()->hasRole('Admin') 
-                    ? route('admin.user.settings.update', $user->uuid)
-                    : route('user.settings.update', $user->uuid)))
-    }}">
+    <form class="py-5" method="post" action="{{ route('user.settings.update', $user->uuid) }}">
         @csrf
+        
+        {{-- Display validation errors --}}
+        @if ($errors->any())
+            <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">There were errors with your submission:</h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            <ul class="list-disc pl-5 space-y-1">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- Display success message --}}
+        @if (session('success'))
+            <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-md">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
+                    </div>
+                </div>
+            </div>
+        @endif
+        
         <div class="space-y-12">
             <div class="">
                 <h2 class="text-base font-semibold leading-7 text-gray-900">
-                    {{ Str::words(auth()->user()->fullname, 1, '') }}'s Setting</h2>
-                <p class="mt-1 text-sm leading-6 text-gray-600">Update user information</p>
-                <p class="mt-1 text-sm leading-6 text-gray-600">Role: <span
-                        class="inline-flex ml-4 items-center gap-x-1.5 py-1 px-1.5 rounded-full text-xs font-medium bg-secondary-900 text-gray-200">Publisher</span>
+                    {{ Str::words($user->fullname, 1, '') }}'s Settings</h2>
+                <p class="mt-1 text-sm leading-6 text-gray-600">Update your account information and preferences</p>
+                <p class="mt-1 text-sm leading-6 text-gray-600">
+                    Role: 
+                    @foreach($user->roles as $role)
+                        <span class="inline-flex ml-2 items-center gap-x-1.5 py-1 px-1.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {{ $role->name }}
+                        </span>
+                    @endforeach
                 </p>
 
                 <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
                     <input type="hidden" name="uuid" value="{{ $user->uuid }}">
                     <div>
-                        <label for="fullname" class="block text-sm font-medium leading-6 text-gray-900">First
-                            Name</label>
+                        <label for="fullname" class="block text-sm font-medium leading-6 text-gray-900">Full Name</label>
                         <div class="mt-2">
-                            <input id="fullname" name="fullname" type="text" value="{{ $user->fullname }}" autocomplete="fullname"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            <input id="fullname" name="fullname" type="text" value="{{ old('fullname', $user->fullname) }}" autocomplete="fullname" required
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 @error('fullname') ring-red-500 focus:ring-red-500 @enderror">
+                            @error('fullname')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                     <div>
                         <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username</label>
                         <div class="mt-2">
-                            <input id="username" name="username" type="text" value="{{ $user->username }}" autocomplete="username"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            <input id="username" name="username" type="text" value="{{ old('username', $user->username) }}" autocomplete="username" required
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 @error('username') ring-red-500 focus:ring-red-500 @enderror">
+                            @error('username')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                     <div>
                         <label for="institution" class="block text-sm font-medium leading-6 text-gray-900">Institution</label>
                         <div class="mt-2">
-                            <input id="institution" name="username" type="text" value="{{ $user->institution }}" autocomplete="institution"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            <input id="institution" name="institution" type="text" value="{{ old('institution', $user->institution) }}" autocomplete="institution"
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 @error('institution') ring-red-500 focus:ring-red-500 @enderror">
+                            @error('institution')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                     <div>
                         <label for="interests" class="block text-sm font-medium leading-6 text-gray-900">
-                            Interests <a href="{{ route('user.interests') }}" class="text-primary-500 font-bold hover:underline}}">Edit</a></label>
+                            Interests <a href="{{ route('user.interests') }}" class="text-primary-500 font-bold hover:underline">Edit</a></label>
                         <div class="mt-2">
-                            <input disabled id="interests" name="username" type="text" value="{{ $interests }}" autocomplete="interests"
-                                class="block w-full pointer-event-none rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            <input disabled id="interests" name="interests" type="text" value="{{ $interests ?? 'No interests set' }}" autocomplete="interests"
+                                class="block w-full pointer-events-none rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
                     <div class="w-full">
-                        <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country /
-                            Region</label>
+                        <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country / Region</label>
                         <div class="mt-2">
-                            {{-- <label for="country" class="form-label mb-8 h6"> Country</label> --}}
-                            <div class="position-relative">
-                                <select name="country" id="country"  class="block w-full bg-[#F9FAFB] rounded-md border-0 px-3 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
-                                    <option value="">Select your country</option>
-                                    <optgroup label="Central Africa">
-                                        <option value="Cameroon" {{ $user->country == 'Cameroon' ? 'selected' : '' }}>Cameroon</option>
-                                        <option value="Central African Republic" {{ $user->country == 'Central African Republic' ? 'selected' : '' }}>Central African Republic</option>
-                                        <option value="Chad" {{ $user->country == 'Chad' ? 'selected' : '' }}>Chad</option>
-                                        <option value="Congo, Democratic Republic of the" {{ $user->country == 'Congo, Democratic Republic of the' ? 'selected' : '' }}>Congo, Democratic Republic of
-                                            the</option>
-                                        <option value="Congo, Republic of the" {{ $user->country == 'Congo, Republic of the' ? 'selected' : '' }}>Congo, Republic of the</option>
-                                        <option value="Equatorial Guinea" {{ $user->country == 'Equatorial Guinea' ? 'selected' : '' }}>Equatorial Guinea</option>
-                                        <option value="Gabon" {{ $user->country == 'Gabon' ? 'selected' : '' }}>Gabon</option>
-                                        <option value="Sao Tome and Principe" {{ $user->country == 'Sao Tome and Principe' ? 'selected' : '' }}>Sao Tome and Principe</option>
-                                    </optgroup>
-                                    <optgroup label="Eastern Africa">
-                                        <option value="Burundi" {{ $user->country == 'Burundi' ? 'selected' : '' }}>Burundi</option>
-                                        <option value="Comoros" {{ $user->country == 'Comoros' ? 'selected' : '' }}>Comoros</option>
-                                        <option value="Djibouti" {{ $user->country == 'Djibouti' ? 'selected' : '' }}>Djibouti</option>
-                                        <option value="Eritrea" {{ $user->country == 'Eritrea' ? 'selected' : '' }}>Eritrea</option>
-                                        <option value="Ethiopia" {{ $user->country == 'Ethiopia' ? 'selected' : '' }}>Ethiopia</option>
-                                        <option value="Kenya" {{ $user->country == 'Kenya' ? 'selected' : '' }}>Kenya</option>
-                                        <option value="Madagascar" {{ $user->country == 'Madagascar' ? 'selected' : '' }}>Madagascar</option>
-                                        <option value="Malawi" {{ $user->country == 'Malawi' ? 'selected' : '' }}>Malawi</option>
-                                        <option value="Mauritius" {{ $user->country == 'Mauritius' ? 'selected' : '' }}>Mauritius</option>
-                                        <option value="Mozambique" {{ $user->country == 'Mozambique' ? 'selected' : '' }}>Mozambique</option>
-                                        <option value="Rwanda" {{ $user->country == 'Rwanda' ? 'selected' : '' }}>Rwanda</option>
-                                        <option value="Seychelles" {{ $user->country == 'Seychelles' ? 'selected' : '' }}>Seychelles</option>
-                                        <option value="Somalia" {{ $user->country == 'Somalia' ? 'selected' : '' }}>Somalia</option>
-                                        <option value="South Sudan" {{ $user->country == 'South Sudan' ? 'selected' : '' }}>South Sudan</option>
-                                        <option value="Tanzania" {{ $user->country == 'Tanzania' ? 'selected' : '' }}>Tanzania</option>
-                                        <option value="Uganda" {{ $user->country == 'Uganda' ? 'selected' : '' }}>Uganda</option>
-                                        <option value="Zambia" {{ $user->country == 'Zambia' ? 'selected' : '' }}>Zambia</option>
-                                        <option value="Zimbabwe" {{ $user->country == 'Zimbabwe' ? 'selected' : '' }}>Zimbabwe</option>
-                                    </optgroup>
-                                    <optgroup label="Northern Africa">
-                                        <option value="Algeria" {{ $user->country == 'Algeria' ? 'selected' : '' }}>Algeria</option>
-                                        <option value="Egypt" {{ $user->country == 'Egypt' ? 'selected' : '' }}>Egypt</option>
-                                        <option value="Libya" {{ $user->country == 'Libya' ? 'selected' : '' }}>Libya</option>
-                                        <option value="Morocco" {{ $user->country == 'Morocco' ? 'selected' : '' }}>Morocco</option>
-                                        <option value="Sudan" {{ $user->country == 'Sudan' ? 'selected' : '' }}>Sudan</option>
-                                        <option value="Tunisia" {{ $user->country == 'Tunisia' ? 'selected' : '' }}>Tunisia</option>
-                                        <option value="Western Sahara" {{ $user->country == 'Western Sahara' ? 'selected' : '' }}>Western Sahara</option>
-                                    </optgroup>
-                                    <optgroup label="Southern Africa">
-                                        <option value="Angola" {{ $user->country == 'Angola' ? 'selected' : '' }}>Angola</option>
-                                        <option value="Botswana" {{ $user->country == 'Botswana' ? 'selected' : '' }}>Botswana</option>
-                                        <option value="Lesotho" {{ $user->country == 'Lesotho' ? 'selected' : '' }}>Lesotho</option>
-                                        <option value="Namibia" {{ $user->country == 'Namibia' ? 'selected' : '' }}>Namibia</option>
-                                        <option value="South Africa" {{ $user->country == 'South Africa' ? 'selected' : '' }}>South Africa</option>
-                                        <option value="Swaziland" {{ $user->country == 'Swaziland' ? 'selected' : '' }}>Swaziland</option>
-                                    </optgroup>
-                                    <optgroup label="Western Africa">
-                                        <option value="Benin" {{ $user->country == 'Benin' ? 'selected' : '' }}>Benin</option>
-                                        <option value="Burkina Faso" {{ $user->country == 'Burkina Faso' ? 'selected' : '' }}>Burkina Faso</option>
-                                        <option value="Cape Verde" {{ $user->country == 'Cape Verde' ? 'selected' : '' }}>Cape Verde</option>
-                                        <option value="Cote d'Ivoire" {{ $user->country == `Cote d'Ivoire` ? 'selected' : '' }}>Cote d'Ivoire</option>
-                                        <option value="Gambia" {{ $user->country == 'Gambia' ? 'selected' : '' }}>Gambia</option>
-                                        <option value="Ghana" {{ $user->country == 'Ghana' ? 'selected' : '' }}>Ghana</option>
-                                        <option value="Guinea" {{ $user->country == 'Guinea' ? 'selected' : '' }}>Guinea</option>
-                                        <option value="Guinea-Bissau" {{ $user->country == 'Guinea-Bissau' ? 'selected' : '' }}>Guinea-Bissau</option>
-                                        <option value="Liberia" {{ $user->country == 'Liberia' ? 'selected' : '' }}>Liberia</option>
-                                        <option value="Mali" {{ $user->country == 'Mali' ? 'selected' : '' }}>Mali</option>
-                                        <option value="Mauritania" {{ $user->country == 'Mauritania' ? 'selected' : '' }}>Mauritania</option>
-                                        <option value="Niger" {{ $user->country == 'Niger' ? 'selected' : '' }}>Niger</option>
-                                        <option value="Nigeria" {{ $user->country == 'Nigeria' ? 'selected' : '' }}>Nigeria</option>
-                                        <option value="Senegal" {{ $user->country == 'Senegal' ? 'selected' : '' }}>Senegal</option>
-                                        <option value="Sierra Leone" {{ $user->country == 'Sierra Leone' ? 'selected' : '' }}>Sierra Leone</option>
-                                        <option value="Togo" {{ $user->country == 'Togo' ? 'selected' : '' }}>Togo</option>
-                                    </optgroup>
-                                </select>
-                            </div>
+                            <select name="country" id="country" class="block w-full bg-white rounded-md border-0 px-3 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 @error('country') ring-red-500 focus:ring-red-500 @enderror">
+                                <option value="">Select your country</option>
+                                @include('components.country-options', ['selectedCountry' => old('country', $user->country)])
+                            </select>
+                            @error('country')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                     <div>
                         <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
                         <div class="mt-2">
-                            <input id="email" name="email" type="email" value="{{ $user->email }}" autocomplete="email"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" autocomplete="email" required
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 @error('email') ring-red-500 focus:ring-red-500 @enderror">
+                            @error('email')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                     <div>
-                        <label for="old_password" class="block text-sm font-medium leading-6 text-gray-900">Old Password</label>
+                        <label for="old_password" class="block text-sm font-medium leading-6 text-gray-900">Current Password</label>
                         <div class="mt-2">
-                            <input id="old_password" name="old_password" type="password"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            <input id="old_password" name="old_password" type="password" autocomplete="current-password"
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 @error('old_password') ring-red-500 focus:ring-red-500 @enderror">
+                            @error('old_password')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            <p class="mt-1 text-xs text-gray-500">Leave blank if you don't want to change your password</p>
                         </div>
                     </div>
-                    {{-- <div>
-                        <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Confirm
-                            Email</label>
-                        <div class="mt-2">
-                            <input id="email" name="email" type="text" autocomplete="email"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        </div>
-                    </div> --}}
                     <div>
                         <label for="password" class="block text-sm font-medium leading-6 text-gray-900">New Password</label>
                         <div class="mt-2">
-                            <input id="password" name="password" type="password"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            <input id="password" name="password" type="password" autocomplete="new-password"
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 @error('password') ring-red-500 focus:ring-red-500 @enderror">
+                            @error('password')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                     <div>
-                        <label for="confirm_password" class="block text-sm font-medium leading-6 text-gray-900">Confirm New
-                            Password</label>
+                        <label for="password_confirmation" class="block text-sm font-medium leading-6 text-gray-900">Confirm New Password</label>
                         <div class="mt-2">
-                            <input id="confirm_password" name="confirm_password" type="password"
+                            <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password"
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
@@ -247,24 +167,50 @@
         </div>
 
         <div class="mt-6 flex items-center justify-end gap-x-6">
-            <button type="submit"
-                class="@if(auth()->user()->hasRole('Author') || auth()->user()->hasRole('Publisher')) rounded-md bg-green-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 @else btn btn-primary px-20 @endif">
-                Update Account
+            <button type="submit" id="updateButton"
+                class="rounded-md bg-green-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+                <span id="buttonText">Update Account</span>
+                <span id="buttonSpinner" class="hidden">
+                    <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Updating...
+                </span>
             </button>
         </div>
     </form>
 
-@if(!auth()->user()->hasRole('Author') && !auth()->user()->hasRole('Publisher'))
-    </div>
-</div>
-@endif
+<script>
+document.getElementById('updateButton').addEventListener('click', function() {
+    const button = this;
+    const buttonText = document.getElementById('buttonText');
+    const buttonSpinner = document.getElementById('buttonSpinner');
+    
+    // Show loading state
+    buttonText.classList.add('hidden');
+    buttonSpinner.classList.remove('hidden');
+    button.disabled = true;
+    
+    // Re-enable button after form submission (fallback)
+    setTimeout(() => {
+        buttonText.classList.remove('hidden');
+        buttonSpinner.classList.add('hidden');
+        button.disabled = false;
+    }, 5000);
+});
 
-@if(auth()->user()->hasRole('Associate Editor') || auth()->user()->hasRole('Reviewer'))
-</x-layouts.reviewer_layout>
-@elseif(auth()->user()->hasAnyRole(['Editor in Chief', 'Managing Editor']))
-</x-layouts.editor_layout>
-@elseif(auth()->user()->hasRole('Admin'))
-</x-layouts.admin_layout>
-@else
+// Password confirmation validation
+document.getElementById('password_confirmation').addEventListener('input', function() {
+    const password = document.getElementById('password').value;
+    const confirmation = this.value;
+    
+    if (password && confirmation && password !== confirmation) {
+        this.setCustomValidity('Passwords do not match');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+</script>
+
 </x-layouts.layout>
-@endif

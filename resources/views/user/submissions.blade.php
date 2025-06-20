@@ -53,7 +53,7 @@
                         </div>
 
                         <!-- Review Progress -->
-                        @if($journal->review_summary['total_reviews'] > 0)
+                        @if(isset($journal->review_summary) && $journal->review_summary['total_reviews'] > 0)
                             <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
                                 <h4 class="text-sm font-medium text-gray-900 mb-2">Review Progress</h4>
                                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
@@ -67,7 +67,7 @@
                                     </div>
                                     <div class="text-center">
                                         <div class="text-lg font-semibold text-yellow-600">
-                                            @if($journal->review_summary['average_rating'])
+                                            @if(isset($journal->review_summary['average_rating']) && $journal->review_summary['average_rating'])
                                                 {{ number_format($journal->review_summary['average_rating'], 1) }}/5
                                             @else
                                                 N/A
@@ -77,7 +77,7 @@
                                     </div>
                                     <div class="text-center">
                                         <div class="text-lg font-semibold text-purple-600">
-                                            @if($journal->review_summary['recommendations'] && $journal->review_summary['recommendations']->get('accept', 0) > 0)
+                                            @if(isset($journal->review_summary['recommendations']) && $journal->review_summary['recommendations'] && $journal->review_summary['recommendations']->get('accept', 0) > 0)
                                                 {{ $journal->review_summary['recommendations']->get('accept', 0) }} Accepts
                                             @else
                                                 Pending
@@ -279,48 +279,71 @@
     </div>
 
     <!-- Revision Upload Modal -->
-    <div id="revisionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-            <div class="mt-3">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-medium text-gray-900">Upload Revision</h3>
-                    <button onclick="closeRevisionModal()" class="text-gray-400 hover:text-gray-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+    <div id="revisionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 h-full w-full hidden z-50">
+        <div class="flex items-center justify-center w-full min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-auto my-8 flex flex-col max-h-[calc(100vh-8rem)]">
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between flex-shrink-0 p-6 border-b">
+                    <h3 class="text-xl font-semibold text-gray-900">
+                        <svg class="w-6 h-6 inline-block mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                         </svg>
+                        Upload Revision
+                    </h3>
+                    <button onclick="closeRevisionModal()" class="flex-shrink-0 text-2xl text-gray-400 hover:text-gray-600 transition-colors">
+                        <span class="sr-only">Close</span>
+                        ×
                     </button>
                 </div>
                 
-                <form id="revisionForm" enctype="multipart/form-data" class="space-y-4">
-                    @csrf
-                    <input type="hidden" id="revisionJournalUuid" name="journal_uuid" value="">
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Revised Manuscript File</label>
-                        <input type="file" name="revision_file" required 
-                               accept=".pdf,.doc,.docx" 
-                               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                        <p class="text-xs text-gray-500 mt-1">Accepted formats: PDF, DOC, DOCX (Max 10MB)</p>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Revision Notes</label>
-                        <textarea name="revision_notes" rows="4" required
-                                  placeholder="Please describe the changes you made in response to the reviewer feedback..."
-                                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"></textarea>
-                    </div>
-                    
-                    <div class="flex justify-end space-x-3 pt-4">
-                        <button type="button" onclick="closeRevisionModal()" 
-                                class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                            Cancel
-                        </button>
-                        <button type="submit" 
-                                class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700">
-                            Upload Revision
-                        </button>
-                    </div>
-                </form>
+                <!-- Modal Content (Scrollable) -->
+                <div class="flex-1 p-6 overflow-y-auto">
+                    <form id="revisionForm" enctype="multipart/form-data" class="space-y-6">
+                        @csrf
+                        <input type="hidden" id="revisionJournalUuid" name="journal_uuid" value="">
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                </svg>
+                                Revised Manuscript File
+                            </label>
+                            <input type="file" name="revision_file" required 
+                                   accept=".pdf,.doc,.docx" 
+                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                            <p class="text-xs text-gray-500 mt-2">Accepted formats: PDF, DOC, DOCX (Max 10MB)</p>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                Revision Notes
+                            </label>
+                            <textarea name="revision_notes" rows="6" required
+                                      placeholder="Please describe the changes you made in response to the reviewer feedback..."
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 resize-none"></textarea>
+                            <p class="text-xs text-gray-500 mt-1">Provide a clear summary of the changes made</p>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Modal Footer -->
+                <div class="flex items-center justify-end flex-shrink-0 p-6 border-t bg-gray-50 space-x-3">
+                    <button type="button" onclick="closeRevisionModal()" 
+                            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
+                        Cancel
+                    </button>
+                    <button type="submit" form="revisionForm"
+                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
+                        <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                        </svg>
+                        Upload Revision
+                    </button>
+                </div>
             </div>
         </div>
     </div>

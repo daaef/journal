@@ -53,6 +53,7 @@ Route::get('/user-interests', [UserController::class, 'interests'])->name('user.
 Route::prefix('journals')->group(function () {
     Route::match(['get', 'post'], '/', [JournalController::class, 'searchJournal'])->name('journals');
     Route::get('/view/{slug}', [JournalController::class, 'showJournal'])->name('journals.view');
+    Route::get('/preview/{uuid}', [JournalController::class, 'previewDocument'])->name('journals.preview');
     Route::match(['get', 'post'], '/like-journal/', [JournalController::class, 'likeJournal'])->name('journals.like')->middleware('auth');
     Route::match(['get', 'post'], '/dislike-journal/', [JournalController::class, 'dislikeJournal'])->name('journals.dislike')->middleware('auth');
     Route::match(['get', 'post'], '/add-to-collection/', [MyJournalCollectionController::class, 'store'])->name('journals.add-to-collection')->middleware('auth');
@@ -340,6 +341,9 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'publisher']], f
     });
 
     Route::get('/submit-manuscript', [JournalController::class, 'creatManuscript'])->name('submit-manuscript');    Route::post('/submit-manuscript', [JournalController::class, 'submitManuscript'])->name('submit-manuscript.post');
+
+    // Document preview route
+    Route::post('/document/preview', [App\Http\Controllers\DocumentPreviewController::class, 'preview'])->name('document.preview');
 
     Route::get('/settings/{uuid}', [UserController::class, 'edit'])->name('user.settings');
     Route::post('/settings/{uuid}', [UserController::class, 'update'])->name('user.settings.update');

@@ -147,8 +147,18 @@ class EloquentJournalRepository implements JournalContract {
             }
             $baseFileName = $titleSlug;
             
-            // Always use .pdf as the final extension since we convert everything to PDF
-            $fileName = $baseFileName . '.pdf';
+            // Determine target filename based on whether we'll convert or not
+            $isPdf = strtolower($originalExtension) === 'pdf';
+            $isConvertible = in_array(strtolower($originalExtension), ['doc', 'docx']);
+            
+            // For PDFs, keep PDF extension; for convertible docs, use PDF extension (we'll try to convert)
+            // For conversion failures, the DocumentConversionService will handle the actual filename
+            if ($isPdf || $isConvertible) {
+                $fileName = $baseFileName . '.pdf';
+            } else {
+                // For other file types, preserve original extension
+                $fileName = $baseFileName . '.' . $originalExtension;
+            }
             
             // Double-check that filename is valid (not just an extension)
             $filenameWithoutExt = pathinfo($fileName, PATHINFO_FILENAME);
@@ -158,7 +168,7 @@ class EloquentJournalRepository implements JournalContract {
                     'title_slug' => $titleSlug,
                     'generated_filename' => $fileName
                 ]);
-                $fileName = 'manuscript-' . time() . '-' . Str::random(8) . '.pdf';
+                $fileName = 'manuscript-' . time() . '-' . Str::random(8) . '.' . ($isPdf || $isConvertible ? 'pdf' : $originalExtension);
             }
             
             // Validate parameters before conversion
