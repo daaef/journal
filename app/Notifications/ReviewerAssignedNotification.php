@@ -37,7 +37,7 @@ class ReviewerAssignedNotification extends Notification
             ->greeting('Hello ' . $notifiable->fullname . '!')
             ->line('You have been invited to review a manuscript.')
             ->line('Title: ' . $this->journal->title)
-            ->line('Abstract: ' . substr($this->journal->abstract, 0, 200) . '...')
+            ->line('Abstract: ' . substr(strip_tags($this->journal->abstract), 0, 200) . '...')
             ->action('Accept Review', $acceptUrl)
             ->line('Or decline this invitation: ' . $declineUrl)
             ->line('Thank you for your consideration.');

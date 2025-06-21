@@ -257,17 +257,16 @@
                         @if(isset($comparison['abstract_side_by_side']))
                             {!! $comparison['abstract_side_by_side'] !!}
                         @else
-                            <div class="row">
-                                <div class="col-md-6">
+                            <div class="row">                                <div class="col-md-6">
                                     <div class="bg-light p-16 rounded-8">
                                         <h6 class="text-14 mb-8 text-muted">Version {{ $comparison['metadata']['older_version']['version_number'] }}</h6>
-                                        <div class="content-preview">{{ Str::limit($comparison['metadata']['older_version']['abstract'] ?? 'No abstract', 500) }}</div>
+                                        <div class="content-preview">{!! Str::limit($comparison['metadata']['older_version']['abstract'] ?? 'No abstract', 500) !!}</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="bg-light p-16 rounded-8">
                                         <h6 class="text-14 mb-8 text-muted">Version {{ $comparison['metadata']['newer_version']['version_number'] }}</h6>
-                                        <div class="content-preview">{{ Str::limit($comparison['metadata']['newer_version']['abstract'] ?? 'No abstract', 500) }}</div>
+                                        <div class="content-preview">{!! Str::limit($comparison['metadata']['newer_version']['abstract'] ?? 'No abstract', 500) !!}</div>
                                     </div>
                                 </div>
                             </div>

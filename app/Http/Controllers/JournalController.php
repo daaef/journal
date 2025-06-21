@@ -379,7 +379,34 @@ class JournalController extends Controller
             }
             
             // Check if user is authorized to view this document
-            if (!Auth::check() || Auth::user()->id !== $journal->user_id) {
+            $canView = false;
+            
+            if (Auth::check()) {
+                $user = Auth::user();
+                
+                // Author can view their own manuscript
+                if ($user->id === $journal->user_id) {
+                    $canView = true;
+                }
+                
+                // Editors and Managing Editors can view any manuscript
+                elseif ($user->hasRole(['Editor in Chief', 'Managing Editor'])) {
+                    $canView = true;
+                }
+                
+                // Associate Editors can view manuscripts assigned to them for review
+                elseif ($user->hasRole('Associate Editor')) {
+                    $isAssignedReviewer = $journal->reviewers()
+                        ->where('user_id', $user->id)
+                        ->exists();
+                    
+                    if ($isAssignedReviewer) {
+                        $canView = true;
+                    }
+                }
+            }
+            
+            if (!$canView) {
                 abort(403, 'Unauthorized to view this document');
             }
             

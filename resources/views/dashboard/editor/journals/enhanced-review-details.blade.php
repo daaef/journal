@@ -1,57 +1,75 @@
-@extends('dashboard.editor.layouts.app')
+<x-layouts.editor_layout>
+    <!-- Clean Navigation Breadcrumb -->
+    <nav class="bg-white border-b border-gray-200 mb-8">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2 text-sm text-gray-600">
+                    <a href="{{ route('editor.dashboard') }}" class="hover:text-gray-900 transition-colors">Dashboard</a>
+                    <span class="text-gray-400">→</span>
+                    <span class="text-gray-900 font-medium">Enhanced Review Details</span>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-@section('content')
-<div class="dashboard-main-body">
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-        <h6 class="fw-semibold mb-0">Enhanced Review Details</h6>
-        <ul class="d-flex align-items-center gap-2">
-            <li class="fw-medium">
-                <a href="{{ route('editor.dashboard') }}" class="d-flex align-items-center gap-1 hover-text-main">
-                    <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
-                    Dashboard
-                </a>
-            </li>
-            <li>-</li>
-            <li class="fw-medium">Enhanced Review Details</li>
-        </ul>
-    </div>
-
-    <div class="row gy-4">
-        <!-- Manuscript Overview -->
-        <div class="col-12">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-md-8">
-                            <h5 class="mb-8">{{ $journal->title }}</h5>
-                            <div class="d-flex flex-wrap gap-3 mb-12">
-                                <span class="badge bg-primary-100 text-primary-600 px-12 py-6">
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <div class="space-y-8">
+            <!-- Manuscript Overview -->
+            <div class="bg-white border border-gray-200">
+                <div class="p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex-1">
+                            <h1 class="text-2xl font-bold text-gray-900 mb-3">{{ $journal->title }}</h1>
+                            <div class="flex flex-wrap gap-3 mb-4">
+                                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
                                     {{ $journal->category->name ?? 'Uncategorized' }}
-                                </span>
-                                @if($journal->sub_category)
-                                    <span class="badge bg-secondary-100 text-secondary-600 px-12 py-6">
+                                </span>                                @if($journal->sub_category)
+                                    <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium">
                                         {{ $journal->sub_category->name }}
                                     </span>
                                 @endif
+                                @if($journal->status === 'published')
+                                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                                        Published
+                                    </span>
+                                @endif
                             </div>
-                            <p class="text-gray-600 mb-12">
+                            <p class="text-gray-600 mb-4">
                                 <strong>Author:</strong> {{ $journal->author->fullname ?? 'Unknown' }}
-                            </p>                        </div>
-                        <div class="col-md-4 text-end">
-                            <div class="mb-12">
-                                <span class="text-gray-600">Status:</span>                                <span class="badge 
-                                    @if($journal->approval_status === 'approved') bg-success
-                                    @elseif($journal->approval_status === 'reviewed') bg-info
-                                    @elseif($journal->approval_status === 'in-progress' || $journal->approval_status === 'under_peer_review') bg-warning
-                                    @elseif($journal->approval_status === 'pending') bg-secondary
-                                    @elseif($journal->approval_status === 'ready_for_managing_editor_notice') bg-info
-                                    @else bg-danger
-                                    @endif
-                                    text-white ms-8">
-                                    {{ $journal->status_label }}
-                                </span>
+                            </p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="text-right">
+                                <div class="mb-2">
+                                    <span class="text-gray-600">Status:</span>
+                                    <span class="ml-2 px-3 py-1 rounded-full text-sm font-medium
+                                        @if($journal->approval_status === 'approved') bg-green-100 text-green-800
+                                        @elseif($journal->approval_status === 'reviewed') bg-blue-100 text-blue-800
+                                        @elseif($journal->approval_status === 'in-progress' || $journal->approval_status === 'under_peer_review') bg-yellow-100 text-yellow-800
+                                        @elseif($journal->approval_status === 'pending') bg-gray-100 text-gray-800
+                                        @elseif($journal->approval_status === 'ready_for_managing_editor_notice') bg-blue-100 text-blue-800
+                                        @else bg-red-100 text-red-800
+                                        @endif">
+                                        {{ $journal->status_label }}
+                                    </span>
+                                </div>
+                                <a href="{{ route('editor.journals.preview', [$journal->uuid, $journal->slug]) }}" 
+                                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    View Manuscript
+                                </a>
                             </div>
-                            <a href="{{ route('editor.journals.preview', [$journal->uuid, $journal->slug]) }}" 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Document Reader Section -->
+            @if($journal->journal_url)
+            <div class="bg-white border border-gray-200">
                                class="btn btn-outline-main btn-sm">
                                 <i class="ph ph-eye me-8"></i>View Manuscript
                             </a>
@@ -59,87 +77,19 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Document Reader Section -->
+        </div>        <!-- Document Reader Section -->
         @if($journal->journal_url)
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="mb-0">
-                                <i class="ph ph-file-pdf me-8"></i>Manuscript Document Reader
-                            </h6>
-                            <small class="text-gray-600">Review the manuscript directly in your browser</small>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <button type="button" onclick="openDetailsFullscreen()" 
-                                    class="btn btn-sm btn-outline-primary"
-                                    title="Open in fullscreen">
-                                <i class="ph ph-corners-out"></i>
-                            </button>
-                            <button type="button" onclick="resizeDetailsViewer('expand')" 
-                                    class="btn btn-sm btn-outline-primary"
-                                    title="Expand viewer">
-                                <i class="ph ph-arrows-out"></i>
-                            </button>
-                            <button type="button" onclick="resizeDetailsViewer('shrink')" 
-                                    class="btn btn-sm btn-outline-primary"
-                                    title="Shrink viewer">
-                                <i class="ph ph-arrows-in"></i>
-                            </button>
-                            <a href="{{ asset('storage/' . $journal->journal_url) }}" target="_blank"
-                               class="btn btn-sm btn-outline-success"
-                               title="Open in new tab">
-                                <i class="ph ph-arrow-square-out"></i>
-                            </a>
-                            <a href="{{ asset('storage/' . $journal->journal_url) }}" download
-                               class="btn btn-sm btn-outline-info"
-                               title="Download PDF">
-                                <i class="ph ph-download-simple"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="bg-light px-3 py-2 border-bottom d-flex justify-content-between align-items-center">
-                        <small class="text-muted">
-                            <i class="ph ph-lightbulb me-1"></i>
-                            <strong>Tip:</strong> Use Ctrl+F to search within the document
-                        </small>
-                        <small class="text-muted">
-                            <i class="ph ph-info me-1"></i>
-                            File: {{ basename($journal->journal_url) }}
-                        </small>
-                    </div>
-                    
-                    <!-- PDF Viewer -->
-                    <iframe id="detailsPdfViewer" 
-                            src="{{ asset('storage/' . $journal->journal_url) }}#toolbar=1&navpanes=1&scrollbar=1" 
-                            style="width: 100%; height: 600px; border: none; background: #f8f9fa;"
-                            loading="lazy"
-                            title="Manuscript PDF Viewer">
-                        <div class="p-4 text-center">
-                            <div class="alert alert-warning">
-                                <i class="ph ph-warning-circle me-2"></i>
-                                <strong>PDF Preview Not Available</strong>
-                                <p class="mb-3">Your browser does not support embedded PDFs.</p>
-                                <div class="d-flex gap-2 justify-content-center">
-                                    <a href="{{ asset('storage/' . $journal->journal_url) }}" target="_blank" 
-                                       class="btn btn-primary">
-                                        <i class="ph ph-arrow-square-out me-2"></i>Open in New Tab
-                                    </a>
-                                    <a href="{{ asset('storage/' . $journal->journal_url) }}" download
-                                       class="btn btn-success">
-                                        <i class="ph ph-download-simple me-2"></i>Download PDF
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </iframe>
-                </div>
-            </div>
+            <!-- Document Reader Component -->
+            <x-document-reader 
+                :journal="$journal" 
+                title="Manuscript Document Reader"
+                subtitle="Review the manuscript directly in your browser"
+                height="600px"
+                role="details"
+                :showControls="true"
+                container-class=""
+            />
         </div>
         @endif
 
@@ -341,31 +291,13 @@
 </style>
 
 <script>
-    // Document viewer controls for enhanced review details
+    // Legacy controls (now handled by component)
     window.openDetailsFullscreen = function() {
-        const viewer = document.getElementById('detailsPdfViewer');
-        if (!viewer) return;
-        
-        if (viewer.requestFullscreen) {
-            viewer.requestFullscreen();
-        } else if (viewer.webkitRequestFullscreen) { /* Safari */
-            viewer.webkitRequestFullscreen();
-        } else if (viewer.msRequestFullscreen) { /* IE11 */
-            viewer.msRequestFullscreen();
-        }
+        console.log('Fullscreen functionality moved to component');
     };
 
     window.resizeDetailsViewer = function(action) {
-        const viewer = document.getElementById('detailsPdfViewer');
-        if (!viewer) return;
-        
-        const currentHeight = parseInt(viewer.style.height) || 600;
-        
-        if (action === 'expand' && currentHeight < 1000) {
-            viewer.style.height = (currentHeight + 100) + 'px';
-        } else if (action === 'shrink' && currentHeight > 400) {
-            viewer.style.height = (currentHeight - 100) + 'px';
-        }
+        console.log('Resize functionality moved to component');
     };
 </script>
 @endsection

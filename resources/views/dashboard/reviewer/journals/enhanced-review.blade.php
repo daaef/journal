@@ -1,1392 +1,571 @@
-<x-layouts.reviewer_layout>    <div class="breadcrumb mb-24">
-        <ul class="flex-align gap-4">
-            <li><a href="{{ route('reviewer.dashboard') }}" class="text-gray-600 fw-normal text-15 hover-text-gray-800">Home</a></li>
-            <li><span class="text-gray-400 fw-normal d-flex"><i class="ph ph-caret-right"></i></span></li>
-            <li><span class="text-gray-800 fw-normal text-15">Review: {{ Str::limit($journal->title, 50) }}</span></li>
-        </ul>
-    </div>
+<x-layouts.reviewer_layout>
+    @php
+        // Ensure variables are defined to prevent errors
+        $existingReview = $existingReview ?? null;
+        $otherReviews = $otherReviews ?? collect();
+    @endphp
 
-    <!-- Manuscript Overview Section -->
-    <div class="card mb-24 border">
-        <div class="card-header bg-gray-50 border-bottom">
-            <h4 class="mb-0 text-gray-800">
-                <i class="ph ph-file-text me-12"></i>Manuscript Overview
-            </h4>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-lg-8">
-                    <h3 class="mb-16 text-gray-800">{{ $journal->title }}</h3>                    <div class="flex-wrap gap-20 mb-20">
-                        <div class="bg-white p-12 rounded border border-gray-200 d-inline-block">
-                            <strong class="text-gray-700">Author:</strong> 
-                            <span class="text-gray-600">{{ $journal->author->fullname ?? $journal->author }}</span>
-                        </div>
-                        <div class="bg-white p-12 rounded border border-gray-200 d-inline-block ml-8">
-                            <strong class="text-gray-700">Category:</strong> 
-                            <span class="text-gray-600">{{ $journal->category->name ?? 'N/A' }}</span>
-                        </div>                        <div class="bg-white p-12 rounded border border-gray-200 d-inline-block ml-8">
-                            <strong class="text-gray-700">Status:</strong> 
-                            <span class="text-gray-600">{{ $journal->status_label }}</span>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 p-16 rounded border-l-4 border-gray-400">
-                        <h6 class="mb-12 text-gray-800">
-                            <i class="ph ph-note me-8"></i>Abstract
-                        </h6>
-                        <p class="text-gray-700 text-15 line-height-relaxed">{{ $journal->abstract }}</p>
-                    </div>
-                    
-    <!-- Document Preview Section (Visible by Default) -->
-    @if($journal->journal_url)
-    <div id="documentPreview" class="card mb-24 border-2 border-blue-200">        <div class="card-header bg-blue-50 border-bottom border-blue-200">
-            <div class="flex-between">
-                <div>
-                    <h5 class="mb-0 text-blue-800 fw-bold">
-                        <i class="ph ph-file-pdf me-12"></i>Manuscript Document Reader
-                    </h5>
-                    <small class="text-blue-600">Read the manuscript directly in your browser while reviewing</small>
-                </div>
-                <div class="d-flex gap-2">
-                    <button type="button" onclick="openFullscreen()" 
-                            class="btn btn-sm btn-outline-primary rounded"
-                            title="Open in fullscreen">
-                        <i class="ph ph-corners-out"></i>
-                    </button>
-                    <button type="button" onclick="resizeDocumentViewer('expand')" 
-                            class="btn btn-sm btn-outline-primary rounded"
-                            title="Expand viewer">
-                        <i class="ph ph-arrows-out"></i>
-                    </button>
-                    <button type="button" onclick="resizeDocumentViewer('shrink')" 
-                            class="btn btn-sm btn-outline-primary rounded"
-                            title="Shrink viewer">
-                        <i class="ph ph-arrows-in"></i>
-                    </button>
-                    <a href="{{ asset('storage/' . $journal->journal_url) }}" target="_blank"
-                       class="btn btn-sm btn-outline-success rounded"
-                       title="Open in new tab">
-                        <i class="ph ph-arrow-square-out"></i>
-                    </a>
-                    <a href="{{ asset('storage/' . $journal->journal_url) }}" download
-                       class="btn btn-sm btn-outline-info rounded"
-                       title="Download PDF">
-                        <i class="ph ph-download-simple"></i>
-                    </a>
-                    <button type="button" onclick="toggleDocumentPreview()" 
-                            class="btn btn-sm btn-outline-secondary rounded"
-                            title="Hide document reader">
-                        <i class="ph ph-eye-slash me-8"></i>Hide
-                    </button>
-                </div>
-            </div>
-        </div>        <div class="card-body p-0">            <div class="bg-gray-100 px-16 py-8 border-bottom d-flex justify-content-between align-items-center">
-                <small class="text-gray-600">
-                    <i class="ph ph-lightbulb me-4"></i>
-                    <strong>Tip:</strong> Use Ctrl+F to search within the document, or right-click for additional PDF options.
-                </small>
-                <small class="text-gray-500">
-                    <i class="ph ph-info me-4"></i>
-                    File: {{ basename($journal->journal_url) }}
-                </small>
-            </div>
-            
-            <!-- Loading Indicator -->
-            <div id="pdfLoading" class="text-center py-5" style="display: none;">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading PDF...</span>
-                </div>
-                <p class="mt-2 text-gray-600">Loading manuscript...</p>
-            </div>
-            
-            <!-- PDF Viewer -->
-            <iframe id="pdfViewer" 
-                    src="{{ asset('storage/' . $journal->journal_url) }}#toolbar=1&navpanes=1&scrollbar=1" 
-                    style="width: 100%; height: 700px; border: none; background: #f8f9fa;"
-                    loading="lazy"
-                    title="Manuscript PDF Viewer"
-                    onload="hidePdfLoading()"
-                    onerror="showPdfError()">
-            </iframe>
-            
-            <!-- Error Fallback -->
-            <div id="pdfError" class="p-24 text-center" style="display: none;">
-                <div class="alert alert-warning">
-                    <i class="ph ph-warning-circle me-8"></i>
-                    <strong>PDF Preview Not Available</strong>
-                    <p class="mb-16">Your browser does not support embedded PDFs or the document could not be loaded.</p>
-                    <div class="d-flex gap-2 justify-content-center">
-                        <a href="{{ asset('storage/' . $journal->journal_url) }}" target="_blank" 
-                           class="btn btn-primary">
-                            <i class="ph ph-arrow-square-out me-8"></i>Open in New Tab
-                        </a>
-                        <a href="{{ asset('storage/' . $journal->journal_url) }}" download
-                           class="btn btn-success">
-                            <i class="ph ph-download-simple me-8"></i>Download PDF
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
-                </div>
-                <div class="col-lg-4">
-                    <div class="bg-white p-20 rounded border border-gray-200">
-                        <h6 class="mb-16 text-gray-800 fw-bold">
-                            <i class="ph ph-info me-8"></i>Manuscript Details
-                        </h6>
-                        <ul class="list-unstyled space-y-3">
-                            <li class="flex-between py-8 border-bottom border-gray-200">
-                                <strong class="text-gray-700">Submitted:</strong> 
-                                <span class="text-gray-600">{{ $journal->created_at->format('M j, Y') }}</span>
-                            </li>
-                            <li class="flex-between py-8 border-bottom border-gray-200">
-                                <strong class="text-gray-700">Version:</strong> 
-                                <span class="text-gray-600">{{ $journal->versions->count() > 0 ? $journal->versions->first()->version_number : '1.0' }}</span>
-                            </li>
-                            <li class="flex-between py-8 border-bottom border-gray-200">
-                                <strong class="text-gray-700">Institution:</strong> 
-                                <span class="text-gray-600">{{ Str::limit($journal->institution ?? 'N/A', 20) }}</span>
-                            </li>
-                            <li class="flex-between py-8">
-                                <strong class="text-gray-700">Language:</strong> 
-                                <span class="text-gray-600">{{ $journal->journal_language ?? 'N/A' }}</span>
-                            </li>
-                        </ul>                        @if($journal->journal_url)
-                            <div class="mt-16 space-y-2">
-                                <div class="p-12 bg-blue-50 rounded border border-blue-200 mb-12">
-                                    <div class="text-center mb-8">
-                                        <i class="ph ph-file-pdf text-blue-600" style="font-size: 24px;"></i>
-                                    </div>                                    <h6 class="text-blue-800 mb-8 text-center fw-bold">Document Reader Active</h6>
-                                    <p class="text-blue-700 text-sm mb-12 text-center">
-                                        The manuscript is displayed below for convenient side-by-side reading while reviewing. You can hide it if needed.
-                                    </p><button type="button" onclick="toggleDocumentPreview()" 
-                                            class="btn btn-secondary btn-sm rounded w-100 fw-bold">
-                                        <i class="ph ph-eye-slash me-8"></i>Hide Document Reader
-                                    </button>
-                                </div>
-                                
-                                <div class="border-top pt-12">
-                                    <a href="{{ asset('storage/' . $journal->journal_url) }}" target="_blank" 
-                                       class="btn btn-outline-secondary btn-sm rounded w-100">
-                                        <i class="ph ph-download-simple me-8"></i>Download PDF Instead
-                                    </a>
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-                         <!-- Academic Review Information -->
-            <div class="sticky-sidebar mt-16">                <!-- Review Status -->
-                <div class="bg-gray-50 p-20 rounded border-l-4 border-gray-400 mb-20">
-                    <h6 class="mb-16 text-gray-800 fw-bold">
-                        Review Status
-                    </h6>
-                        @php
-                            $totalReviewers = $journal->reviewerAssignments ? $journal->reviewerAssignments->count() : 0;
-                            $reviewersRatings = $journal->reviewers_ratings ?? [];
-                            $completedReviews = count(array_filter($reviewersRatings, function($review) {
-                                return !empty($review['comment']);
-                            }));
-                        @endphp
-                        
-                        <div class="text-center mb-16">
-                            <div class="h2 text-gray-800 mb-0">{{ $completedReviews }}/{{ $totalReviewers }}</div>
-                            <small class="text-muted">Reviews Completed</small>
-                        </div>
-                        
-                        <div class="text-center">
-                            <div class="bg-gray-200 rounded" style="height: 8px;">
-                                <div class="bg-gray-600 rounded" style="height: 8px; width: {{ $totalReviewers > 0 ? ($completedReviews / $totalReviewers) * 100 : 0 }}%"></div>
-                            </div>                            <small class="text-muted mt-8 d-block">
-                                {{ $totalReviewers > 0 ? round(($completedReviews / $totalReviewers) * 100) : 0 }}% Complete
-                            </small>
-                        </div>
-                </div>
+    <!-- Modern Header with Gradient -->
+    <div class="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6">
+                <a href="{{ route('reviewer.dashboard') }}" class="hover:text-blue-600 transition-colors">Dashboard</a>
+                <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-gray-900 font-medium">Enhanced Review</span>
+            </nav>
 
-                <!-- Other Reviewers (Simplified) -->
-                @if($otherReviews && $otherReviews->count() > 0)
-                <div class="card border border-gray-300">
-                    <div class="card-header bg-gray-100 border-bottom border-gray-300">
-                        <h6 class="mb-0 text-gray-800 fw-bold">
-                            Other Reviewers
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        @foreach($otherReviews as $review)
-                        <div class="border-bottom border-gray-200 pb-12 mb-12 last:border-0 last:pb-0 last:mb-0">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <div class="fw-bold text-gray-800 text-14">{{ $review->user->fullname }}</div>
-                                    <small class="text-muted">{{ $review->updated_at->diffForHumans() ?? 'Recently' }}</small>
-                                </div>
-                                @if($review->recommendation)
-                                <span class="badge bg-gray-100 text-gray-700 text-12">
-                                    {{ ucfirst(str_replace('_', ' ', $review->recommendation)) }}
-                                </span>
-                                @endif
-                            </div>
+            <!-- Title Section -->
+            <div class="flex items-start justify-between mb-6">
+                <div class="flex-1 pr-6">
+                    <h1 class="text-3xl font-light text-gray-900 leading-tight mb-4">{{ $journal->title }}</h1>
+                    <div class="flex flex-wrap items-center gap-4 text-sm">
+                        <div class="flex items-center text-gray-600">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                            </svg>
+                            {{ $journal->author->fullname ?? $journal->author }}
                         </div>
-                        @endforeach
-                    </div>                </div>
-                @endif
-            </div>
+                        <div class="flex items-center text-gray-600">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                            </svg>
+                            {{ $journal->created_at->format('F j, Y') }}
+                        </div>
+                        <span class="px-3 py-1 bg-white text-gray-700 text-xs font-medium rounded-full border">
+                            {{ $journal->category->name ?? 'N/A' }}
+                        </span>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>    
-
-    <div class="row gy-4">        <!-- Review Form Section -->
-        <div class="col-lg-8">
-            <div class="card border">                <div class="card-header bg-gray-50 border-bottom">                    <h5 class="mb-0 text-gray-800">
-                        @if($existingReview && $existingReview->review_submitted_at)
-                            <i class="ph ph-check-circle text-success me-12"></i>Your Review 
-                            (Submitted {{ $existingReview->review_submitted_at->format('M j, Y \a\t g:i A') }})
-                        @else
-                            <i class="ph ph-pencil me-12"></i>Submit Your Review
-                        @endif
-                    </h5>@if($existingReview && $existingReview->review_submitted_at)                        <div class="alert alert-info mt-16 mb-0">
-                            <div class="d-flex align-items-center">
-                                <i class="ph ph-info text-info me-8"></i>
-                                <div>
-                                    <strong>Review Completed:</strong> Your review has been submitted and is now read-only. 
-                                    Reviews can only be submitted once and cannot be modified.
-                                </div>
-                            </div>
+                
+                <!-- Status Badge -->
+                <div class="flex-shrink-0">
+                    @if($existingReview && $existingReview->review_submitted_at)
+                        <div class="px-4 py-2 bg-green-100 text-green-800 rounded-lg flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            Review Submitted
+                        </div>
+                    @else
+                        <div class="px-4 py-2 bg-amber-100 text-amber-800 rounded-lg flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                            </svg>
+                            Review Pending
                         </div>
                     @endif
                 </div>
-                <div class="card-body">
-                    <form action="{{ route('reviewer.journals.submitReview') }}" method="POST" id="enhancedReviewForm">
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+            
+            <!-- Document & Abstract Column -->
+            <div class="xl:col-span-8 space-y-6">
+                
+                <!-- Abstract Card -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                    <div class="p-6 border-b border-gray-100">
+                        <h2 class="text-lg font-semibold text-gray-900">Abstract</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-gray-700 leading-relaxed">{!! $journal->abstract !!}</div>
+                    </div>
+                </div>
+
+                <!-- Document Reader Card -->
+                @if($journal->journal_url)
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                    <div class="p-6 border-b border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg font-semibold text-gray-900">Manuscript Document</h2>
+                            <a href="{{ asset('storage/' . $journal->journal_url) }}" target="_blank" 
+                               class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Download PDF
+                            </a>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <x-document-reader 
+                            :journal="$journal" 
+                            title="Manuscript for Review"
+                            subtitle="Review the complete manuscript document"
+                            height="700px"
+                            role="reviewer"
+                            :showControls="true"
+                        />
+                    </div>
+                </div>
+                @endif
+
+            </div>
+
+            <!-- Sidebar -->
+            <div class="xl:col-span-4 space-y-6">
+                <!-- Manuscript Details Card -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                    <div class="p-6 border-b border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-900">Manuscript Information</h3>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <span class="text-gray-500">Submitted</span>
+                                <p class="font-medium text-gray-900">{{ $journal->created_at->format('M j, Y') }}</p>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Version</span>
+                                <p class="font-medium text-gray-900">{{ $journal->versions->count() > 0 ? $journal->versions->first()->version_number : '1.0' }}</p>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Institution</span>
+                                <p class="font-medium text-gray-900 text-xs">{{ Str::limit($journal->institution ?? 'N/A', 15) }}</p>
+                            </div>
+                            <div>
+                                <span class="text-gray-500">Language</span>
+                                <p class="font-medium text-gray-900">{{ $journal->journal_language ?? 'N/A' }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-gray-100">
+                            <span class="text-sm text-gray-500">Review Due</span>
+                            <div class="flex items-center mt-1">
+                                <svg class="w-4 h-4 text-amber-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                </svg>
+                                <p class="text-amber-600 font-medium">{{ now()->addWeeks(3)->format('M j, Y') }}</p>
+                            </div>
+                        </div>
+
+                        @if($journal->keywords)
+                        <div class="pt-4 border-t border-gray-100">
+                            <span class="text-sm text-gray-500 mb-3 block">Keywords</span>
+                            <div class="flex flex-wrap gap-2">
+                                @foreach(explode(',', $journal->keywords) as $keyword)
+                                    <span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full border border-blue-200">{{ trim($keyword) }}</span>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Progress Card -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Review Progress</h3>
+                        @if($existingReview && $existingReview->review_submitted_at)
+                            <div class="text-center py-6">
+                                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <p class="text-sm font-medium text-gray-900 mb-1">Review Completed</p>
+                                <p class="text-xs text-gray-500">{{ $existingReview->review_submitted_at->format('M j, Y') }}</p>
+                            </div>
+                        @else
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Review Status</span>
+                                    <span class="text-sm font-medium text-amber-600">In Progress</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-amber-500 h-2 rounded-full" style="width: 45%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500">Complete the form below to submit your review</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Review Form Section -->
+        @if(!($existingReview && $existingReview->review_submitted_at))
+        <div class="mt-8">
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                <div class="p-6 border-b border-gray-100">
+                    <h2 class="text-xl font-semibold text-gray-900 flex items-center">
+                        <svg class="w-6 h-6 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Submit Your Review
+                    </h2>
+                    <p class="text-gray-600 mt-2">Please provide a comprehensive evaluation of this manuscript based on academic standards.</p>
+                </div>
+                
+                <div class="p-8">
+                    <form action="{{ route('reviewer.journals.submitReview') }}" method="POST" id="enhancedReviewForm" class="space-y-8">
                         @csrf
                         <input type="hidden" name="journal_uuid" value="{{ $journal->uuid }}">
-                        <input type="hidden" name="reviewer_id" value="{{ auth()->id() }}">                        <!-- Academic Review Assessment -->
-                        <div class="mb-32">
-                            <div class="bg-gray-50 p-20 rounded border-l-4 border-gray-400">
-                                <h6 class="mb-16 text-gray-800 fw-bold">
-                                    Academic Review Assessment
-                                </h6>
-                                <p class="text-gray-700 mb-16 text-15">
-                                    Please evaluate this manuscript based on the following core academic criteria:
-                                </p>
-                                
-                                <!-- Simplified 3-Criteria Assessment -->
-                                <div class="row g-4 mb-20">
-                                        <div class="col-md-4">
-                                            <div class="border border-gray-200 rounded p-16 text-center">
-                                                <label class="fw-bold text-gray-800 mb-8 d-block">Scholarly Merit</label>                                                <select name="criteria_ratings[scholarly_merit]" class="form-select form-select-sm" {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
-                                                    <option value="">Select Rating</option>
-                                                    <option value="1" {{ ($existingReview && isset($existingReview->criteria_ratings['scholarly_merit']) && $existingReview->criteria_ratings['scholarly_merit'] == 1) ? 'selected' : '' }}>1 - Poor</option>
-                                                    <option value="2" {{ ($existingReview && isset($existingReview->criteria_ratings['scholarly_merit']) && $existingReview->criteria_ratings['scholarly_merit'] == 2) ? 'selected' : '' }}>2 - Fair</option>
-                                                    <option value="3" {{ ($existingReview && isset($existingReview->criteria_ratings['scholarly_merit']) && $existingReview->criteria_ratings['scholarly_merit'] == 3) ? 'selected' : '' }}>3 - Good</option>
-                                                    <option value="4" {{ ($existingReview && isset($existingReview->criteria_ratings['scholarly_merit']) && $existingReview->criteria_ratings['scholarly_merit'] == 4) ? 'selected' : '' }}>4 - Very Good</option>
-                                                    <option value="5" {{ ($existingReview && isset($existingReview->criteria_ratings['scholarly_merit']) && $existingReview->criteria_ratings['scholarly_merit'] == 5) ? 'selected' : '' }}>5 - Excellent</option>
-                                                </select>
-                                                <small class="text-muted mt-8 d-block">Originality, significance, contribution to field</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="border border-gray-200 rounded p-16 text-center">
-                                                <label class="fw-bold text-gray-800 mb-8 d-block">Methodology</label>
-                                                <select name="criteria_ratings[methodology]" class="form-select form-select-sm" {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
-                                                    <option value="">Select Rating</option>
-                                                    <option value="1" {{ ($existingReview && isset($existingReview->criteria_ratings['methodology']) && $existingReview->criteria_ratings['methodology'] == 1) ? 'selected' : '' }}>1 - Poor</option>
-                                                    <option value="2" {{ ($existingReview && isset($existingReview->criteria_ratings['methodology']) && $existingReview->criteria_ratings['methodology'] == 2) ? 'selected' : '' }}>2 - Fair</option>
-                                                    <option value="3" {{ ($existingReview && isset($existingReview->criteria_ratings['methodology']) && $existingReview->criteria_ratings['methodology'] == 3) ? 'selected' : '' }}>3 - Good</option>
-                                                    <option value="4" {{ ($existingReview && isset($existingReview->criteria_ratings['methodology']) && $existingReview->criteria_ratings['methodology'] == 4) ? 'selected' : '' }}>4 - Very Good</option>
-                                                    <option value="5" {{ ($existingReview && isset($existingReview->criteria_ratings['methodology']) && $existingReview->criteria_ratings['methodology'] == 5) ? 'selected' : '' }}>5 - Excellent</option>
-                                                </select>
-                                                <small class="text-muted mt-8 d-block">Research design, analysis, rigor</small>
-                                            </div>
-                                        </div>                                        <div class="col-md-4">
-                                            <div class="border border-gray-200 rounded p-16 text-center">
-                                                <label class="fw-bold text-gray-800 mb-8 d-block">Literature Review</label>
-                                                <select name="criteria_ratings[literature_review]" class="form-select form-select-sm" {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
-                                                    <option value="">Select Rating</option>
-                                                    <option value="1" {{ ($existingReview && isset($existingReview->criteria_ratings['literature_review']) && $existingReview->criteria_ratings['literature_review'] == 1) ? 'selected' : '' }}>1 - Poor</option>
-                                                    <option value="2" {{ ($existingReview && isset($existingReview->criteria_ratings['literature_review']) && $existingReview->criteria_ratings['literature_review'] == 2) ? 'selected' : '' }}>2 - Fair</option>
-                                                    <option value="3" {{ ($existingReview && isset($existingReview->criteria_ratings['literature_review']) && $existingReview->criteria_ratings['literature_review'] == 3) ? 'selected' : '' }}>3 - Good</option>
-                                                    <option value="4" {{ ($existingReview && isset($existingReview->criteria_ratings['literature_review']) && $existingReview->criteria_ratings['literature_review'] == 4) ? 'selected' : '' }}>4 - Very Good</option>
-                                                    <option value="5" {{ ($existingReview && isset($existingReview->criteria_ratings['literature_review']) && $existingReview->criteria_ratings['literature_review'] == 5) ? 'selected' : '' }}>5 - Excellent</option>
-                                                </select>
-                                                <small class="text-muted mt-8 d-block">Comprehensiveness, relevance, citations</small>                                            </div>
-                                        </div>
-                                    </div>
-                            </div>
-                        </div>                        <!-- Overall Assessment -->
-                        <div class="mb-32">
-                            <div class="bg-gray-50 p-20 rounded border-l-4 border-gray-400">
-                                <h6 class="mb-16 text-gray-800 fw-bold">
-                                    Overall Assessment
-                                </h6>
-                                <div class="row align-items-center">
-                                        <div class="col-md-6">
-                                            <label class="form-label fw-bold text-gray-800 mb-12">
-                                                Overall Quality Rating
-                                            </label>
-                                            <select name="rating" class="form-select" required {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
-                                                <option value="">Select Overall Rating</option>
-                                                <option value="1" {{ ($existingReview->rating ?? '') == 1 ? 'selected' : '' }}>1 - Poor (Reject)</option>
-                                                <option value="2" {{ ($existingReview->rating ?? '') == 2 ? 'selected' : '' }}>2 - Fair (Major Concerns)</option>
-                                                <option value="3" {{ ($existingReview->rating ?? '') == 3 ? 'selected' : '' }}>3 - Good (Minor Revisions)</option>
-                                                <option value="4" {{ ($existingReview->rating ?? '') == 4 ? 'selected' : '' }}>4 - Very Good (Accept with Minor Changes)</option>
-                                                <option value="5" {{ ($existingReview->rating ?? '') == 5 ? 'selected' : '' }}>5 - Excellent (Accept as is)</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label fw-bold text-gray-800 mb-12">
-                                                Editorial Recommendation
-                                            </label>                                            <select name="recommendation" class="form-select" required {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
-                                                <option value="">Select Recommendation</option>
-                                                <option value="accept" {{ ($existingReview->recommendation ?? '') === 'accept' ? 'selected' : '' }}>Accept for Publication</option>
-                                                <option value="minor_revision" {{ ($existingReview->recommendation ?? '') === 'minor_revision' ? 'selected' : '' }}>Accept with Minor Revisions</option>
-                                                <option value="major_revision" {{ ($existingReview->recommendation ?? '') === 'major_revision' ? 'selected' : '' }}>Major Revisions Required</option>
-                                                <option value="reject" {{ ($existingReview->recommendation ?? '') === 'reject' ? 'selected' : '' }}>Reject</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                            </div>
-                        </div>                        <!-- Review Comments -->
-                        <div class="mb-32">                            <div class="bg-gray-50 p-20 rounded border-l-4 border-gray-400">
-                                <h6 class="mb-16 text-gray-800 fw-bold">
-                                    Detailed Review Comments
-                                </h6>
-                                    <div class="mb-20">
-                                        <label class="form-label fw-bold text-gray-800 mb-8">
-                                            <i class="ph ph-user me-8 text-primary"></i>Comments for Author
-                                            <span class="badge bg-primary-50 text-primary text-12 ms-8">Author will see this</span>
-                                        </label>
-                                        
-                                        <!-- File Upload for Author Comments -->
-                                        <div class="mb-12">
-                                            <input type="file" class="form-control" id="authorCommentsFile" accept=".txt,.doc,.docx,.pdf" {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
-                                            <small class="text-muted">Upload a document to auto-fill comments (optional)</small>
-                                        </div>
-                                        
-                                        <textarea name="comment" class="form-control" rows="8" id="authorCommentsTextarea"
-                                                  placeholder="Provide detailed, constructive feedback for the author. Include specific comments on strengths, weaknesses, and suggestions for improvement. Be professional and helpful in your critique."
-                                                  required {{ ($existingReview && $existingReview->review_submitted_at) ? 'readonly' : '' }}>{{ $existingReview->comment ?? '' }}</textarea>
-                                        <small class="text-muted mt-8 d-block">
-                                            <i class="ph ph-info me-4"></i>These comments will be shared directly with the author to help improve their manuscript.
-                                        </small>
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="form-label fw-bold text-gray-800 mb-8">
-                                            <i class="ph ph-lock me-8 text-warning"></i>Confidential Comments for Editorial Team
-                                            <span class="badge bg-warning-50 text-warning text-12 ms-8">Editors only</span>
-                                        </label>
-                                        
-                                        <!-- File Upload for Editor Comments -->
-                                        <div class="mb-12">
-                                            <input type="file" class="form-control" id="editorCommentsFile" accept=".txt,.doc,.docx,.pdf" {{ ($existingReview && $existingReview->review_submitted_at) ? 'disabled' : '' }}>
-                                            <small class="text-muted">Upload a document to auto-fill confidential comments (optional)</small>
-                                        </div>
-                                        
-                                        <textarea name="confidential_comments" class="form-control" rows="4" id="editorCommentsTextarea"
-                                                  placeholder="Optional: Any confidential comments for the editorial team regarding manuscript handling, concerns about methodology, ethical issues, or recommendations for additional reviewers." {{ ($existingReview && $existingReview->review_submitted_at) ? 'readonly' : '' }}>{{ $existingReview->confidential_comments ?? '' }}</textarea>
-                                        <small class="text-muted mt-8 d-block">
-                                            <i class="ph ph-shield-check me-4"></i>These comments are strictly confidential and will only be visible to Managing Editors and Editor-in-Chief.
-                                        </small>
-                                    </div>
-                            </div>
-                        </div>                        <!-- Submit Review -->
-                        <div class="text-center py-20 border-top border-gray-200">
-                            @if($existingReview && $existingReview->review_submitted_at)
-                                <div class="alert alert-success">
-                                    <i class="ph ph-check-circle me-8"></i>
-                                    <strong>Review Completed:</strong> 
-                                    Your review was submitted on {{ $existingReview->review_submitted_at->format('M j, Y \a\t g:i A') }}
+                        <input type="hidden" name="reviewer_id" value="{{ auth()->id() }}">
+
+                        <!-- Rating Section -->
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-6">Academic Assessment</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <!-- Scholarly Merit -->
+                                <div class="bg-white rounded-lg p-4 border border-gray-200">
+                                    <label class="block text-sm font-semibold text-gray-900 mb-3">Scholarly Merit</label>
+                                    <select name="criteria_ratings[scholarly_merit]" 
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                        <option value="">Select Rating</option>
+                                        <option value="1">1 - Poor</option>
+                                        <option value="2">2 - Fair</option>
+                                        <option value="3">3 - Good</option>
+                                        <option value="4">4 - Very Good</option>
+                                        <option value="5">5 - Excellent</option>
+                                    </select>
                                 </div>
-                            @else
-                                <button type="submit" class="btn btn-success px-32 py-12">
-                                    <i class="ph ph-check-circle me-8"></i>Submit Review
-                                </button>
-                            @endif
-                            <div class="mt-12">
-                                <small class="text-muted">
-                                    @if($existingReview && $existingReview->review_submitted_at)
-                                        Your review has been submitted and cannot be modified.
-                                    @else
-                                        <strong>Note:</strong> Once submitted, your review cannot be changed or updated.
-                                    @endif
-                                </small>
+
+                                <!-- Methodology -->
+                                <div class="bg-white rounded-lg p-4 border border-gray-200">
+                                    <label class="block text-sm font-semibold text-gray-900 mb-3">Methodology</label>
+                                    <select name="criteria_ratings[methodology]" 
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                        <option value="">Select Rating</option>
+                                        <option value="1">1 - Poor</option>
+                                        <option value="2">2 - Fair</option>
+                                        <option value="3">3 - Good</option>
+                                        <option value="4">4 - Very Good</option>
+                                        <option value="5">5 - Excellent</option>
+                                    </select>
+                                </div>
+
+                                <!-- Presentation -->
+                                <div class="bg-white rounded-lg p-4 border border-gray-200">
+                                    <label class="block text-sm font-semibold text-gray-900 mb-3">Presentation</label>
+                                    <select name="criteria_ratings[presentation]" 
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                        <option value="">Select Rating</option>
+                                        <option value="1">1 - Poor</option>
+                                        <option value="2">2 - Fair</option>
+                                        <option value="3">3 - Good</option>
+                                        <option value="4">4 - Very Good</option>
+                                        <option value="5">5 - Excellent</option>
+                                    </select>
+                                </div>
                             </div>
+                        </div>
+
+                        <!-- Overall Rating & Recommendation -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Overall Rating -->
+                            <div class="bg-white rounded-lg border border-gray-200 p-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-4">Overall Rating</label>
+                                <div class="space-y-3">
+                                    @for($i = 1; $i <= 5; $i++)
+                                    <label class="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors">
+                                        <input type="radio" name="overall_rating" value="{{ $i }}" class="mr-3 text-blue-600 focus:ring-blue-500">
+                                        <div class="flex items-center">
+                                            <div class="flex mr-3">
+                                                @for($j = 1; $j <= 5; $j++)
+                                                    <svg class="w-4 h-4 {{ $j <= $i ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                                                    </svg>
+                                                @endfor
+                                            </div>
+                                            <span class="text-sm font-medium text-gray-700">
+                                                @if($i == 1) Poor
+                                                @elseif($i == 2) Fair
+                                                @elseif($i == 3) Good
+                                                @elseif($i == 4) Very Good
+                                                @else Excellent
+                                                @endif
+                                            </span>
+                                        </div>
+                                    </label>
+                                    @endfor
+                                </div>
+                            </div>
+
+                            <!-- Recommendation -->
+                            <div class="bg-white rounded-lg border border-gray-200 p-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-4">Editorial Recommendation</label>
+                                <div class="space-y-3">
+                                    <label class="flex items-center cursor-pointer hover:bg-green-50 p-3 rounded-lg border border-transparent hover:border-green-200 transition-all">
+                                        <input type="radio" name="recommendation" value="accept" class="mr-3 text-green-600 focus:ring-green-500">
+                                        <div>
+                                            <div class="text-sm font-medium text-green-800">Accept</div>
+                                            <div class="text-xs text-green-600">Ready for publication</div>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-blue-50 p-3 rounded-lg border border-transparent hover:border-blue-200 transition-all">
+                                        <input type="radio" name="recommendation" value="minor_revisions" class="mr-3 text-blue-600 focus:ring-blue-500">
+                                        <div>
+                                            <div class="text-sm font-medium text-blue-800">Minor Revisions</div>
+                                            <div class="text-xs text-blue-600">Small changes needed</div>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-yellow-50 p-3 rounded-lg border border-transparent hover:border-yellow-200 transition-all">
+                                        <input type="radio" name="recommendation" value="major_revisions" class="mr-3 text-yellow-600 focus:ring-yellow-500">
+                                        <div>
+                                            <div class="text-sm font-medium text-yellow-800">Major Revisions</div>
+                                            <div class="text-xs text-yellow-600">Significant changes required</div>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer hover:bg-red-50 p-3 rounded-lg border border-transparent hover:border-red-200 transition-all">
+                                        <input type="radio" name="recommendation" value="reject" class="mr-3 text-red-600 focus:ring-red-500">
+                                        <div>
+                                            <div class="text-sm font-medium text-red-800">Reject</div>
+                                            <div class="text-xs text-red-600">Not suitable for publication</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Comments Section -->
+                        <div class="space-y-6">
+                            <!-- Author Comments -->
+                            <div class="bg-white rounded-lg border border-gray-200 p-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-4">Comments for Author</label>
+                                <p class="text-sm text-gray-600 mb-4">These comments will be shared with the author to help improve their manuscript.</p>
+                                <textarea name="comment" 
+                                          rows="6"
+                                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-vertical"
+                                          placeholder="Provide detailed feedback on the manuscript's strengths, weaknesses, and suggestions for improvement..."
+                                          id="authorCommentsTextarea"></textarea>
+                                <div class="mt-2 text-right text-sm text-gray-500">
+                                    <span id="authorCommentsCount">0</span> / 2000 characters
+                                </div>
+                            </div>
+
+                            <!-- Confidential Comments -->
+                            <div class="bg-gray-50 rounded-lg border border-gray-200 p-6">
+                                <label class="block text-sm font-semibold text-gray-900 mb-4">Confidential Comments for Editor</label>
+                                <p class="text-sm text-gray-600 mb-4">These comments are private and will only be seen by the editorial team.</p>
+                                <textarea name="confidential_comments" 
+                                          rows="4"
+                                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-vertical bg-white"
+                                          placeholder="Share any concerns or additional context that should remain confidential..."
+                                          id="editorCommentsTextarea"></textarea>
+                                <div class="mt-2 text-right text-sm text-gray-500">
+                                    <span id="editorCommentsCount">0</span> / 1000 characters
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="flex justify-end pt-6 border-t border-gray-200">
+                            <button type="submit" 
+                                    class="px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors shadow-lg">
+                                <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg>
+                                Submit Review
+                            </button>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>   
+        </div>
+        @else
+        <!-- Read-only Review Display -->
+        <div class="mt-8">
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                <div class="p-6 border-b border-gray-100">
+                    <h2 class="text-xl font-semibold text-gray-900 flex items-center">
+                        <svg class="w-6 h-6 text-green-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        Your Submitted Review
+                    </h2>
+                    <p class="text-gray-600 mt-2">Review submitted on {{ $existingReview->review_submitted_at->format('F j, Y \a\t g:i A') }}</p>
+                </div>
+                
+                <div class="p-8 space-y-6">
+                    <!-- Display existing review data here if needed -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <p class="text-blue-800 font-medium">Review Complete</p>
+                        <p class="text-blue-700 text-sm">Your review has been successfully submitted and is now with the editorial team for processing.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
 
-<!-- Enhanced Styles -->
-    <style>
-        /* Document Preview */
-        #documentPreview {
-            animation: slideDown 0.3s ease-out;
-        }
-          @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }        /* Subtle Form Input Styling */
-        .form-select, .form-control, textarea.form-control {
-            border: 1px solid #e2e8f0 !important;
-            border-radius: 6px !important;
-            padding: 12px 16px !important;
-            font-size: 14px !important;
-            background-color: #ffffff !important;
-            transition: all 0.2s ease !important;
-        }
-        
-        .form-select:focus, .form-control:focus, textarea.form-control:focus {
-            border-color: #6b7280 !important;
-            box-shadow: 0 0 0 2px rgba(107, 114, 128, 0.1) !important;
-            outline: none !important;
-            background-color: #ffffff !important;
-        }
-        
-        .form-select:hover, .form-control:hover, textarea.form-control:hover {
-            border-color: #9ca3af !important;
-        }
-          .form-select-sm {
-            padding: 8px 12px !important;
-            font-size: 13px !important;
-        }
-
-        /* Section Background Colors for Differentiation */
-        .border.border-gray-300.rounded {
-            background-color: #f8fafc !important;
-            border-color: #e2e8f0 !important;
-        }
-        
-        .bg-gray-100 {
-            background-color: #f1f5f9 !important;
-        }
-        
-        .card {
-            background-color: #ffffff !important;
-        }
-        
-        .card-body {
-            background-color: #ffffff !important;
-        }
-
-        /* Criteria Grid */
-        .criteria-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .criteria-card {
-            background: linear-gradient(135deg, #f8faff 0%, #f1f5ff 100%);
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .criteria-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border-color: #6366f1;
-        }        .criteria-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: #6b7280;
-        }
-
-        .criteria-header {
-            margin-bottom: 12px;
-        }
-
-        .criteria-body {
-            text-align: center;
-        }        /* Enhanced Star Rating */
-        .star-rating .star-enhanced, .overall-star-rating .star-enhanced {
-            font-size: 28px;
-            color: #d1d5db;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin: 0 2px;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-        }
-
-        .star-rating .star-enhanced.large, .overall-star-rating .star-enhanced.large {
-            font-size: 36px;
-            margin: 0 4px;
-        }
-
-        .star-rating .star-enhanced.active, .overall-star-rating .star-enhanced.active {
-            color: #fbbf24;
-            transform: scale(1.1);
-        }
-
-        .star-rating .star-enhanced:hover, .overall-star-rating .star-enhanced:hover {
-            color: #fbbf24;
-            transform: scale(1.15);
-        }
-
-        .rating-text, .overall-rating-text {
-            height: 20px;
-            transition: all 0.3s ease;
-        }        .rating-label-enhanced, .overall-rating-label {
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Recommendation Grid */
-        .recommendation-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-top: 16px;
-        }
-
-        .recommendation-option {
-            position: relative;
-        }
-
-        .recommendation-option input[type="radio"] {
-            position: absolute;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            cursor: pointer;
-        }
-
-        .recommendation-label {
-            display: flex;
-            align-items: center;
-            padding: 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        .recommendation-label:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }        .recommendation-label.accept {
-            border-color: #d1d5db;
-        }
-        .recommendation-label.minor {
-            border-color: #d1d5db;
-        }
-        .recommendation-label.major {
-            border-color: #d1d5db;
-        }
-        .recommendation-label.reject {
-            border-color: #d1d5db;
-        }.recommendation-option input:checked + .recommendation-label.accept {
-            background: #f3f4f6;
-            border-color: #6b7280;
-            color: #374151;
-        }
-        .recommendation-option input:checked + .recommendation-label.minor {
-            background: #f3f4f6;
-            border-color: #6b7280;
-            color: #374151;
-        }
-        .recommendation-option input:checked + .recommendation-label.major {
-            background: #f3f4f6;
-            border-color: #6b7280;
-            color: #374151;
-        }
-        .recommendation-option input:checked + .recommendation-label.reject {
-            background: #f3f4f6;
-            border-color: #6b7280;
-            color: #374151;
-        }
-
-        .recommendation-icon {
-            font-size: 24px;
-            margin-right: 12px;
-            flex-shrink: 0;
-        }
-
-        .recommendation-text {
-            flex-grow: 1;
-        }
-
-        .recommendation-text strong {
-            display: block;
-            font-size: 14px;
-            margin-bottom: 2px;
-        }
-
-        .recommendation-text small {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        /* Enhanced Textareas */
-        .enhanced-textarea {
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 16px;
-            font-size: 14px;
-            line-height: 1.6;
-            transition: all 0.3s ease;
-            resize: vertical;
-            min-height: 120px;
-        }        .enhanced-textarea:focus {
-            border-color: #6b7280;
-            box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
-            outline: none;
-        }
-
-        /* Sidebar Enhancements */
-        .sticky-sidebar {
-            position: sticky;
-            top: 20px;
-        }
-
-        .sidebar-card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            margin-bottom: 24px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .sidebar-card-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .sidebar-card-body {
-            padding: 20px;
-        }
-
-        /* Progress Circle */
-        .progress-circle-container {
-            position: relative;
-            display: inline-block;
-        }        .progress-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: conic-gradient(#6b7280 0deg, #6b7280 var(--percentage, 0deg), #e5e7eb var(--percentage, 0deg));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .progress-circle::before {
-            content: '';
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: white;
-            position: absolute;
-        }
-
-        .progress-value {
-            font-size: 14px;
-            font-weight: bold;
-            color: #374151;
-            z-index: 1;
-        }
-
-        .progress-stats {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            display: block;
-            font-size: 18px;
-            font-weight: bold;
-            color: #374151;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: #6b7280;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-divider {
-            width: 1px;
-            height: 30px;
-            background: #e5e7eb;
-        }
-
-        .progress-bar-custom {
-            height: 8px;
-            background: #e5e7eb;
-            border-radius: 4px;
-            overflow: hidden;
-        }        .progress-fill {
-            height: 100%;
-            background: #6b7280;
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-
-        /* Review Items */
-        .review-item {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-
-        .reviewer-info {
-            display: flex;
-            align-items: center;
-        }        .reviewer-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #6b7280;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            margin-right: 8px;
-        }
-
-        .reviewer-details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .reviewer-name {
-            font-size: 13px;
-            font-weight: 600;
-            color: #374151;
-        }
-
-        .review-date {
-            font-size: 11px;
-            color: #6b7280;
-        }
-
-        .review-rating {
-            display: flex;
-        }
-
-        .star.mini {
-            font-size: 12px;
-            margin: 0 1px;
-        }
-
-        .star.mini.filled {
-            color: #fbbf24;
-        }
-
-        .star.mini:not(.filled) {
-            color: #d1d5db;
-        }
-
-        .recommendation-badge {
-            display: inline-flex;
-            align-items: center;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 4px 8px;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .recommendation-badge.accept {
-            background: #d1fae5;
-            color: #065f46;
-        }
-        .recommendation-badge.minor_revisions {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        .recommendation-badge.major_revisions {
-            background: #fed7aa;
-            color: #9a3412;
-        }
-        .recommendation-badge.reject {
-            background: #fecaca;
-            color: #991b1b;
-        }
-
-        .review-comment p {
-            font-size: 12px;
-            color: #6b7280;
-            line-height: 1.4;
-            margin: 0;
-        }
-
-        /* Empty State */
-        .empty-state {
-            padding: 20px;
-        }
-
-        .empty-state i {
-            font-size: 48px;
-        }
-
-        /* Quick Actions */
-        .quick-actions-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .action-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 16px 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            background: white;
-            color: #374151;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            text-decoration: none;
-            color: #6366f1;
-            border-color: #6366f1;
-        }
-
-        .action-btn i {
-            font-size: 20px;
-            margin-bottom: 8px;
-        }
-
-        .action-btn span {
-            font-size: 12px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .criteria-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .recommendation-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .quick-actions-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>    <script>
+    <!-- Enhanced JavaScript -->
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Enhanced review form loaded');            // Document preview toggle and controls
-            window.toggleDocumentPreview = function() {
-                const preview = document.getElementById('documentPreview');
-                const toggleBtn = document.querySelector('button[onclick="toggleDocumentPreview()"]');
-                const headerBtn = preview?.querySelector('button[onclick="toggleDocumentPreview()"]');
-                
-                if (preview.style.display === 'none') {
-                    preview.style.display = 'block';
-                    preview.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    // Update button text in the sidebar
-                    if (toggleBtn && toggleBtn.innerHTML.includes('Show Document Reader')) {
-                        toggleBtn.innerHTML = '<i class="ph ph-eye-slash me-8"></i>Hide Document Reader';
-                        toggleBtn.classList.remove('btn-primary');
-                        toggleBtn.classList.add('btn-secondary');
-                    }
-                    // Update header button
-                    if (headerBtn) {
-                        headerBtn.innerHTML = '<i class="ph ph-eye-slash me-8"></i>Hide';
-                        headerBtn.title = 'Hide document reader';
-                    }
-                } else {
-                    preview.style.display = 'none';
-                    // Update button text in the sidebar
-                    if (toggleBtn && toggleBtn.innerHTML.includes('Hide Document Reader')) {
-                        toggleBtn.innerHTML = '<i class="ph ph-eye me-8"></i>Show Document Reader';
-                        toggleBtn.classList.remove('btn-secondary');
-                        toggleBtn.classList.add('btn-primary');
-                    }
-                    // Update header button (won't be visible when hidden, but for consistency)
-                    if (headerBtn) {
-                        headerBtn.innerHTML = '<i class="ph ph-eye me-8"></i>Show';
-                        headerBtn.title = 'Show document reader';
-                    }
-                }
-            };            // Document viewer resize functionality
-            window.resizeDocumentViewer = function(action) {
-                const viewer = document.getElementById('pdfViewer');
-                if (!viewer) return;
-                
-                const currentHeight = parseInt(viewer.style.height) || 700;
-                
-                if (action === 'expand' && currentHeight < 1000) {
-                    viewer.style.height = (currentHeight + 100) + 'px';
-                } else if (action === 'shrink' && currentHeight > 400) {
-                    viewer.style.height = (currentHeight - 100) + 'px';
-                }
-            };            // Fullscreen document viewer
-            window.openFullscreen = function() {
-                const viewer = document.getElementById('pdfViewer');
-                if (!viewer) return;
-                
-                if (viewer.requestFullscreen) {
-                    viewer.requestFullscreen();
-                } else if (viewer.webkitRequestFullscreen) { /* Safari */
-                    viewer.webkitRequestFullscreen();
-                } else if (viewer.msRequestFullscreen) { /* IE11 */
-                    viewer.msRequestFullscreen();
-                }
-            };
+            // Character counters
+            const authorTextarea = document.getElementById('authorCommentsTextarea');
+            const editorTextarea = document.getElementById('editorCommentsTextarea');
+            const authorCounter = document.getElementById('authorCommentsCount');
+            const editorCounter = document.getElementById('editorCommentsCount');
 
-            // PDF Loading and Error Handling
-            window.hidePdfLoading = function() {
-                const loading = document.getElementById('pdfLoading');
-                if (loading) loading.style.display = 'none';
-            };
-
-            window.showPdfError = function() {
-                const loading = document.getElementById('pdfLoading');
-                const viewer = document.getElementById('pdfViewer');
-                const error = document.getElementById('pdfError');
-                
-                if (loading) loading.style.display = 'none';
-                if (viewer) viewer.style.display = 'none';
-                if (error) error.style.display = 'block';
-            };
-
-            // Show loading initially
-            const pdfLoading = document.getElementById('pdfLoading');
-            if (pdfLoading) pdfLoading.style.display = 'block';
-
-            // Progress circle animation
-            function updateProgressCircle() {
-                const circles = document.querySelectorAll('.progress-circle');
-                circles.forEach(circle => {
-                    const percentage = circle.getAttribute('data-percentage');
-                    const degrees = (percentage / 100) * 360;
-                    circle.style.setProperty('--percentage', degrees + 'deg');
-                });
-            }
-            updateProgressCircle();
-
-            // Enhanced star rating with labels
-            const ratingLabels = {
-                0: 'Not Rated',
-                1: 'Poor',
-                2: 'Fair', 
-                3: 'Good',
-                4: 'Very Good',
-                5: 'Excellent'
-            };            // Initialize criteria star ratings
-            document.querySelectorAll('.star-rating').forEach(function(container) {
-                console.log('Found star rating container:', container);
-                const stars = container.querySelectorAll('.star-enhanced');
-                console.log('Found stars:', stars.length);
-                const hiddenInput = container.parentNode.querySelector('input[type="hidden"]');
-                const ratingText = container.parentNode.querySelector('.rating-label-enhanced');
-                const currentRating = parseInt(container.getAttribute('data-rating')) || 0;
-                
-                // Set initial rating
-                updateStars(stars, currentRating);
-                if (ratingText) {
-                    ratingText.textContent = ratingLabels[currentRating];
-                    ratingText.style.color = getRatingColor(currentRating);
-                }
-                
-                stars.forEach(function(star, index) {
-                    star.addEventListener('click', function() {
-                        const rating = index + 1;
-                        hiddenInput.value = rating;
-                        updateStars(stars, rating);
-                        if (ratingText) {
-                            ratingText.textContent = ratingLabels[rating];
-                            ratingText.style.color = getRatingColor(rating);
-                        }
-                        
-                        // Add visual feedback
-                        container.style.transform = 'scale(1.05)';
-                        setTimeout(() => {
-                            container.style.transform = 'scale(1)';
-                        }, 150);
-                    });
-                    
-                    star.addEventListener('mouseover', function() {
-                        updateStars(stars, index + 1);
-                        if (ratingText) {
-                            ratingText.textContent = ratingLabels[index + 1];
-                            ratingText.style.color = getRatingColor(index + 1);
-                        }
-                    });
-                });
-                
-                container.addEventListener('mouseleave', function() {
-                    const currentValue = parseInt(hiddenInput.value) || 0;
-                    updateStars(stars, currentValue);
-                    if (ratingText) {
-                        ratingText.textContent = ratingLabels[currentValue];
-                        ratingText.style.color = getRatingColor(currentValue);
-                    }
-                });
-            });            // Overall rating
-            document.querySelectorAll('.overall-star-rating').forEach(function(container) {
-                const stars = container.querySelectorAll('.star-enhanced');
-                const hiddenInput = container.parentNode.querySelector('input[name="rating"]');
-                const ratingText = container.parentNode.querySelector('.overall-rating-label');
-                const currentRating = parseInt(container.getAttribute('data-rating')) || 0;
-                
-                updateStars(stars, currentRating);
-                if (ratingText) {
-                    ratingText.textContent = ratingLabels[currentRating];
-                    ratingText.style.color = getRatingColor(currentRating);
-                }
-                
-                stars.forEach(function(star, index) {
-                    star.addEventListener('click', function() {
-                        const rating = index + 1;
-                        hiddenInput.value = rating;
-                        updateStars(stars, rating);
-                        if (ratingText) {
-                            ratingText.textContent = ratingLabels[rating];
-                            ratingText.style.color = getRatingColor(rating);
-                        }
-                        
-                        // Add visual feedback
-                        container.style.transform = 'scale(1.05)';
-                        setTimeout(() => {
-                            container.style.transform = 'scale(1)';
-                        }, 150);
-                    });
-                    
-                    star.addEventListener('mouseover', function() {
-                        updateStars(stars, index + 1);
-                        if (ratingText) {
-                            ratingText.textContent = ratingLabels[index + 1];
-                            ratingText.style.color = getRatingColor(index + 1);
-                        }
-                    });
-                });
-                
-                container.addEventListener('mouseleave', function() {
-                    const currentValue = parseInt(hiddenInput.value) || 0;
-                    updateStars(stars, currentValue);
-                    if (ratingText) {
-                        ratingText.textContent = ratingLabels[currentValue];
-                        ratingText.style.color = getRatingColor(currentValue);
-                    }
-                });
-            });
-
-            function updateStars(stars, rating) {
-                stars.forEach(function(star, index) {
-                    if (index < rating) {
-                        star.classList.add('active');
+            if (authorTextarea && authorCounter) {
+                authorTextarea.addEventListener('input', function() {
+                    const count = this.value.length;
+                    authorCounter.textContent = count;
+                    if (count > 1800) {
+                        authorCounter.parentElement.classList.add('text-red-500');
                     } else {
-                        star.classList.remove('active');
+                        authorCounter.parentElement.classList.remove('text-red-500');
                     }
                 });
             }
 
-            function getRatingColor(rating) {
-                const colors = {
-                    0: '#6b7280',
-                    1: '#dc2626',
-                    2: '#ea580c',
-                    3: '#ca8a04',
-                    4: '#16a34a',
-                    5: '#059669'
-                };
-                return colors[rating] || '#6b7280';
-            }
-
-            // Recommendation selection visual feedback
-            document.querySelectorAll('input[name="recommendation"]').forEach(function(radio) {
-                radio.addEventListener('change', function() {
-                    // Add animation to selected option
-                    const label = this.nextElementSibling;
-                    label.style.transform = 'scale(1.05)';
-                    setTimeout(() => {
-                        label.style.transform = 'scale(1)';
-                    }, 200);
-                });
-            });
-
-            // Textarea character count and auto-resize
-            document.querySelectorAll('.enhanced-textarea').forEach(function(textarea) {
-                // Auto-resize
-                textarea.addEventListener('input', function() {
-                    this.style.height = 'auto';
-                    this.style.height = this.scrollHeight + 'px';
-                });
-                
-                // Initial resize
-                textarea.style.height = textarea.scrollHeight + 'px';
-            });
-
-            // File upload functionality for comments
-        document.getElementById('authorCommentsFile').addEventListener('change', function(e) {
-            handleFileUpload(e, 'authorCommentsTextarea');
-        });
-        
-        document.getElementById('editorCommentsFile').addEventListener('change', function(e) {
-            handleFileUpload(e, 'editorCommentsTextarea');
-        });
-        
-        function handleFileUpload(event, textareaId) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const fileSize = file.size / 1024 / 1024; // MB
-            if (fileSize > 5) {
-                alert('File size must be less than 5MB');
-                event.target.value = '';
-                return;
-            }
-            
-            const allowedTypes = ['text/plain', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-            if (!allowedTypes.includes(file.type)) {
-                alert('Please upload only TXT, PDF, DOC, or DOCX files');
-                event.target.value = '';
-                return;
-            }
-            
-            const reader = new FileReader();
-            const textarea = document.getElementById(textareaId);
-            
-            // Show loading indicator
-            const originalPlaceholder = textarea.placeholder;
-            textarea.placeholder = 'Loading file content...';
-            textarea.disabled = true;
-            
-            reader.onload = function(e) {
-                try {
-                    let content = '';
-                    
-                    if (file.type === 'text/plain') {
-                        content = e.target.result;
-                    } else if (file.type === 'application/pdf') {
-                        // For PDF files, we'll extract text (simplified - would need PDF.js for full implementation)
-                        content = 'PDF content loaded. Please review and edit as needed.';
-                        alert('PDF uploaded. Please review the content and make any necessary edits.');
+            if (editorTextarea && editorCounter) {
+                editorTextarea.addEventListener('input', function() {
+                    const count = this.value.length;
+                    editorCounter.textContent = count;
+                    if (count > 900) {
+                        editorCounter.parentElement.classList.add('text-red-500');
                     } else {
-                        // For DOC/DOCX files (simplified - would need a proper library for full implementation)
-                        content = 'Document content loaded. Please review and edit as needed.';
-                        alert('Document uploaded. Please review the content and make any necessary edits.');
+                        editorCounter.parentElement.classList.remove('text-red-500');
                     }
-                    
-                    // Clean and format the content
-                    content = content.trim();
-                    if (content.length > 0) {
-                        // If textarea already has content, ask user if they want to replace or append
-                        if (textarea.value.trim().length > 0) {
-                            const action = confirm('The comment field already has content. Click OK to replace it, or Cancel to append the uploaded content.');
-                            if (action) {
-                                textarea.value = content;
-                            } else {
-                                textarea.value = textarea.value.trim() + '\n\n' + content;
+                });
+            }
+
+            // Form validation
+            const form = document.getElementById('enhancedReviewForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const errors = [];
+                    let isValid = true;
+
+                    // Check criteria ratings
+                    const criteriaSelects = form.querySelectorAll('select[name^="criteria_ratings"]');
+                    criteriaSelects.forEach(select => {
+                        if (!select.value) {
+                            errors.push(`Please rate ${select.name.replace('criteria_ratings[', '').replace(']', '').replace('_', ' ')}.`);
+                            isValid = false;
+                        }
+                    });
+
+                    // Check overall rating
+                    const rating = form.querySelector('input[name="overall_rating"]:checked');
+                    if (!rating) {
+                        errors.push('Please provide an overall rating.');
+                        isValid = false;
+                    }
+
+                    // Check recommendation
+                    const recommendation = form.querySelector('input[name="recommendation"]:checked');
+                    if (!recommendation) {
+                        errors.push('Please select an editorial recommendation.');
+                        isValid = false;
+                    }
+
+                    // Check comments
+                    const comment = form.querySelector('textarea[name="comment"]').value.trim();
+                    if (!comment) {
+                        errors.push('Please provide comments for the author.');
+                        isValid = false;
+                    }
+
+                    if (!isValid) {
+                        e.preventDefault();
+                        
+                        // Remove existing error
+                        const existingError = document.querySelector('.validation-errors');
+                        if (existingError) {
+                            existingError.remove();
+                        }
+
+                        // Create error message
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'validation-errors fixed top-4 right-4 z-50 max-w-md bg-red-50 border border-red-200 rounded-lg p-4 shadow-lg';
+                        errorDiv.innerHTML = `
+                            <div class="flex items-start">
+                                <svg class="w-5 h-5 text-red-500 mt-1 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                </svg>
+                                <div>
+                                    <h3 class="text-red-800 font-medium text-sm">Please complete the following:</h3>
+                                    <ul class="text-red-700 text-sm mt-2 list-disc list-inside">
+                                        ${errors.map(error => `<li>${error}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                <button onclick="this.parentElement.parentElement.remove()" class="ml-auto text-red-500 hover:text-red-700">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                        `;
+                        
+                        document.body.appendChild(errorDiv);
+                        
+                        // Auto-remove after 5 seconds
+                        setTimeout(() => {
+                            if (errorDiv.parentElement) {
+                                errorDiv.remove();
                             }
-                        } else {
-                            textarea.value = content;
-                        }
-                        
-                        // Auto-resize textarea if needed
-                        textarea.style.height = 'auto';
-                        textarea.style.height = Math.max(textarea.scrollHeight, 120) + 'px';
-                        
-                        // Show success message
-                        showUploadSuccess(event.target, 'File content loaded successfully!');
-                    }
-                } catch (error) {
-                    console.error('Error reading file:', error);
-                    alert('Error reading file. Please try again or copy the content manually.');
-                }
-                
-                // Restore textarea state
-                textarea.placeholder = originalPlaceholder;
-                textarea.disabled = false;
-                
-                // Clear file input
-                event.target.value = '';
-            };
-            
-            reader.onerror = function() {
-                alert('Error reading file. Please try again.');
-                textarea.placeholder = originalPlaceholder;
-                textarea.disabled = false;
-                event.target.value = '';
-            };
-            
-            // Read file based on type
-            if (file.type === 'text/plain') {
-                reader.readAsText(file);
-            } else {
-                // For other file types, we'd need specialized libraries
-                // For now, we'll just indicate the file was uploaded
-                reader.readAsArrayBuffer(file);
-            }
-        }
-        
-        function showUploadSuccess(fileInput, message) {
-            // Create success indicator
-            const successDiv = document.createElement('div');
-            successDiv.className = 'text-success text-12 mt-4';
-            successDiv.innerHTML = `<i class="ph ph-check-circle me-4"></i>${message}`;
-            
-            // Remove any existing success message
-            const existingSuccess = fileInput.parentNode.querySelector('.text-success');
-            if (existingSuccess) {
-                existingSuccess.remove();
-            }
-            
-            // Add success message
-            fileInput.parentNode.appendChild(successDiv);
-            
-            // Remove success message after 3 seconds
-            setTimeout(() => {
-                if (successDiv.parentNode) {
-                    successDiv.remove();
-                }
-            }, 3000);
-        }
-        
-            // Form validation with enhanced UX
-            document.getElementById('enhancedReviewForm').addEventListener('submit', function(e) {
-                const rating = document.querySelector('input[name="rating"]').value;
-                const recommendation = document.querySelector('input[name="recommendation"]:checked');
-                const comment = document.querySelector('textarea[name="comment"]').value.trim();
-                
-                let isValid = true;
-                let errors = [];
-                
-                if (!rating || rating === '0') {
-                    errors.push('Please provide an overall rating.');
-                    isValid = false;
-                    
-                    // Highlight overall rating section
-                    const ratingSection = document.querySelector('.overall-star-rating').closest('.mb-32');
-                    ratingSection.style.border = '2px solid #ef4444';
-                    ratingSection.style.borderRadius = '12px';
-                    setTimeout(() => {
-                        ratingSection.style.border = '';
-                    }, 3000);
-                }
-                
-                if (!recommendation) {
-                    errors.push('Please select a recommendation.');
-                    isValid = false;
-                    
-                    // Highlight recommendation section
-                    const recSection = document.querySelector('.recommendation-grid').closest('.mb-32');
-                    recSection.style.border = '2px solid #ef4444';
-                    recSection.style.borderRadius = '12px';
-                    setTimeout(() => {
-                        recSection.style.border = '';
-                    }, 3000);
-                }
-                
-                if (!comment) {
-                    errors.push('Please provide detailed comments.');
-                    isValid = false;
-                    
-                    // Highlight comment section
-                    const commentSection = document.querySelector('textarea[name="comment"]').closest('.mb-32');
-                    commentSection.style.border = '2px solid #ef4444';
-                    commentSection.style.borderRadius = '12px';
-                    setTimeout(() => {
-                        commentSection.style.border = '';
-                    }, 3000);
-                }
-                
-                if (!isValid) {
-                    e.preventDefault();
-                    
-                    // Show errors in a better way
-                    const errorHtml = `
-                        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin-bottom: 20px; color: #991b1b;">
-                            <h6 style="margin: 0 0 8px 0; color: #991b1b;"><i class="ph ph-warning-circle"></i> Please complete the following:</h6>
-                            <ul style="margin: 0; padding-left: 20px;">
-                                ${errors.map(error => `<li>${error}</li>`).join('')}
-                            </ul>
-                        </div>
-                    `;
-                    
-                    // Remove existing error message
-                    const existingError = document.querySelector('.validation-errors');
-                    if (existingError) {
-                        existingError.remove();
-                    }
-                    
-                    // Add new error message
-                    const form = document.getElementById('enhancedReviewForm');
-                    const errorDiv = document.createElement('div');
-                    errorDiv.className = 'validation-errors';
-                    errorDiv.innerHTML = errorHtml;
-                    form.insertBefore(errorDiv, form.firstChild);
-                    
-                    // Scroll to top of form
-                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    
-                    return false;
-                }
-                
-                // Add loading state to submit button
-                const submitBtn = this.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<i class="ph ph-circle-notch ph-spin me-8"></i>Submitting...';
-                submitBtn.disabled = true;
-                
-                // Re-enable button after 5 seconds (fallback)
-                setTimeout(() => {
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                }, 5000);
-            });
+                        }, 5000);
 
-            // Auto-save draft functionality (optional)
-            let saveTimeout;
-            function autoSaveDraft() {
-                clearTimeout(saveTimeout);
-                saveTimeout = setTimeout(() => {
-                    const formData = new FormData(document.getElementById('enhancedReviewForm'));
-                    // Here you could implement auto-save to localStorage or server
-                    console.log('Auto-saving draft...');
-                }, 2000);
+                        return false;
+                    }
+
+                    // Show loading state
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalHTML = submitBtn.innerHTML;
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = `
+                        <svg class="w-5 h-5 inline-block mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Submitting Review...
+                    `;
+
+                    // Reset after delay if something goes wrong
+                    setTimeout(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalHTML;
+                    }, 10000);
+                });
             }
-            
-            document.querySelectorAll('#enhancedReviewForm input, #enhancedReviewForm textarea').forEach(function(input) {
-                input.addEventListener('input', autoSaveDraft);
-            });
         });
     </script>
+
+    <style>
+        /* Modern Academic Styling */
+        .academic-gradient {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        
+        /* Enhanced focus states */
+        .form-input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* Smooth transitions */
+        .transition-smooth {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Modern shadows */
+        .shadow-modern {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        /* Rating hover effects */
+        input[type="radio"]:hover + div {
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+        
+        /* Card hover effects */
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </x-layouts.reviewer_layout>

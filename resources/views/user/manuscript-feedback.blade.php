@@ -78,7 +78,7 @@
                 @if($journal->abstract)
                     <div class="mt-4">
                         <span class="font-medium text-gray-700">Abstract:</span>
-                        <p class="text-gray-600 mt-1 text-sm leading-relaxed">{{ $journal->abstract }}</p>
+                        <p class="text-gray-600 mt-1 text-sm leading-relaxed">{!! $journal->abstract !!}</p>
                     </div>
                 @endif
             </div>
