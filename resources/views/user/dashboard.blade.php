@@ -7,9 +7,6 @@
             <h3 class="text-lg font-bold leading-6 text-gray-900">Dashboard</h3>
             <div class="flex items-center space-x-4">
                 <span class="text-sm text-gray-600">Welcome, {{ Str::words(auth()->user()->fullname, 1, '') }}</span>
-                <a href="{{ route('submit-manuscript') }}" class="bg-primary-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-700">
-                    Submit Manuscript
-                </a>
             </div>
         </div>
     </x-slot:breadcrumb>

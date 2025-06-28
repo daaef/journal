@@ -247,4 +247,30 @@ class Journal extends Model
             'recommendations' => $recommendations,
         ];
     }
+
+    /**
+     * Get the document type based on the file extension
+     */
+    public function getDocumentType()
+    {
+        if (!$this->journal_url) {
+            return 'unknown';
+        }
+
+        $extension = strtolower(pathinfo($this->journal_url, PATHINFO_EXTENSION));
+        
+        switch ($extension) {
+            case 'pdf':
+                return 'pdf';
+            case 'doc':
+            case 'docx':
+                return 'docx';
+            case 'txt':
+                return 'txt';
+            case 'md':
+                return 'markdown';
+            default:
+                return 'unknown';
+        }
+    }
 }

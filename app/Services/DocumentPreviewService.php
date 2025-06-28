@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 use Exception;
 
@@ -277,18 +278,52 @@ class DocumentPreviewService
             if ($htmlPath && file_exists($htmlPath)) unlink($htmlPath);
         }
     }
-    
-    /**
+      /**
      * Generate preview for PDF files
-     */
-    private function generatePdfPreview(UploadedFile $file): array
+     */    private function generatePdfPreview(UploadedFile $file): array
     {
-        // For PDF files, we can use PDF.js or similar
-        return [
-            'success' => true,
-            'html' => '<div class="pdf-preview">PDF preview requires PDF.js integration</div>',
-            'message' => 'PDF preview placeholder'
-        ];
+        try {
+            // Clean up old temporary files first
+            $this->cleanupTempFiles();
+            
+            // Ensure temp/previews directory exists
+            $tempDir = 'temp/previews';
+            if (!Storage::disk('public')->exists($tempDir)) {
+                Storage::disk('public')->makeDirectory($tempDir);
+            }
+              // Store the uploaded PDF file temporarily for preview
+            $fileName = 'preview_' . time() . '_' . Str::random(8) . '.pdf';
+            $filePath = $file->storeAs($tempDir, $fileName, 'public');
+            
+            // Generate URL for our PDF serving route instead of direct storage URL
+            $previewUrl = route('document.preview.pdf', ['filename' => $fileName]);
+            
+            Log::info('PDF preview generated', [
+                'file_path' => $filePath,
+                'url' => $previewUrl,
+                'original_name' => $file->getClientOriginalName()
+            ]);
+            
+            // Return PDF information for browser viewing
+            return [
+                'success' => true,
+                'html' => null,
+                'type' => 'pdf',
+                'url' => $previewUrl,
+                'message' => 'PDF ready for preview'
+            ];
+        } catch (Exception $e) {
+            Log::error('PDF preview generation failed', [
+                'file' => $file->getClientOriginalName(),
+                'error' => $e->getMessage()
+            ]);
+            
+            return [
+                'success' => false,
+                'html' => null,
+                'message' => 'Failed to prepare PDF for preview: ' . $e->getMessage()
+            ];
+        }
     }
     
     /**
@@ -372,5 +407,33 @@ class DocumentPreviewService
         $html = '<div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 100%; overflow-wrap: break-word;">' . $html . '</div>';
         
         return $html;
+    }
+    
+    /**
+     * Clean up old temporary preview files (older than 1 hour)
+     */
+    public function cleanupTempFiles(): void
+    {
+        try {
+            $tempDir = 'temp/previews';
+            if (!Storage::disk('public')->exists($tempDir)) {
+                return;
+            }
+            
+            $files = Storage::disk('public')->files($tempDir);
+            $oneHourAgo = time() - 3600;
+            
+            foreach ($files as $file) {
+                $lastModified = Storage::disk('public')->lastModified($file);
+                if ($lastModified < $oneHourAgo) {
+                    Storage::disk('public')->delete($file);
+                    Log::info('Deleted old preview file: ' . $file);
+                }
+            }
+        } catch (Exception $e) {
+            Log::error('Failed to cleanup temporary preview files', [
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 }

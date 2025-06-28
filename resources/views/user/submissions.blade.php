@@ -7,9 +7,6 @@
             <h3 class="text-lg font-bold leading-6 text-gray-900">My Submissions</h3>
             <div class="flex items-center space-x-4">
                 <span class="text-sm text-gray-600">{{ auth()->user()->fullname }}</span>
-                <a href="{{ route('submit-manuscript') }}" class="bg-primary-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-700">
-                    Submit New Manuscript
-                </a>
             </div>
         </div>
     </x-slot:breadcrumb>

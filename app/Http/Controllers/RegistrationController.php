@@ -96,6 +96,13 @@ class RegistrationController extends Controller
                     'alert-type' => 'success'
                 );
                 return redirect()->route('auth.login.get')->with($notification);
+            } else {
+                // Handle case where verification code is incorrect or user/activation not found
+                $notification = array(
+                    'message' => 'Invalid verification code or account not found. Please check your code and try again.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification)->withInput();
             }
 
         } catch (\Throwable $th) {

@@ -22,15 +22,38 @@
             <div class="space-y-6">
                 <!-- Manuscript Preview Section (For Authors Only) -->
                 @if(Auth::check() && Auth::user()->id === $journal->user_id && $journal->journal_url)
-                <!-- Document Reader Component -->
-                <x-document-reader 
-                    :journal="$journal" 
-                    title="Your Manuscript"
-                    subtitle="{{ basename($journal->journal_url) }}"
-                    height="75vh"
-                    role="author"
-                    :showControls="false"
-                />
+                <!-- New Document Preview Component -->
+                @php
+                    $extension = strtolower(pathinfo($journal->journal_url, PATHINFO_EXTENSION));
+                    $documentType = ($extension === 'pdf') ? 'pdf' : 'pandoc';
+                    // For existing journal documents, we'll use the journals.preview route
+                    $documentUrl = route('journals.preview', $journal->uuid);
+                @endphp
+                
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+                    <div class="bg-gradient-to-r from-slate-50 to-blue-50 px-6 py-5 border-b border-gray-100">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
+                                <i class="ph ph-file-text text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 leading-tight">Your Manuscript</h3>
+                                <p class="text-sm text-gray-600 mt-1">{{ basename($journal->journal_url) }}</p>
+                                <span class="text-xs text-gray-500 mt-1 font-medium bg-gray-100 px-2 py-1 rounded-md inline-block">
+                                    📄 {{ strtoupper($extension) }} Document
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <x-document-preview 
+                            :document-url="$documentUrl" 
+                            :document-type="$documentType" 
+                            height="75vh" 
+                            :show-controls="true" 
+                        />
+                    </div>
+                </div>
                 @endif
 
                 <!-- Abstract Content -->

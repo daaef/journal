@@ -14,16 +14,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body p-0 overflow-x-auto scroll-sm scroll-sm-horizontal">
-                    <table class="table style-two mb-0">
-                        <thead>
-                            <tr>
-                                <th>Manuscript Details</th>
-                                <th>Peer Review Summary</th>
-                                <th class="text-center">Status</th>
-                                <th class="text-center">Actions</th>
-                            </tr>
-                        </thead>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" style="table-layout: fixed; width: 100%;">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th style="width: 35%;">Manuscript Details</th>
+                                    <th style="width: 25%;">Peer Review Summary</th>
+                                    <th style="width: 15%;" class="text-center">Status</th>
+                                    <th style="width: 25%;" class="text-center">Actions</th>
+                                </tr>
+                            </thead>
                         <tbody>
                             @forelse ($journals as $journal)
                                 @php
@@ -33,75 +34,76 @@
                                     $revisionReviews = $journal->reviewerAssignments->whereIn('recommendation', ['minor_revision', 'major_revision'])->count();
                                 @endphp
                                 <tr>
-                                    <td>
-                                        <div class="flex-align gap-8">
-                                            <div class="w-40 h-40 rounded-circle bg-main-600 flex-center flex-shrink-0">
-                                                <i class="ph ph-file-text text-white"></i>
+                                    <td style="width: 35%; word-wrap: break-word; overflow: hidden;">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    <i class="ph ph-file-text text-white"></i>
+                                                </div>
                                             </div>
-                                            <div class="">
-                                                <h6 class="mb-0">{{ $journal->title }}</h6>
-                                                <div class="table-list">
-                                                    <span class="text-13 text-gray-600">{{ $journal->author }}</span>
-                                                    <span class="text-13 text-gray-600">{{ $journal->created_at->format('d F Y') }}</span>
+                                            <div class="flex-grow-1 min-w-0">
+                                                <h6 class="mb-1">
+                                                    <a href="{{ route('editor.journals.preview', [$journal->uuid, $journal->slug]) }}" 
+                                                       class="text-decoration-none text-primary fw-bold text-truncate d-block">
+                                                        {{ Str::limit($journal->title, 50) }}
+                                                    </a>
+                                                </h6>
+                                                <div class="text-muted small">
+                                                    <div class="text-truncate">{{ $journal->author }}</div>
+                                                    <div>{{ $journal->created_at->format('M j, Y') }}</div>
                                                 </div>
                                                 @if($journal->category)
-                                                    <span class="text-11 text-gray-500">{{ $journal->category->name }}</span>
+                                                    <span class="badge bg-light text-dark small">{{ $journal->category->name }}</span>
                                                 @endif
                                             </div>
                                         </div>
                                     </td>
-                                    <td>
-                                        <div class="mb-2">
-                                            <small class="text-muted">Total Reviews: {{ $completedReviews }}</small>
-                                        </div>
-                                        <div class="d-flex flex-wrap gap-1 mb-2">
-                                            @if($approvedReviews > 0)
-                                                <span class="badge bg-success">{{ $approvedReviews }} Accept</span>
-                                            @endif
-                                            @if($rejectedReviews > 0)
-                                                <span class="badge bg-danger">{{ $rejectedReviews }} Reject</span>
-                                            @endif
-                                            @if($revisionReviews > 0)
-                                                <span class="badge bg-warning">{{ $revisionReviews }} Revision</span>
-                                            @endif
-                                        </div>
-                                        <div class="text-11 text-gray-500">
-                                            Peer review completed on {{ $journal->updated_at->format('M j, Y') }}
+                                    <td style="width: 25%; word-wrap: break-word;">
+                                        <div class="small">
+                                            <div class="mb-2">
+                                                <strong>Total Reviews:</strong> {{ $completedReviews }}
+                                            </div>
+                                            <div class="d-flex flex-wrap gap-1 mb-2">
+                                                @if($approvedReviews > 0)
+                                                    <span class="badge bg-success small">{{ $approvedReviews }} Accept</span>
+                                                @endif
+                                                @if($rejectedReviews > 0)
+                                                    <span class="badge bg-danger small">{{ $rejectedReviews }} Reject</span>
+                                                @endif
+                                                @if($revisionReviews > 0)
+                                                    <span class="badge bg-warning small">{{ $revisionReviews }} Revision</span>
+                                                @endif
+                                            </div>
+                                            <div class="text-muted">
+                                                Completed: {{ $journal->updated_at->format('M j, Y') }}
+                                            </div>
                                         </div>
                                     </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-info text-white">
+                                    <td style="width: 15%;" class="text-center">
+                                        <span class="badge bg-info text-white small">
                                             Ready for Notice
                                         </span>
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="dropdown">
-                                            <button class="btn btn-sm btn-outline-main dropdown-toggle" type="button" 
-                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                Actions
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li>
-                                                    <a class="dropdown-item" href="{{ route('editor.journals.preview', [$journal->uuid, $journal->slug]) }}">
-                                                        <i class="ph ph-eye me-2"></i>Review Details
-                                                    </a>
-                                                </li>
-                                                <li><hr class="dropdown-divider"></li>
-                                                <li>
-                                                    <button type="button" class="dropdown-item text-success" 
-                                                            onclick="showApprovalForm('{{ $journal->uuid }}', '{{ $journal->title }}')">
-                                                        <i class="ph ph-check-circle me-2"></i>Send Approval Notice
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button type="button" class="dropdown-item text-danger" 
-                                                            onclick="showDeclineForm('{{ $journal->uuid }}', '{{ $journal->title }}')">
-                                                        <i class="ph ph-x-circle me-2"></i>Send Decline Notice
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </td>
+                                    </td>                    <td style="width: 25%;" class="text-center">
+                        <div class="d-flex flex-column gap-1">
+                            <!-- Direct Review Link -->
+                            <a href="{{ route('editor.journals.preview', [$journal->uuid, $journal->slug]) }}" 
+                               class="btn btn-sm btn-primary">
+                                <i class="ph ph-eye me-1"></i>Review
+                            </a>
+                            
+                            <!-- Direct Action Buttons -->
+                            <div class="d-flex gap-1">
+                                <button type="button" class="btn btn-sm btn-success flex-fill" 
+                                        onclick="showApprovalForm('{{ $journal->uuid }}', '{{ $journal->title }}')">
+                                    <i class="ph ph-check-circle me-1"></i>Approve
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger flex-fill" 
+                                        onclick="showDeclineForm('{{ $journal->uuid }}', '{{ $journal->title }}')">
+                                    <i class="ph ph-x-circle me-1"></i>Decline
+                                </button>
+                            </div>
+                        </div>
+                    </td>
                                 </tr>
                             @empty
                                 <tr>
@@ -127,12 +129,12 @@
     </div>
 
     <!-- Approval Notice Modal -->
-    <div class="modal fade" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade z-[8000]" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
+        <div class="modal-dialog h-screen flex items-center">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="approvalModalLabel">
-                        <i class="ph ph-check-circle text-success me-2"></i>Send Approval Notice
+                        <i class="ph ph-check-circle text-success me-2"></i>Approve Manuscript
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -167,7 +169,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-success">
-                            <i class="ph ph-paper-plane me-2"></i>Send Approval Notice
+                            <i class="ph ph-check-circle me-2"></i>Approve
                         </button>
                     </div>
                 </form>
@@ -176,12 +178,12 @@
     </div>
 
     <!-- Decline Notice Modal -->
-    <div class="modal fade" id="declineModal" tabindex="-1" aria-labelledby="declineModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade z-[8000]" id="declineModal" tabindex="-1" aria-labelledby="declineModalLabel" aria-hidden="true">
+        <div class="modal-dialog h-screen flex items-center">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="declineModalLabel">
-                        <i class="ph ph-x-circle text-danger me-2"></i>Send Decline Notice
+                        <i class="ph ph-x-circle text-danger me-2"></i>Decline Manuscript
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -216,7 +218,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-danger">
-                            <i class="ph ph-paper-plane me-2"></i>Send Decline Notice
+                            <i class="ph ph-x-circle me-2"></i>Decline
                         </button>
                     </div>
                 </form>
@@ -243,4 +245,62 @@
             modal.show();
         }
     </script>
+
+    <style>
+        /* Fix table width issues */
+        .table-responsive {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+        
+        .table {
+            table-layout: fixed !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        .table td,
+        .table th {
+            word-wrap: break-word !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+        
+        /* Ensure content doesn't overflow */
+        .min-w-0 {
+            min-width: 0;
+        }
+        
+        .text-truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .table td,
+            .table th {
+                padding: 0.5rem !important;
+            }
+            
+            .d-flex.flex-column {
+                gap: 0.25rem !important;
+            }
+        }
+        
+        /* Action buttons styling */
+        .btn-sm {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .d-flex.gap-1 {
+            gap: 0.25rem !important;
+        }
+        
+        .flex-fill {
+            flex: 1 1 auto;
+        }
+    </style>
 </x-layouts.editor_layout>

@@ -26,15 +26,24 @@ class DocumentPreviewController extends Controller
         ]);
         
         $file = $request->file('document');
-        
-        $result = $this->previewService->generatePreview($file);
+          $result = $this->previewService->generatePreview($file);
         
         if ($result['success']) {
-            return response()->json([
+            $response = [
                 'success' => true,
                 'html' => $result['html'],
                 'message' => $result['message']
-            ]);
+            ];
+            
+            // Include type and URL for PDF files
+            if (isset($result['type'])) {
+                $response['type'] = $result['type'];
+            }
+            if (isset($result['url'])) {
+                $response['url'] = $result['url'];
+            }
+            
+            return response()->json($response);
         } else {
             return response()->json([
                 'success' => false,
@@ -83,5 +92,42 @@ class DocumentPreviewController extends Controller
                 'message' => 'Preview not available for this file format'
             ], 400);
         }
+    }
+      /**
+     * Serve PDF file with proper inline headers
+     */
+    public function servePdf(Request $request, $filename)
+    {
+        $filePath = storage_path('app/public/temp/previews/' . $filename);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'PDF file not found');
+        }
+        
+        // Security check - ensure file is in the correct directory and is a PDF
+        $realPath = realpath($filePath);
+        $allowedDir = realpath(storage_path('app/public/temp/previews'));
+        
+        if (!$realPath || !$allowedDir || strpos($realPath, $allowedDir) !== 0) {
+            abort(403, 'Access denied');
+        }
+        
+        $extension = strtolower(pathinfo($realPath, PATHINFO_EXTENSION));
+        if ($extension !== 'pdf') {
+            abort(400, 'Only PDF files are allowed');
+        }
+        
+        // Check if download is requested
+        $isDownload = $request->has('download');
+        $disposition = $isDownload ? 'attachment' : 'inline';
+        
+        return response()->file($filePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => $disposition . '; filename="' . basename($filename) . '"',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+            'X-Frame-Options' => 'SAMEORIGIN'
+        ]);
     }
 }

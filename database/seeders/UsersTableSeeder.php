@@ -43,6 +43,21 @@ class UsersTableSeeder extends Seeder
         $editor->save();
         $editor->assignRole('Editor in Chief');
 
+        // Seed managing editor user
+        $managingEditor = new \App\Models\User();
+        $managingEditor->fullname = 'Managing Editor User';
+        $managingEditor->username = 'managing_editor';
+        $managingEditor->email = 'managing@example.com';
+        $managingEditor->country = 'Nigeria';
+        $managingEditor->password = bcrypt('password');
+        $managingEditor->uuid = \Illuminate\Support\Str::uuid();
+        $managingEditor->avatar = 'https://via.placeholder.com/150';
+        $managingEditor->email_verified_at = now();
+        $managingEditor->is_first_login = true;
+        $managingEditor->is_active = true;
+        $managingEditor->save();
+        $managingEditor->assignRole('Managing Editor');
+
         // Seed author user
         $author = new \App\Models\User();
         $author->fullname = 'Author User';

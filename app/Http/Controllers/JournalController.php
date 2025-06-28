@@ -612,7 +612,7 @@ class JournalController extends Controller
         return view('dashboard.reviewer.journals.showPendingApproval', compact('journals'));
     }
 
-    public function previewJournal(string $uuid)
+    public function previewJournal(string $uuid, string $slug = null)
     {
         // return "dsdsds";
         $journal = $this->repo->findByUuid($uuid);

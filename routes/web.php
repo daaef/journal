@@ -342,8 +342,9 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'publisher']], f
 
     Route::get('/submit-manuscript', [JournalController::class, 'creatManuscript'])->name('submit-manuscript');    Route::post('/submit-manuscript', [JournalController::class, 'submitManuscript'])->name('submit-manuscript.post');
 
-    // Document preview route
+    // Document preview routes
     Route::post('/document/preview', [App\Http\Controllers\DocumentPreviewController::class, 'preview'])->name('document.preview');
+    Route::get('/document/preview/pdf/{filename}', [App\Http\Controllers\DocumentPreviewController::class, 'servePdf'])->name('document.preview.pdf');
 
     Route::get('/settings/{uuid}', [UserController::class, 'edit'])->name('user.settings');
     Route::post('/settings/{uuid}', [UserController::class, 'update'])->name('user.settings.update');

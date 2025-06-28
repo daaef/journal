@@ -102,6 +102,11 @@
                                                             </form>
                                                         </li>
                                                         <li>
+                                                            <a class="dropdown-item text-warning" href="#" onclick="openRevisionModal('{{ $journal->uuid }}')">
+                                                                <i class="ph ph-note-pencil me-2"></i>Request Revisions
+                                                            </a>
+                                                        </li>
+                                                        <li>
                                                             <a class="dropdown-item text-danger" href="#" onclick="openRejectModal('{{ $journal->uuid }}')">
                                                                 <i class="ph ph-x-circle me-2"></i>Reject Manuscript
                                                             </a>
@@ -140,4 +145,243 @@
 
         </div>
     </div>
+
+    <!-- Reject Manuscript Modal -->
+    <div id="rejectModal" class="modal fade" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-danger-subtle">
+                    <h5 class="modal-title text-danger" id="rejectModalLabel">
+                        <i class="ph ph-x-circle me-2"></i>Reject Manuscript
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="rejectForm" method="POST" action="{{ route('editor.journals.rejectManuscript') }}">
+                    <div class="modal-body">
+                        @csrf
+                        <input type="hidden" name="journal_uuid" id="rejectJournalUuid">
+                        
+                        <div class="alert alert-warning d-flex align-items-start">
+                            <i class="ph ph-warning-circle me-2 mt-1"></i>
+                            <div>
+                                <strong>Important:</strong> This action will permanently reject the manuscript. 
+                                Please provide detailed feedback to help the author understand the decision.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="rejectionReason" class="form-label fw-medium">
+                                Rejection Reason <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" name="rejection_reason" id="rejectionReason" required>
+                                <option value="">Select rejection reason...</option>
+                                <option value="scope">Outside journal scope</option>
+                                <option value="quality">Insufficient quality/rigor</option>
+                                <option value="methodology">Methodological issues</option>
+                                <option value="significance">Limited significance/impact</option>
+                                <option value="plagiarism">Plagiarism concerns</option>
+                                <option value="ethics">Ethical issues</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="rejectionComments" class="form-label fw-medium">
+                                Detailed Comments <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" name="reason" id="rejectionComments" 
+                                      rows="6" placeholder="Provide detailed feedback explaining the rejection decision..." required></textarea>
+                            <div class="form-text">
+                                <span id="rejectionCommentsCount">0</span>/1000 characters
+                            </div>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="notify_author" id="notifyAuthorReject" checked>
+                            <label class="form-check-label" for="notifyAuthorReject">
+                                Send notification email to author
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="ph ph-x-circle me-2"></i>Reject Manuscript
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Revisions Modal -->
+    <div id="revisionModal" class="modal fade" tabindex="-1" aria-labelledby="revisionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning-subtle">
+                    <h5 class="modal-title text-warning-emphasis" id="revisionModalLabel">
+                        <i class="ph ph-note-pencil me-2"></i>Request Revisions
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="revisionForm" method="POST" action="{{ route('editor.journals.requestRevisions') }}">
+                    <div class="modal-body">
+                        @csrf
+                        <input type="hidden" name="journal_uuid" id="revisionJournalUuid">
+                        
+                        <div class="alert alert-info d-flex align-items-start">
+                            <i class="ph ph-info me-2 mt-1"></i>
+                            <div>
+                                The author will be notified of the revision request and can resubmit their manuscript 
+                                with the requested changes.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="revisionType" class="form-label fw-medium">
+                                Revision Type <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" name="revision_type" id="revisionType" required>
+                                <option value="">Select revision type...</option>
+                                <option value="minor">Minor Revisions (2-4 weeks)</option>
+                                <option value="major">Major Revisions (6-8 weeks)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="revisionComments" class="form-label fw-medium">
+                                Revision Instructions <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" name="changes" id="revisionComments" 
+                                      rows="6" placeholder="Provide clear instructions for the required revisions..." required></textarea>
+                            <div class="form-text">
+                                <span id="revisionCommentsCount">0</span>/2000 characters
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="revisionDeadline" class="form-label fw-medium">
+                                Revision Deadline
+                            </label>
+                            <input type="date" class="form-control" name="revision_deadline" id="revisionDeadline">
+                            <div class="form-text">Optional: Set a specific deadline for revisions</div>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="notify_author" id="notifyAuthorRevision" checked>
+                            <label class="form-check-label" for="notifyAuthorRevision">
+                                Send notification email to author
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="ph ph-note-pencil me-2"></i>Request Revisions
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functions
+        function openRejectModal(journalUuid) {
+            document.getElementById('rejectJournalUuid').value = journalUuid;
+            const modal = new bootstrap.Modal(document.getElementById('rejectModal'));
+            modal.show();
+        }
+
+        function openRevisionModal(journalUuid) {
+            document.getElementById('revisionJournalUuid').value = journalUuid;
+            const modal = new bootstrap.Modal(document.getElementById('revisionModal'));
+            modal.show();
+        }
+
+        // Character counters
+        document.addEventListener('DOMContentLoaded', function() {
+            // Rejection comments counter
+            const rejectionTextarea = document.getElementById('rejectionComments');
+            const rejectionCounter = document.getElementById('rejectionCommentsCount');
+            
+            if (rejectionTextarea && rejectionCounter) {
+                rejectionTextarea.addEventListener('input', function() {
+                    const count = this.value.length;
+                    rejectionCounter.textContent = count;
+                    if (count > 1000) {
+                        rejectionCounter.parentElement.classList.add('text-danger');
+                    } else {
+                        rejectionCounter.parentElement.classList.remove('text-danger');
+                    }
+                });
+            }
+
+            // Revision comments counter
+            const revisionTextarea = document.getElementById('revisionComments');
+            const revisionCounter = document.getElementById('revisionCommentsCount');
+            
+            if (revisionTextarea && revisionCounter) {
+                revisionTextarea.addEventListener('input', function() {
+                    const count = this.value.length;
+                    revisionCounter.textContent = count;
+                    if (count > 2000) {
+                        revisionCounter.parentElement.classList.add('text-danger');
+                    } else {
+                        revisionCounter.parentElement.classList.remove('text-danger');
+                    }
+                });
+            }
+
+            // Set default revision deadline based on type
+            const revisionTypeSelect = document.getElementById('revisionType');
+            const revisionDeadlineInput = document.getElementById('revisionDeadline');
+            
+            if (revisionTypeSelect && revisionDeadlineInput) {
+                revisionTypeSelect.addEventListener('change', function() {
+                    const today = new Date();
+                    let deadline = new Date(today);
+                    
+                    if (this.value === 'minor') {
+                        deadline.setDate(today.getDate() + 28); // 4 weeks
+                    } else if (this.value === 'major') {
+                        deadline.setDate(today.getDate() + 56); // 8 weeks
+                    }
+                    
+                    if (this.value) {
+                        revisionDeadlineInput.value = deadline.toISOString().split('T')[0];
+                    } else {
+                        revisionDeadlineInput.value = '';
+                    }
+                });
+            }
+
+            // Form validation and submission
+            document.getElementById('rejectForm').addEventListener('submit', function(e) {
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalHTML = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+                
+                // Reset button after 10 seconds if form doesn't submit
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalHTML;
+                }, 10000);
+            });
+
+            document.getElementById('revisionForm').addEventListener('submit', function(e) {
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalHTML = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+                
+                // Reset button after 10 seconds if form doesn't submit
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalHTML;
+                }, 10000);
+            });
+        });
+    </script>
 </x-layouts.editor_layout>

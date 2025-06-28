@@ -109,9 +109,9 @@
                         </div>
                         
                         <!-- Document Preview Modal -->
-                        <div id="preview-modal" class="fixed inset-0 z-50 hidden bg-gray-600 bg-opacity-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-                            <div class="flex items-center justify-center w-full min-h-screen p-4">
-                                <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-auto my-8 flex flex-col max-h-[calc(100vh-8rem)]">
+                        <div id="preview-modal" class="fixed inset-0 z-[2000] hidden bg-gray-600 bg-opacity-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                            <div class="flex items-center justify-center w-full h-screen p-4">
+                                <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-auto my-8 flex flex-col max-h-[70vh] overflow-y-auto">
                                     <!-- Modal Header -->
                                     <div class="flex items-center justify-between flex-shrink-0 p-6 border-b">
                                         <h3 class="text-xl font-semibold text-gray-900" id="modal-title">
@@ -125,16 +125,18 @@
                                             ×
                                         </button>
                                     </div>
-                                    
-                                    <!-- Modal Content (Scrollable) -->
-                                    <div id="preview-content" class="flex-1 p-6 overflow-y-auto border rounded-lg m-4 bg-gray-50">
-                                        <div id="preview-loading" class="hidden text-center py-12">
-                                            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                                            <p class="mt-4 text-gray-600 text-lg">Generating preview...</p>
-                                            <p class="mt-2 text-gray-500 text-sm">This may take a moment depending on document size</p>
-                                        </div>
-                                        <div id="preview-html" class="prose max-w-none"></div>
-                                        <div id="preview-error" class="hidden text-center py-12">
+                                                     <!-- Modal Content (Scrollable) -->
+                    <div id="preview-content" class="flex-1 p-6 overflow-y-auto border rounded-lg m-4 bg-gray-50" style="isolation: isolate;">
+                        <div id="preview-loading" class="hidden text-center py-12">
+                            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                            <p class="mt-4 text-gray-600 text-lg">Generating preview...</p>
+                            <p class="mt-2 text-gray-500 text-sm">This may take a moment depending on document size</p>
+                        </div>
+                        
+                        <!-- Document Preview Component Container -->
+                        <div id="preview-html" class="prose max-w-none"></div>
+                        
+                        <div id="preview-error" class="hidden text-center py-12">
                                             <div class="text-red-600 text-lg">
                                                 <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -269,8 +271,8 @@
     </form>
 
     <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 z-50 bg-gray-600 bg-opacity-50" style="display: none;">
-        <div class="flex items-center justify-center h-full">
+    <div id="loadingOverlay" class="fixed inset-0 z-50 bg-gray-600 bg-opacity-50 flex items-center justify-center h-full" style="display: none;">
+        <div class="">
             <div class="p-6 bg-white rounded-lg shadow-lg">
                 <div class="flex items-center space-x-3">
                     <div class="w-6 h-6 border-b-2 border-green-600 rounded-full animate-spin"></div>
@@ -421,7 +423,10 @@
 
         function closePreviewModal() {
             previewModal.classList.add('hidden');
+            // Reset body to normal state
             document.body.style.overflow = '';
+            document.body.style.padding = '0';
+            document.body.style.maxWidth = '100%';
         }
 
         previewBtn.addEventListener('click', function() {
@@ -431,7 +436,7 @@
                 return;
             }
 
-            // Show modal
+            // Show modal and prevent body scrolling
             previewModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
 
@@ -458,7 +463,35 @@
                 previewLoading.classList.add('hidden');
                 
                 if (data.success) {
-                    previewHtml.innerHTML = data.html;
+                    // Clear any existing content
+                    previewHtml.innerHTML = '';
+                    
+                    // Create document preview component dynamically
+                    const documentUrl = data.url || '#';
+                    const documentType = data.type || 'html';
+                    
+                    if (data.type === 'pdf') {
+                        // Use the document preview component for PDF
+                        previewHtml.innerHTML = `
+                            <x-document-preview 
+                                :document-url="'${documentUrl}'" 
+                                document-type="pdf" 
+                                height="600px" 
+                                :show-controls="true" 
+                            />
+                        `;
+                        
+                        // Since we can't use Blade components in JavaScript, we'll create the preview manually
+                        createDocumentPreview(previewHtml, documentUrl, 'pdf');
+                    } else {
+                        // For HTML content from Pandoc, display directly
+                        previewHtml.innerHTML = `
+                            <div style="padding: 20px; font-family: Arial, sans-serif; line-height: 1.6;">
+                                ${data.html}
+                            </div>
+                        `;
+                    }
+                    
                     showNotification('Preview generated successfully', 'success');
                 } else {
                     previewError.innerHTML = data.message || 'Failed to generate preview';
@@ -654,6 +687,152 @@
                     });
             });
         }
+
+        // Function to create document preview manually (since we can't use Blade components in JS)
+        function createDocumentPreview(container, documentUrl, documentType, height = '600px') {
+            const previewHtml = `
+                <div class="document-preview-wrapper" data-document-url="${documentUrl}" data-document-type="${documentType}">
+                    <!-- Preview Container -->
+                    <div id="document-preview-content" style="width: 100%; height: ${height}; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: #f5f5f5;">
+                        <!-- Loading State -->
+                        <div id="document-preview-loading" class="flex items-center justify-center h-full">
+                            <div class="text-center p-8">
+                                <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                                <p class="text-gray-600 text-lg">Loading document...</p>
+                                <p class="text-gray-500 text-sm">Please wait while we prepare the preview</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Preview Content (Initially Hidden) -->
+                        <div id="document-preview-display" class="hidden w-full h-full"></div>
+                        
+                        <!-- Error State -->
+                        <div id="document-preview-error" class="hidden flex items-center justify-center h-full">
+                            <div class="text-center p-8">
+                                <svg class="mx-auto h-16 w-16 text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.502 0L4.732 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                </svg>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">Preview Error</h3>
+                                <p id="document-preview-error-message" class="text-sm text-gray-600 mb-4"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Control Buttons -->
+                    <div class="mt-4 text-center">
+                        <div class="flex justify-center space-x-3">
+                            <a id="document-open-tab" href="${documentUrl}" target="_blank" class="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-800">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                                Open in New Tab
+                            </a>
+                            <a id="document-download" href="${documentUrl}?download=1" class="inline-flex items-center px-3 py-2 text-sm font-medium text-green-600 hover:text-green-800">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                Download
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = previewHtml;
+            
+            // Initialize the preview
+            setTimeout(() => {
+                const wrapper = container.querySelector('.document-preview-wrapper');
+                if (wrapper) {
+                    loadDocumentPreviewJS(wrapper);
+                }
+            }, 100);
+        }
+
+        // JavaScript version of the document preview loader
+        function loadDocumentPreviewJS(wrapper) {
+            const documentUrl = wrapper.dataset.documentUrl;
+            const documentType = wrapper.dataset.documentType;
+            
+            if (!documentUrl) {
+                showDocumentPreviewErrorJS('No document URL provided');
+                return;
+            }
+            
+            const loadingEl = wrapper.querySelector('#document-preview-loading');
+            const displayEl = wrapper.querySelector('#document-preview-display');
+            const errorEl = wrapper.querySelector('#document-preview-error');
+            
+            // Show loading state
+            loadingEl.classList.remove('hidden');
+            displayEl.classList.add('hidden');
+            errorEl.classList.add('hidden');
+            
+            // Handle different document types
+            if (documentType === 'pdf') {
+                loadPdfPreviewJS(documentUrl, displayEl, loadingEl, errorEl, wrapper);
+            } else {
+                loadPandocPreviewJS(documentUrl, displayEl, loadingEl, errorEl, wrapper);
+            }
+        }
+
+        function loadPdfPreviewJS(documentUrl, displayEl, loadingEl, errorEl, wrapper) {
+            // Add inline parameter to ensure PDF displays inline
+            const pdfUrl = documentUrl + (documentUrl.includes('?') ? '&' : '?') + 'inline=1';
+            
+            displayEl.innerHTML = `
+                <object 
+                    data="${pdfUrl}" 
+                    type="application/pdf" 
+                    width="100%" 
+                    height="100%"
+                    style="border: none;">
+                    <embed 
+                        src="${pdfUrl}" 
+                        type="application/pdf" 
+                        width="100%" 
+                        height="100%"
+                        style="border: none;">
+                        <div class="flex items-center justify-center h-full">
+                            <div class="text-center p-8">
+                                <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">PDF Preview Not Supported</h3>
+                                <p class="text-sm text-gray-600 mb-4">Your browser doesn't support inline PDF viewing.</p>
+                                <a href="${documentUrl}" target="_blank" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                    </svg>
+                                    Open PDF in New Tab
+                                </a>
+                            </div>
+                        </div>
+                    </embed>
+                </object>
+            `;
+            
+            // Update control links
+            updateControlLinksJS(wrapper, documentUrl);
+            
+            // Hide loading and show preview
+            loadingEl.classList.add('hidden');
+            displayEl.classList.remove('hidden');
+        }
+
+        function updateControlLinksJS(wrapper, documentUrl) {
+            const openTabLink = wrapper.querySelector('#document-open-tab');
+            const downloadLink = wrapper.querySelector('#document-download');
+            
+            if (openTabLink) {
+                openTabLink.href = documentUrl;
+            }
+            if (downloadLink) {
+                downloadLink.href = documentUrl + (documentUrl.includes('?') ? '&' : '?') + 'download=1';
+            }
+        }
+
+        // ...existing code...
     </script>
 
     <script src="https://cdn.ckeditor.com/ckeditor5/35.1.0/classic/ckeditor.js"></script>

@@ -48,9 +48,19 @@ class EloquentRegistrationRepository implements RegistrationContract {
     {
         // Find User
         $user = User::where('email', $request->email)->first();
+        
+        // Check if user exists
+        if (!$user) {
+            return false;
+        }
 
         // Find Activation Record
         $activation = $user->activation;
+        
+        // Check if activation record exists
+        if (!$activation) {
+            return false;
+        }
 
         // dd($user, $activation, $request->code);
         // Verify Activation Code

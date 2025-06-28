@@ -277,9 +277,7 @@ class PandocDocumentPreviewService
             'type' => 'pdf',
             'url' => Storage::disk('public')->url($documentPath)
         ];
-    }
-
-    /**
+    }    /**
      * Process and sanitize HTML output from Pandoc
      *
      * @param string $html
@@ -287,16 +285,16 @@ class PandocDocumentPreviewService
      */
     private function processAndSanitizeHtml(string $html): string
     {
-        // Add custom styling for better preview
+        // Add custom styling for better preview with body reset
         $customStyles = '
         <style>
             body {
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
                 line-height: 1.6;
                 color: #333;
-                max-width: 100%;
                 margin: 0;
-                padding: 20px;
+                padding: 0 !important;
+                max-width: 100% !important;
                 background-color: #fff;
             }
             h1, h2, h3, h4, h5, h6 {
@@ -305,7 +303,6 @@ class PandocDocumentPreviewService
                 margin-bottom: 0.5em;
             }
             p {
-                margin-bottom: 1em;
                 text-align: justify;
             }
             img {
@@ -345,7 +342,10 @@ class PandocDocumentPreviewService
                 border-radius: 5px;
                 overflow-x: auto;
             }
-            .watermark {
+                border-collapse: collapse;
+                width: 100%;
+                margin: 1em 0;
+            }            .watermark {
                 position: fixed;
                 top: 50%;
                 left: 50%;

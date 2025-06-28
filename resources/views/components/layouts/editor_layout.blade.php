@@ -204,7 +204,7 @@
 
     <div class="dashboard-main-wrapper">
 
-        <div class="top-navbar flex-between gap-16">
+        <div class="top-navbar flex-between gap-16 z-[700]">
 
             <div class="flex-align gap-16">
                 <!-- Toggle Button Start -->
@@ -233,11 +233,11 @@
                             <div class="card-body">
                                 <div class="flex-align gap-8 mb-20 pb-20 border-bottom border-gray-100">
                                     <div class="">
-                                        <h4 class="mb-0">{{ auth()->user()->fullname }}</h4>
-                                        <p class="fw-medium text-13 text-gray-200"></p>
+                                        <h4 class="my-0">{{ auth()->user()->fullname }}</h4>
+                                        <p class="fw-medium text-13 text-gray-200 my-0"></p>
                                     </div>
                                 </div>
-                                <ul class="max-h-270 overflow-y-auto scroll-sm pe-4">
+                                <ul class="max-h-270 overflow-y-auto scroll-sm pl-0">
                                     <li class="mb-4">
                                         <a href="{{ route('editor.user.settings', auth()->user()->uuid) }}"
                                             class="py-12 text-15 px-20 hover-bg-gray-50 text-gray-300 rounded-8 flex-align gap-8 fw-medium text-15">

@@ -1,4 +1,4 @@
-<header class="flex flex-wrap sm:justify-start h-[80px] sm:flex-nowrap w-full fixed z-[20000] bg-white text-sm py-3">
+<header class="flex flex-wrap sm:justify-start h-[80px] sm:flex-nowrap w-full fixed z-[2000] bg-white text-sm py-3">
     <nav class="container w-full mx-auto px-4 flex flex-wrap basis-full items-center justify-between relative">
         <div class="flex gap-5 items-center">
             <a class="flex-none text-xl lg:static lg:translate-y-0 absolute top-[30px] left-[20px] translate-y-[-50%] font-semibold dark:text-white focus:outline-none focus:opacity-80"
@@ -21,12 +21,12 @@
                        href="{{ route('journals') }}">Journals</a>
                     {{-- @dd(Auth::check()) --}}
                     @auth()
-                        <a class="font-bold lg:hidden text-gray-900 hover:text-gray-400 focus:outline-none focus:text-gray-400 "
+                        <a class="font-bold lg:hidden text-gray-100 hover:text-gray-400 focus:outline-none focus:text-gray-400"
                            href="{{ route('submit-manuscript') }}">
                             Submit Manuscript
                         </a>
                         @if (auth()->user()->hasRole('Admin'))
-                            <a class="font-bold lg:hidden text-gray-900 hover:text-gray-400 focus:outline-none focus:text-gray-400 "
+                            <a class="font-bold lg:hidden text-gray-100 hover:text-gray-400 focus:outline-none focus:text-gray-400 "
                                href="{{ route('admin.dashboard') }}">
                                 Dashboard
                             </a>
@@ -84,7 +84,7 @@
                     </button>
 
                     <div
-                        class="hs-dropdown-menu transition-[opacity,margin] ease-in-out duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 sm:w-48 z-10 bg-white sm:shadow-md rounded-lg p-1 space-y-1 before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5 hidden"
+                        class="hs-dropdown-menu transition-[opacity,margin] ease-in-out duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 sm:w-48 z-50 bg-white sm:shadow-md rounded-lg p-1 space-y-1 before:absolute top-full sm:border before:-top-5 before:start-0 before:w-full before:h-5 hidden"
                         role="menu" aria-orientation="vertical" aria-labelledby="hs-navbar-example-dropdown">
                         @if (auth()->user()->hasRole('Admin'))
                             <a class="@if (Route::is('dashboard')) text-primary-500 font-bold @else text-gray-800 font-medium @endif flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm  hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
