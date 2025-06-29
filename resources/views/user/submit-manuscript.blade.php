@@ -99,15 +99,15 @@
                                       class="px-4 py-2 text-sm font-medium text-gray-100 rounded-md bg-primary-600"
                                       style="display: none;"></span>
                                 <p class="text-xs leading-5 text-gray-600">PDF, DOC, or DOCX files up to 10MB</p>
-                                
+
                                 <!-- Preview button -->
-                                <button type="button" id="preview-btn" 
+                                <button type="button" id="preview-btn"
                                         class="hidden mt-3 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     Preview Document
                                 </button>
                             </div>
                         </div>
-                        
+
                         <!-- Document Preview Modal -->
                         <div id="preview-modal" class="fixed inset-0 z-[2000] hidden bg-gray-600 bg-opacity-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                             <div class="flex items-center justify-center w-full h-screen p-4">
@@ -132,10 +132,10 @@
                             <p class="mt-4 text-gray-600 text-lg">Generating preview...</p>
                             <p class="mt-2 text-gray-500 text-sm">This may take a moment depending on document size</p>
                         </div>
-                        
+
                         <!-- Document Preview Component Container -->
                         <div id="preview-html" class="prose max-w-none"></div>
-                        
+
                         <div id="preview-error" class="hidden text-center py-12">
                                             <div class="text-red-600 text-lg">
                                                 <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,7 +146,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Modal Footer -->
                                     <div class="flex items-center justify-end flex-shrink-0 p-6 border-t bg-gray-50">
                                         <button type="button" id="close-preview-footer" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
@@ -383,7 +383,7 @@
             if (file) {
                 const extension = file.name.split('.').pop().toLowerCase();
                 let message = `Selected: ${file.name}`;
-                
+
                 // Add conversion notice for Word documents
                 if (extension === 'doc' || extension === 'docx') {
                     message += ' (will be converted to PDF)';
@@ -394,10 +394,10 @@
                     fileNameSpan.className = 'px-4 py-2 text-sm font-medium text-gray-100 rounded-md bg-red-600';
                     message = `Unsupported file type: ${file.name}`;
                 }
-                
+
                 fileNameSpan.textContent = message;
                 fileNameSpan.style.display = 'inline-block';
-                
+
                 // Show/hide preview button
                 const previewBtn = document.getElementById('preview-btn');
                 if (extension === 'doc' || extension === 'docx' || extension === 'pdf' || extension === 'txt') {
@@ -461,27 +461,16 @@
             .then(response => response.json())
             .then(data => {
                 previewLoading.classList.add('hidden');
-                
+
                 if (data.success) {
                     // Clear any existing content
                     previewHtml.innerHTML = '';
-                    
+
                     // Create document preview component dynamically
                     const documentUrl = data.url || '#';
-                    const documentType = data.type || 'html';
-                    
+
                     if (data.type === 'pdf') {
-                        // Use the document preview component for PDF
-                        previewHtml.innerHTML = `
-                            <x-document-preview 
-                                :document-url="'${documentUrl}'" 
-                                document-type="pdf" 
-                                height="600px" 
-                                :show-controls="true" 
-                            />
-                        `;
-                        
-                        // Since we can't use Blade components in JavaScript, we'll create the preview manually
+                        // Create the PDF preview manually
                         createDocumentPreview(previewHtml, documentUrl, 'pdf');
                     } else {
                         // For HTML content from Pandoc, display directly
@@ -491,7 +480,7 @@
                             </div>
                         `;
                     }
-                    
+
                     showNotification('Preview generated successfully', 'success');
                 } else {
                     previewError.innerHTML = data.message || 'Failed to generate preview';
@@ -582,7 +571,7 @@
                 newLink.className = 'text-blue-600 hover:text-blue-800 underline font-bold';
                 newLink.textContent = 'JAPR Review Policy';
                 policyLink.parentNode.replaceChild(newLink, policyLink);
-                
+
                 // Remove the hint text
                 const hintText = label.querySelector('small');
                 if (hintText) {
@@ -620,7 +609,7 @@
                 const userAlreadyAccepted = {{ auth()->user()->review_policy_accepted ? 'true' : 'false' }};
                 const checkboxChecked = reviewPolicyCheckbox.checked;
                 const hiddenInputExists = hiddenInput && hiddenInput.value === '1';
-                
+
                 const policyAccepted = userAlreadyAccepted || checkboxChecked || hiddenInputExists;
 
                 if (!policyAccepted) {
@@ -629,13 +618,13 @@
                     showReviewPolicyModal();
                     return false;
                 }
-                
+
                 // Check if we have a Word document that will need conversion
                 const fileInput = document.getElementById('file-upload');
                 if (fileInput.files.length > 0) {
                     const file = fileInput.files[0];
                     const extension = file.name.split('.').pop().toLowerCase();
-                    
+
                     if (extension === 'doc' || extension === 'docx') {
                         // Show loading overlay for Word document conversion
                         loadingOverlay.style.display = 'flex';
@@ -690,7 +679,7 @@
 
         // Function to create document preview manually (since we can't use Blade components in JS)
         function createDocumentPreview(container, documentUrl, documentType, height = '600px') {
-            const previewHtml = `
+            container.innerHTML = `
                 <div class="document-preview-wrapper" data-document-url="${documentUrl}" data-document-type="${documentType}">
                     <!-- Preview Container -->
                     <div id="document-preview-content" style="width: 100%; height: ${height}; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: #f5f5f5;">
@@ -702,22 +691,22 @@
                                 <p class="text-gray-500 text-sm">Please wait while we prepare the preview</p>
                             </div>
                         </div>
-                        
+
                         <!-- Preview Content (Initially Hidden) -->
                         <div id="document-preview-display" class="hidden w-full h-full"></div>
-                        
+
                         <!-- Error State -->
                         <div id="document-preview-error" class="hidden flex items-center justify-center h-full">
                             <div class="text-center p-8">
                                 <svg class="mx-auto h-16 w-16 text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.502 0L4.732 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
                                 <h3 class="text-lg font-medium text-gray-900 mb-2">Preview Error</h3>
                                 <p id="document-preview-error-message" class="text-sm text-gray-600 mb-4"></p>
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Control Buttons -->
                     <div class="mt-4 text-center">
                         <div class="flex justify-center space-x-3">
@@ -737,9 +726,7 @@
                     </div>
                 </div>
             `;
-            
-            container.innerHTML = previewHtml;
-            
+
             // Initialize the preview
             setTimeout(() => {
                 const wrapper = container.querySelector('.document-preview-wrapper');
@@ -753,21 +740,21 @@
         function loadDocumentPreviewJS(wrapper) {
             const documentUrl = wrapper.dataset.documentUrl;
             const documentType = wrapper.dataset.documentType;
-            
+
             if (!documentUrl) {
                 showDocumentPreviewErrorJS('No document URL provided');
                 return;
             }
-            
+
             const loadingEl = wrapper.querySelector('#document-preview-loading');
             const displayEl = wrapper.querySelector('#document-preview-display');
             const errorEl = wrapper.querySelector('#document-preview-error');
-            
+
             // Show loading state
             loadingEl.classList.remove('hidden');
             displayEl.classList.add('hidden');
             errorEl.classList.add('hidden');
-            
+
             // Handle different document types
             if (documentType === 'pdf') {
                 loadPdfPreviewJS(documentUrl, displayEl, loadingEl, errorEl, wrapper);
@@ -779,18 +766,18 @@
         function loadPdfPreviewJS(documentUrl, displayEl, loadingEl, errorEl, wrapper) {
             // Add inline parameter to ensure PDF displays inline
             const pdfUrl = documentUrl + (documentUrl.includes('?') ? '&' : '?') + 'inline=1';
-            
+
             displayEl.innerHTML = `
-                <object 
-                    data="${pdfUrl}" 
-                    type="application/pdf" 
-                    width="100%" 
+                <object
+                    data="${pdfUrl}"
+                    type="application/pdf"
+                    width="100%"
                     height="100%"
                     style="border: none;">
-                    <embed 
-                        src="${pdfUrl}" 
-                        type="application/pdf" 
-                        width="100%" 
+                    <embed
+                        src="${pdfUrl}"
+                        type="application/pdf"
+                        width="100%"
                         height="100%"
                         style="border: none;">
                         <div class="flex items-center justify-center h-full">
@@ -811,10 +798,10 @@
                     </embed>
                 </object>
             `;
-            
+
             // Update control links
             updateControlLinksJS(wrapper, documentUrl);
-            
+
             // Hide loading and show preview
             loadingEl.classList.add('hidden');
             displayEl.classList.remove('hidden');
@@ -823,7 +810,7 @@
         function updateControlLinksJS(wrapper, documentUrl) {
             const openTabLink = wrapper.querySelector('#document-open-tab');
             const downloadLink = wrapper.querySelector('#document-download');
-            
+
             if (openTabLink) {
                 openTabLink.href = documentUrl;
             }
