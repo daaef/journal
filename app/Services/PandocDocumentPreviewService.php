@@ -145,32 +145,66 @@ class PandocDocumentPreviewService
         try {
             Log::info('PandocDocumentPreviewService: Converting DOCX to HTML', ['file' => $filePath]);
 
+            // Ubuntu-specific file validation
+            if (!$this->validateFileForUbuntu($filePath)) {
+                return [
+                    'success' => false,
+                    'message' => 'File validation failed for Ubuntu environment',
+                    'html' => null
+                ];
+            }
+
             // Create temporary output file
             $tempDir = storage_path('app/temp');
             if (!file_exists($tempDir)) {
                 if (!mkdir($tempDir, 0755, true) && !is_dir($tempDir)) {
                     throw new \RuntimeException(sprintf('Directory "%s" was not created', $tempDir));
                 }
+                // Set proper permissions for Ubuntu
+                chmod($tempDir, 0755);
             }
 
             $outputFile = $tempDir . '/' . uniqid('', true) . '.html';
 
-            // Pandoc command to convert DOCX to HTML with styling
+            // Normalize file path for Ubuntu (resolve any symbolic links, etc.)
+            $normalizedPath = realpath($filePath);
+            if (!$normalizedPath) {
+                Log::error('PandocDocumentPreviewService: Could not normalize file path', [
+                    'original_path' => $filePath,
+                    'realpath_result' => $normalizedPath
+                ]);
+                return [
+                    'success' => false,
+                    'message' => 'Could not resolve file path: ' . $filePath,
+                    'html' => null
+                ];
+            }
+
+            // Ubuntu-specific Pandoc command with explicit format detection
             $command = sprintf(
-                'pandoc "%s" -t html5 --standalone --embed-resources --metadata title="Document Preview" -o "%s"',
-                escapeshellarg($filePath),
+                'pandoc --from=docx --to=html5 --standalone --embed-resources --metadata title="Document Preview" "%s" -o "%s" 2>&1',
+                escapeshellarg($normalizedPath),
                 escapeshellarg($outputFile)
             );
 
-            Log::info('PandocDocumentPreviewService: Executing Pandoc command', ['command' => $command]);
+            Log::info('PandocDocumentPreviewService: Executing Pandoc command', [
+                'command' => $command,
+                'normalized_path' => $normalizedPath,
+                'file_exists' => file_exists($normalizedPath),
+                'file_readable' => is_readable($normalizedPath),
+                'file_size' => file_exists($normalizedPath) ? filesize($normalizedPath) : 'N/A'
+            ]);
 
-            $result = Process::timeout(60)->run($command);
+            $result = Process::timeout(120)->run($command);
 
             if (!$result->successful()) {
                 Log::error('PandocDocumentPreviewService: Pandoc conversion failed', [
                     'command' => $command,
+                    'exit_code' => $result->exitCode(),
                     'output' => $result->output(),
-                    'error' => $result->errorOutput()
+                    'error' => $result->errorOutput(),
+                    'working_directory' => getcwd(),
+                    'pandoc_version' => $this->getPandocVersion()
                 ]);
 
                 return [
@@ -220,6 +254,56 @@ class PandocDocumentPreviewService
                 'html' => null
             ];
         }
+    }
+
+    /**
+     * Validate file for Ubuntu-specific requirements
+     *
+     * @param string $filePath
+     * @return bool
+     */
+    private function validateFileForUbuntu(string $filePath): bool
+    {
+        // Check file exists
+        if (!file_exists($filePath)) {
+            Log::error('File does not exist', ['path' => $filePath]);
+            return false;
+        }
+
+        // Check file is readable
+        if (!is_readable($filePath)) {
+            Log::error('File is not readable', [
+                'path' => $filePath,
+                'permissions' => substr(sprintf('%o', fileperms($filePath)), -4),
+                'owner' => fileowner($filePath),
+                'current_user' => get_current_user()
+            ]);
+            return false;
+        }
+
+        // Check file is not empty
+        if (filesize($filePath) === 0) {
+            Log::error('File is empty', ['path' => $filePath]);
+            return false;
+        }
+
+        // Check if file is actually a DOCX file (magic number check)
+        $handle = fopen($filePath, 'rb');
+        if ($handle) {
+            $header = fread($handle, 4);
+            fclose($handle);
+
+            // DOCX files start with PK (ZIP magic number)
+            if (substr($header, 0, 2) !== 'PK') {
+                Log::warning('File does not appear to be a valid DOCX file', [
+                    'path' => $filePath,
+                    'header' => bin2hex($header)
+                ]);
+                // Don't return false here, just log warning
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -452,6 +536,21 @@ class PandocDocumentPreviewService
         }
 
         return $html;
+    }
+
+    /**
+     * Get Pandoc version for debugging
+     *
+     * @return string
+     */
+    private function getPandocVersion(): string
+    {
+        try {
+            $result = Process::run('pandoc --version');
+            return $result->successful() ? trim($result->output()) : 'Unknown';
+        } catch (Exception $e) {
+            return 'Error: ' . $e->getMessage();
+        }
     }
 
     /**
