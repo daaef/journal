@@ -200,7 +200,7 @@ class JournalController extends Controller
         // dd($request->all());
 
         // Check if user has accepted review policy (either previously or in this request)
-        $userHasAcceptedPolicy = Auth::user()->review_policy_accepted || 
+        $userHasAcceptedPolicy = Auth::user()->review_policy_accepted ||
                                 ($request->has('review_policy_accepted') && $request->review_policy_accepted);
 
         if (!$userHasAcceptedPolicy) {
@@ -266,7 +266,7 @@ class JournalController extends Controller
                 // Check if the file was a Word document that got converted
                 $uploadedFile = $request->file('manuscripts');
                 $originalExtension = strtolower($uploadedFile->getClientOriginalExtension());
-                
+
                 if (in_array($originalExtension, ['doc', 'docx'])) {
                     $notification = array(
                         'message' => 'Manuscript submitted successfully! Your Word document has been converted to PDF for processing.',
@@ -278,7 +278,7 @@ class JournalController extends Controller
                         'alert-type' => 'success'
                     );
                 }
-                
+
                 return redirect()->route('user.submissions')->with($notification);
             }
 
@@ -347,10 +347,10 @@ class JournalController extends Controller
     public function showJournal(string $slug)
     {
         $journal = $this->repo->findBySlug($slug);
-        
+
         // Get general comments
         $comments = $journal->comments()->with('user')->get();
-        
+
         // Get review comments specifically for the author (if user is the author)
         $authorReviewComments = collect();
         if (Auth::check() && Auth::user()->id === $journal->user_id) {
@@ -362,7 +362,7 @@ class JournalController extends Controller
                 ->orderBy('review_submitted_at', 'desc')
                 ->get();
         }
-        
+
         return view('view-abstract', compact('journal', 'comments', 'authorReviewComments'));
     }
 
@@ -373,43 +373,43 @@ class JournalController extends Controller
     {
         try {
             $journal = $this->repo->findByUUID($uuid);
-            
+
             if (!$journal) {
                 abort(404, 'Journal not found');
             }
-            
+
             // Check if user is authorized to view this document
             $canView = false;
-            
+
             if (Auth::check()) {
                 $user = Auth::user();
-                
+
                 // Author can view their own manuscript
                 if ($user->id === $journal->user_id) {
                     $canView = true;
                 }
-                
+
                 // Editors and Managing Editors can view any manuscript
                 elseif ($user->hasRole(['Editor in Chief', 'Managing Editor'])) {
                     $canView = true;
                 }
-                
+
                 // Associate Editors can view manuscripts assigned to them for review
                 elseif ($user->hasRole('Associate Editor')) {
                     $isAssignedReviewer = $journal->reviewers()
                         ->where('user_id', $user->id)
                         ->exists();
-                    
+
                     if ($isAssignedReviewer) {
                         $canView = true;
                     }
                 }
             }
-            
+
             if (!$canView) {
                 abort(403, 'Unauthorized to view this document');
             }
-            
+
             // Check if journal has a document
             if (!$journal->journal_url) {
                 return response()->json([
@@ -417,28 +417,44 @@ class JournalController extends Controller
                     'message' => 'No document attached to this journal'
                 ], 404);
             }
-            
+
+            // Check if the actual file exists before attempting conversion
+            $fullPath = storage_path('app/public/' . $journal->journal_url);
+            if (!file_exists($fullPath)) {
+                Log::error('Document file not found', [
+                    'journal_id' => $journal->id,
+                    'expected_path' => $fullPath,
+                    'journal_url' => $journal->journal_url
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Document file not found on server. Please contact support.'
+                ], 404);
+            }
+
             Log::info('Document preview requested', [
                 'journal_id' => $journal->id,
                 'user_id' => Auth::id(),
-                'document_path' => $journal->journal_url
+                'document_path' => $journal->journal_url,
+                'full_path' => $fullPath
             ]);
-            
+
             // Use Pandoc service to convert document
             $result = $this->pandocService->convertToHtml($journal->journal_url);
-            
+
             if (!$result['success']) {
                 Log::warning('Document preview failed', [
                     'journal_id' => $journal->id,
                     'error' => $result['message']
                 ]);
-                
+
                 return response()->json([
                     'success' => false,
                     'message' => $result['message']
                 ], 400);
             }
-            
+
             // For PDF files, return redirect URL
             if (isset($result['type']) && $result['type'] === 'pdf') {
                 return response()->json([
@@ -447,7 +463,7 @@ class JournalController extends Controller
                     'url' => $result['url']
                 ]);
             }
-            
+
             // For HTML conversion, return the HTML content
             return new Response($result['html'], 200, [
                 'Content-Type' => 'text/html',
@@ -456,14 +472,14 @@ class JournalController extends Controller
                 'Pragma' => 'no-cache',
                 'Expires' => '0'
             ]);
-            
+
         } catch (\Exception $e) {
             Log::error('Document preview error', [
                 'uuid' => $uuid,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while processing the document preview'
@@ -531,7 +547,7 @@ class JournalController extends Controller
     public function showEnhancedReviewDetails(string $uuid)
     {
         $journal = $this->repo->findByUUID($uuid);
-        
+
         if (!$journal) {
             abort(404, 'Journal not found');
         }
@@ -1056,12 +1072,12 @@ class JournalController extends Controller
         if ($result) {
             // Get the author User model safely
             $author = null;
-            
+
             // Try to get the User model through relationship or direct lookup
             if ($journal->user_id) {
                 $author = User::find($journal->user_id);
             }
-            
+
             $reviewer = Auth::user();
 
             // Send notifications only if we have a valid User object

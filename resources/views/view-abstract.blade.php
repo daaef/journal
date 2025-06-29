@@ -28,8 +28,12 @@
                     $documentType = ($extension === 'pdf') ? 'pdf' : 'pandoc';
                     // For existing journal documents, we'll use the journals.preview route
                     $documentUrl = route('journals.preview', $journal->uuid);
+
+                    // Check if the actual file exists before showing preview
+                    $fullPath = storage_path('app/public/' . $journal->journal_url);
+                    $fileExists = file_exists($fullPath);
                 @endphp
-                
+
                 <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
                     <div class="bg-gradient-to-r from-slate-50 to-blue-50 px-6 py-5 border-b border-gray-100">
                         <div class="flex items-center space-x-4">
@@ -42,16 +46,51 @@
                                 <span class="text-xs text-gray-500 mt-1 font-medium bg-gray-100 px-2 py-1 rounded-md inline-block">
                                     📄 {{ strtoupper($extension) }} Document
                                 </span>
+                                @if(!$fileExists)
+                                    <span class="text-xs text-red-600 mt-1 font-medium bg-red-100 px-2 py-1 rounded-md inline-block ml-2">
+                                        ⚠️ File Missing
+                                    </span>
+                                @endif
                             </div>
                         </div>
                     </div>
                     <div class="p-6">
-                        <x-document-preview 
-                            :document-url="$documentUrl" 
-                            :document-type="$documentType" 
-                            height="75vh" 
-                            :show-controls="true" 
-                        />
+                        @if($fileExists)
+                            <x-document-preview
+                                :document-url="$documentUrl"
+                                :document-type="$documentType"
+                                height="600px" />
+                        @else
+                            <!-- File Missing Error Display -->
+                            <div class="text-center py-12 bg-red-50 rounded-lg border border-red-200">
+                                <div class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                                    <i class="ph ph-warning text-red-600 text-2xl"></i>
+                                </div>
+                                <h3 class="text-lg font-medium text-red-900 mb-2">Document File Missing</h3>
+                                <p class="text-sm text-red-700 mb-4">
+                                    The manuscript file could not be found on the server. This may have occurred during a server migration or maintenance.
+                                </p>
+                                <div class="bg-red-100 border border-red-300 rounded-md p-4 text-left max-w-md mx-auto">
+                                    <p class="text-xs text-red-800 mb-2"><strong>Technical Details:</strong></p>
+                                    <p class="text-xs text-red-700 font-mono">Expected: {{ $journal->journal_url }}</p>
+                                    <p class="text-xs text-red-700 font-mono">Path: {{ $fullPath }}</p>
+                                </div>
+                                <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+                                    <a href="mailto:support@japr-research.org?subject=Missing Document File - {{ $journal->title }}&body=Journal ID: {{ $journal->id }}%0AExpected Path: {{ $journal->journal_url }}"
+                                       class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium">
+                                        <i class="ph ph-envelope mr-2"></i>
+                                        Contact Support
+                                    </a>
+                                    @if(Auth::user()->hasRole(['Editor in Chief', 'Managing Editor']))
+                                        <a href="{{ route('user.submit-manuscript') }}"
+                                           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium">
+                                            <i class="ph ph-upload mr-2"></i>
+                                            Re-upload Document
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
                 @endif
@@ -81,7 +120,7 @@
                             <i class="ph ph-download mr-2"></i>
                             Download
                         </a>
-                        
+
                         @if (auth()->user() && checkJournalInMyCollection($journal->id, auth()->user()->id))
                             <form action="{{ route('journals.remove-from-collection') }}" method="post">
                                 @csrf
@@ -105,7 +144,7 @@
                                 </button>
                             </form>
                         @endif
-                        
+
                         <div class="flex space-x-2">
                             <form action="{{ route('journals.like') }}" method="post" class="flex-1">
                                 @csrf
@@ -144,7 +183,7 @@
                                 </div>
                             </div>
                             @endif
-                            
+
                             <div class="flex items-start space-x-3">
                                 <i class="ph ph-tag text-blue-500 text-lg mt-0.5"></i>
                                 <div>
@@ -152,7 +191,7 @@
                                     <p class="text-sm text-gray-600">{{ $journal->category->name }}</p>
                                 </div>
                             </div>
-                            
+
                             <div class="flex items-start space-x-3">
                                 <i class="ph ph-globe text-green-500 text-lg mt-0.5"></i>
                                 <div>
@@ -160,7 +199,7 @@
                                     <p class="text-sm text-gray-600">{{ $journal->journal_language }}</p>
                                 </div>
                             </div>
-                            
+
                             <div class="flex items-start space-x-3">
                                 <i class="ph ph-copyright text-purple-500 text-lg mt-0.5"></i>
                                 <div>
