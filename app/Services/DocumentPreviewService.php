@@ -20,7 +20,7 @@ class DocumentPreviewService
     public function generatePreview(UploadedFile $file): array
     {
         $extension = strtolower($file->getClientOriginalExtension());
-        
+
         switch ($extension) {
             case 'pdf':
                 return $this->generatePdfPreview($file);
@@ -37,7 +37,7 @@ class DocumentPreviewService
                 ];
         }
     }
-    
+
     /**
      * Generate preview for DOCX files
      */
@@ -51,7 +51,7 @@ class DocumentPreviewService
                     return $result;
                 }
             }
-            
+
             // Method 2: Try LibreOffice
             if ($this->isLibreOfficeAvailable()) {
                 $result = $this->convertDocxToHtmlWithLibreOffice($file);
@@ -59,7 +59,7 @@ class DocumentPreviewService
                     return $result;
                 }
             }
-            
+
             // Method 3: Try unoconv
             if ($this->isUnoconvAvailable()) {
                 $result = $this->convertDocxToHtmlWithUnoconv($file);
@@ -67,19 +67,19 @@ class DocumentPreviewService
                     return $result;
                 }
             }
-            
+
             return [
                 'success' => false,
                 'html' => null,
                 'message' => 'No tools available for DOCX preview. Please install pandoc, LibreOffice, or unoconv.'
             ];
-            
+
         } catch (Exception $e) {
             Log::error('Document preview generation failed', [
                 'file' => $file->getClientOriginalName(),
                 'error' => $e->getMessage()
             ]);
-            
+
             return [
                 'success' => false,
                 'html' => null,
@@ -94,54 +94,105 @@ class DocumentPreviewService
     {
         $tempFilePath = null;
         $htmlPath = null;
-        
+
         try {
+            // Create temp directory if it doesn't exist
             $tempDir = storage_path('app/temp');
             if (!file_exists($tempDir)) {
-                mkdir($tempDir, 0755, true);
+                if (!mkdir($tempDir, 0755, true) && !is_dir($tempDir)) {
+                    throw new \RuntimeException(sprintf('Directory "%s" was not created', $tempDir));
+                }
             }
-            
-            // Save uploaded file to temp location - use storeAs to preserve original file
-            $tempFileName = uniqid() . '.docx';
+
+            // Generate unique file names
+            $tempFileName = uniqid('docx_preview_', true) . '.docx';
+            $htmlFileName = uniqid('html_preview_', true) . '.html';
             $tempFilePath = $tempDir . '/' . $tempFileName;
-            copy($file->getRealPath(), $tempFilePath);
-            
-            // Convert to HTML
-            $htmlPath = $tempDir . '/' . uniqid() . '.html';
-            
+            $htmlPath = $tempDir . '/' . $htmlFileName;
+
+            // Copy uploaded file to temp location with proper error handling
+            if (!copy($file->getRealPath(), $tempFilePath)) {
+                throw new Exception('Failed to copy uploaded file to temp directory');
+            }
+
+            // Verify the temp file exists and is readable
+            if (!file_exists($tempFilePath) || !is_readable($tempFilePath)) {
+                throw new Exception('Temp file is not accessible: ' . $tempFilePath);
+            }
+
+            Log::info('Pandoc conversion starting', [
+                'temp_file' => $tempFilePath,
+                'html_output' => $htmlPath,
+                'file_size' => filesize($tempFilePath)
+            ]);
+
+            // Convert to HTML with explicit format specification
             $process = new Process([
                 'pandoc',
-                $tempFilePath,
-                '--to', 'html',
-                '--output', $htmlPath,
+                '--from=docx',  // Explicitly specify input format
+                '--to=html',    // Explicitly specify output format
+                '--output=' . $htmlPath,
                 '--standalone',
-                '--self-contained'
+                '--self-contained',
+                '--wrap=none',  // Don't wrap lines
+                $tempFilePath
             ]);
-            
-            $process->setTimeout(60);
+
+            $process->setTimeout(120); // Increase timeout for larger files
             $process->run();
-            
-            if ($process->isSuccessful() && file_exists($htmlPath)) {
-                $html = file_get_contents($htmlPath);
-                
-                // Clean up temp files
-                if ($tempFilePath && file_exists($tempFilePath)) unlink($tempFilePath);
-                if ($htmlPath && file_exists($htmlPath)) unlink($htmlPath);
-                
+
+            Log::info('Pandoc process completed', [
+                'exit_code' => $process->getExitCode(),
+                'successful' => $process->isSuccessful(),
+                'error_output' => $process->getErrorOutput()
+            ]);
+
+            if (!$process->isSuccessful()) {
+                $errorOutput = $process->getErrorOutput();
+                Log::error('Pandoc conversion failed', [
+                    'error' => $errorOutput,
+                    'command' => $process->getCommandLine()
+                ]);
+
                 return [
-                    'success' => true,
-                    'html' => $this->sanitizeHtml($html),
-                    'message' => 'Preview generated successfully with pandoc'
+                    'success' => false,
+                    'html' => null,
+                    'message' => 'Failed to convert document with Pandoc: ' . $errorOutput
                 ];
             }
-            
+
+            // Check if HTML file was created
+            if (!file_exists($htmlPath)) {
+                return [
+                    'success' => false,
+                    'html' => null,
+                    'message' => 'Pandoc completed but no HTML output file was generated'
+                ];
+            }
+
+            // Read and return the HTML content
+            $html = file_get_contents($htmlPath);
+            if ($html === false) {
+                return [
+                    'success' => false,
+                    'html' => null,
+                    'message' => 'Failed to read generated HTML file'
+                ];
+            }
+
             return [
-                'success' => false,
-                'html' => null,
-                'message' => 'Pandoc conversion failed: ' . $process->getErrorOutput()
+                'success' => true,
+                'html' => $this->sanitizeHtml($html),
+                'message' => 'Preview generated successfully with Pandoc'
             ];
-            
+
         } catch (Exception $e) {
+            Log::error('Pandoc conversion exception', [
+                'error' => $e->getMessage(),
+                'file' => $file->getClientOriginalName(),
+                'temp_path' => $tempFilePath
+            ]);
+
             return [
                 'success' => false,
                 'html' => null,
@@ -149,8 +200,12 @@ class DocumentPreviewService
             ];
         } finally {
             // Ensure cleanup even if an exception occurs
-            if ($tempFilePath && file_exists($tempFilePath)) unlink($tempFilePath);
-            if ($htmlPath && file_exists($htmlPath)) unlink($htmlPath);
+            if ($tempFilePath && file_exists($tempFilePath)) {
+                unlink($tempFilePath);
+            }
+            if ($htmlPath && file_exists($htmlPath)) {
+                unlink($htmlPath);
+            }
         }
     }
       /**
@@ -160,17 +215,19 @@ class DocumentPreviewService
     {
         $tempFilePath = null;
         $htmlPath = null;
-        
+
         try {
             $tempDir = storage_path('app/temp');
             if (!file_exists($tempDir)) {
-                mkdir($tempDir, 0755, true);
+                if (!mkdir($tempDir, 0755, true) && !is_dir($tempDir)) {
+                    throw new \RuntimeException(sprintf('Directory "%s" was not created', $tempDir));
+                }
             }
-            
-            $tempFileName = uniqid() . '.docx';
+
+            $tempFileName = uniqid('', true) . '.docx';
             $tempFilePath = $tempDir . '/' . $tempFileName;
             copy($file->getRealPath(), $tempFilePath);
-            
+
             $process = new Process([
                 'soffice',
                 '--headless',
@@ -178,32 +235,32 @@ class DocumentPreviewService
                 '--outdir', $tempDir,
                 $tempFilePath
             ]);
-            
+
             $process->setTimeout(60);
             $process->run();
-            
+
             $htmlPath = $tempDir . '/' . pathinfo($tempFileName, PATHINFO_FILENAME) . '.html';
-            
+
             if ($process->isSuccessful() && file_exists($htmlPath)) {
                 $html = file_get_contents($htmlPath);
-                
+
                 // Clean up temp files
                 if ($tempFilePath && file_exists($tempFilePath)) unlink($tempFilePath);
                 if ($htmlPath && file_exists($htmlPath)) unlink($htmlPath);
-                
+
                 return [
                     'success' => true,
                     'html' => $this->sanitizeHtml($html),
                     'message' => 'Preview generated successfully with LibreOffice'
                 ];
             }
-            
+
             return [
                 'success' => false,
                 'html' => null,
                 'message' => 'LibreOffice conversion failed: ' . $process->getErrorOutput()
             ];
-            
+
         } catch (Exception $e) {
             return [
                 'success' => false,
@@ -223,49 +280,49 @@ class DocumentPreviewService
     {
         $tempFilePath = null;
         $htmlPath = null;
-        
+
         try {
             $tempDir = storage_path('app/temp');
             if (!file_exists($tempDir)) {
                 mkdir($tempDir, 0755, true);
             }
-            
+
             $tempFileName = uniqid() . '.docx';
             $tempFilePath = $tempDir . '/' . $tempFileName;
             copy($file->getRealPath(), $tempFilePath);
-            
+
             $htmlPath = $tempDir . '/' . uniqid() . '.html';
-            
+
             $process = new Process([
                 'unoconv',
                 '-f', 'html',
                 '-o', $htmlPath,
                 $tempFilePath
             ]);
-            
+
             $process->setTimeout(60);
             $process->run();
-            
+
             if ($process->isSuccessful() && file_exists($htmlPath)) {
                 $html = file_get_contents($htmlPath);
-                
+
                 // Clean up temp files
                 if ($tempFilePath && file_exists($tempFilePath)) unlink($tempFilePath);
                 if ($htmlPath && file_exists($htmlPath)) unlink($htmlPath);
-                
+
                 return [
                     'success' => true,
                     'html' => $this->sanitizeHtml($html),
                     'message' => 'Preview generated successfully with unoconv'
                 ];
             }
-            
+
             return [
                 'success' => false,
                 'html' => null,
                 'message' => 'Unoconv conversion failed: ' . $process->getErrorOutput()
             ];
-            
+
         } catch (Exception $e) {
             return [
                 'success' => false,
@@ -285,7 +342,7 @@ class DocumentPreviewService
         try {
             // Clean up old temporary files first
             $this->cleanupTempFiles();
-            
+
             // Ensure temp/previews directory exists
             $tempDir = 'temp/previews';
             if (!Storage::disk('public')->exists($tempDir)) {
@@ -294,16 +351,16 @@ class DocumentPreviewService
               // Store the uploaded PDF file temporarily for preview
             $fileName = 'preview_' . time() . '_' . Str::random(8) . '.pdf';
             $filePath = $file->storeAs($tempDir, $fileName, 'public');
-            
+
             // Generate URL for our PDF serving route instead of direct storage URL
             $previewUrl = route('document.preview.pdf', ['filename' => $fileName]);
-            
+
             Log::info('PDF preview generated', [
                 'file_path' => $filePath,
                 'url' => $previewUrl,
                 'original_name' => $file->getClientOriginalName()
             ]);
-            
+
             // Return PDF information for browser viewing
             return [
                 'success' => true,
@@ -317,7 +374,7 @@ class DocumentPreviewService
                 'file' => $file->getClientOriginalName(),
                 'error' => $e->getMessage()
             ]);
-            
+
             return [
                 'success' => false,
                 'html' => null,
@@ -325,7 +382,7 @@ class DocumentPreviewService
             ];
         }
     }
-    
+
     /**
      * Generate preview for text files
      */
@@ -334,7 +391,7 @@ class DocumentPreviewService
         try {
             $content = $file->get();
             $html = '<pre class="text-preview">' . htmlspecialchars($content) . '</pre>';
-            
+
             return [
                 'success' => true,
                 'html' => $html,
@@ -348,7 +405,7 @@ class DocumentPreviewService
             ];
         }
     }
-    
+
     /**
      * Check if pandoc is available
      */
@@ -375,7 +432,7 @@ class DocumentPreviewService
             return false;
         }
     }
-    
+
     /**
      * Check if unoconv is available
      */
@@ -389,7 +446,7 @@ class DocumentPreviewService
             return false;
         }
     }
-    
+
     /**
      * Sanitize HTML content for safe display
      */
@@ -399,16 +456,16 @@ class DocumentPreviewService
         $html = preg_replace('/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/mi', '', $html);
         $html = preg_replace('/<link\b[^<]*(?:(?!<\/link>)<[^<]*)*<\/link>/mi', '', $html);
         $html = preg_replace('/on\w+\s*=\s*["\'].*?["\']/i', '', $html);
-        
+
         // Clean up base64 images that might be too large
         $html = preg_replace('/data:image\/[^;]+;base64,[^"\'>\s]+/i', '#image-removed', $html);
-        
+
         // Add basic styling for better appearance
         $html = '<div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 100%; overflow-wrap: break-word;">' . $html . '</div>';
-        
+
         return $html;
     }
-    
+
     /**
      * Clean up old temporary preview files (older than 1 hour)
      */
@@ -419,10 +476,10 @@ class DocumentPreviewService
             if (!Storage::disk('public')->exists($tempDir)) {
                 return;
             }
-            
+
             $files = Storage::disk('public')->files($tempDir);
             $oneHourAgo = time() - 3600;
-            
+
             foreach ($files as $file) {
                 $lastModified = Storage::disk('public')->lastModified($file);
                 if ($lastModified < $oneHourAgo) {
