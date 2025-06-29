@@ -598,6 +598,7 @@
         const form = document.querySelector('form');
         const reviewPolicyCheckbox = document.getElementById('review_policy_accepted');
         const loadingOverlay = document.getElementById('loadingOverlay');
+        const submitBtn = document.getElementById('submitBtn');
 
         form.addEventListener('submit', function(e) {
             const submitValue = e.submitter.value;
@@ -619,6 +620,11 @@
                     return false;
                 }
 
+                // Show loading overlay for all submissions
+                loadingOverlay.style.display = 'flex';
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+
                 // Check if we have a Word document that will need conversion
                 const fileInput = document.getElementById('file-upload');
                 if (fileInput.files.length > 0) {
@@ -626,14 +632,30 @@
                     const extension = file.name.split('.').pop().toLowerCase();
 
                     if (extension === 'doc' || extension === 'docx') {
-                        // Show loading overlay for Word document conversion
-                        loadingOverlay.style.display = 'flex';
+                        // Show specific message for Word document conversion
                         showNotification('Processing your Word document... This may take a moment.', 'info');
+                    } else {
+                        // Show general processing message for other files
+                        showNotification('Processing your manuscript submission...', 'info');
                     }
+                } else {
+                    // Show message even if no file (shouldn't happen due to validation, but just in case)
+                    showNotification('Processing your manuscript submission...', 'info');
                 }
             }
         });
 
+        // Handle form submission errors (re-enable submit button if there's an error)
+        window.addEventListener('beforeunload', function() {
+            // Reset button state when page is about to unload
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit';
+            }
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+            }
+        });
         // Close modal when clicking outside
         document.getElementById('reviewPolicyModal').addEventListener('click', function(e) {
             if (e.target === this) {
