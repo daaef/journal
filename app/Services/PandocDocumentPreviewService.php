@@ -164,7 +164,7 @@ class PandocDocumentPreviewService
                 chmod($tempDir, 0755);
             }
 
-            $outputFile = $tempDir . '/' . uniqid('', true) . '.html';
+            $outputFile = $tempDir . '/' . uniqid('pandoc_', true) . '.html';
 
             // Normalize file path for Ubuntu (resolve any symbolic links, etc.)
             $normalizedPath = realpath($filePath);
@@ -180,9 +180,23 @@ class PandocDocumentPreviewService
                 ];
             }
 
-            // Ubuntu-specific Pandoc command with explicit format detection
+            // Test Pandoc with simple command first
+            $pandocTest = Process::timeout(10)->run('pandoc --version');
+            if (!$pandocTest->successful()) {
+                Log::error('Pandoc is not working', [
+                    'error' => $pandocTest->errorOutput(),
+                    'output' => $pandocTest->output()
+                ]);
+                return [
+                    'success' => false,
+                    'message' => 'Pandoc is not available: ' . $pandocTest->errorOutput(),
+                    'html' => null
+                ];
+            }
+
+            // Enhanced Pandoc command with better error handling
             $command = sprintf(
-                'pandoc --from=docx --to=html5 --standalone --embed-resources --metadata title="Document Preview" "%s" -o "%s" 2>&1',
+                'pandoc --from=docx --to=html5 --standalone --embed-resources --metadata title="Document Preview" %s -o %s',
                 escapeshellarg($normalizedPath),
                 escapeshellarg($outputFile)
             );
@@ -190,40 +204,85 @@ class PandocDocumentPreviewService
             Log::info('PandocDocumentPreviewService: Executing Pandoc command', [
                 'command' => $command,
                 'normalized_path' => $normalizedPath,
+                'output_file' => $outputFile,
                 'file_exists' => file_exists($normalizedPath),
                 'file_readable' => is_readable($normalizedPath),
-                'file_size' => file_exists($normalizedPath) ? filesize($normalizedPath) : 'N/A'
+                'file_size' => file_exists($normalizedPath) ? filesize($normalizedPath) : 'N/A',
+                'working_directory' => getcwd(),
+                'temp_dir_writable' => is_writable($tempDir)
             ]);
 
             $result = Process::timeout(120)->run($command);
 
+            // Enhanced error logging
             if (!$result->successful()) {
+                $errorOutput = $result->errorOutput();
+                $standardOutput = $result->output();
+
                 Log::error('PandocDocumentPreviewService: Pandoc conversion failed', [
                     'command' => $command,
                     'exit_code' => $result->exitCode(),
-                    'output' => $result->output(),
-                    'error' => $result->errorOutput(),
+                    'error_output' => $errorOutput,
+                    'standard_output' => $standardOutput,
                     'working_directory' => getcwd(),
-                    'pandoc_version' => $this->getPandocVersion()
+                    'pandoc_version' => $this->getPandocVersion(),
+                    'file_info' => [
+                        'path' => $normalizedPath,
+                        'exists' => file_exists($normalizedPath),
+                        'readable' => is_readable($normalizedPath),
+                        'size' => file_exists($normalizedPath) ? filesize($normalizedPath) : 0,
+                        'mime_type' => file_exists($normalizedPath) ? mime_content_type($normalizedPath) : 'unknown'
+                    ]
+                ]);
+
+                // Provide more specific error messages
+                $userMessage = 'Failed to convert document with Pandoc';
+                if (strpos($errorOutput, 'does not exist') !== false) {
+                    $userMessage .= ': File not found';
+                } elseif (strpos($errorOutput, 'permission') !== false) {
+                    $userMessage .= ': Permission denied';
+                } elseif (strpos($errorOutput, 'format') !== false) {
+                    $userMessage .= ': Unsupported file format';
+                } else {
+                    $userMessage .= ': ' . trim($errorOutput ?: $standardOutput);
+                }
+
+                return [
+                    'success' => false,
+                    'message' => $userMessage,
+                    'html' => null,
+                    'debug_info' => [
+                        'command' => $command,
+                        'exit_code' => $result->exitCode(),
+                        'error' => $errorOutput,
+                        'output' => $standardOutput
+                    ]
+                ];
+            }
+
+            // Check if output file was created
+            if (!file_exists($outputFile)) {
+                Log::error('PandocDocumentPreviewService: Output file not created', [
+                    'expected_output' => $outputFile,
+                    'temp_dir_contents' => scandir($tempDir)
                 ]);
 
                 return [
                     'success' => false,
-                    'message' => 'Failed to convert document with Pandoc: ' . $result->errorOutput(),
+                    'message' => 'Pandoc completed but no HTML output file was generated',
                     'html' => null
                 ];
             }
 
             // Read the generated HTML
-            if (!file_exists($outputFile)) {
+            $html = file_get_contents($outputFile);
+            if ($html === false) {
                 return [
                     'success' => false,
-                    'message' => 'Pandoc conversion completed but output file not found',
+                    'message' => 'Failed to read generated HTML file',
                     'html' => null
                 ];
             }
-
-            $html = file_get_contents($outputFile);
 
             // Clean up temporary file
             unlink($outputFile);
@@ -232,7 +291,8 @@ class PandocDocumentPreviewService
             $processedHtml = $this->processAndSanitizeHtml($html);
 
             Log::info('PandocDocumentPreviewService: DOCX conversion successful', [
-                'output_size' => strlen($processedHtml)
+                'output_size' => strlen($processedHtml),
+                'original_file' => $normalizedPath
             ]);
 
             return [
@@ -243,9 +303,10 @@ class PandocDocumentPreviewService
             ];
 
         } catch (Exception $e) {
-            Log::error('PandocDocumentPreviewService: Error in DOCX conversion', [
+            Log::error('PandocDocumentPreviewService: Exception in DOCX conversion', [
                 'file' => $filePath,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
 
             return [
