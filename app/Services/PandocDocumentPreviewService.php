@@ -19,23 +19,61 @@ class PandocDocumentPreviewService
     {
         try {
             Log::info('PandocDocumentPreviewService: Converting document to HTML', ['path' => $documentPath]);
-            
-            // Check if file exists
-            if (!Storage::disk('public')->exists($documentPath)) {
+
+            // Try multiple path resolution strategies
+            $possiblePaths = [
+                // Strategy 1: Direct storage path (if already relative to storage/app/public)
+                storage_path('app/public/' . $documentPath),
+                // Strategy 2: If path already includes storage/app/public
+                $documentPath,
+                // Strategy 3: Using Laravel Storage facade
+                Storage::disk('public')->path($documentPath),
+                // Strategy 4: Remove leading slash if present
+                storage_path('app/public/' . ltrim($documentPath, '/')),
+            ];
+
+            $fullPath = null;
+            $actualPath = null;
+
+            // Find the actual file path
+            foreach ($possiblePaths as $testPath) {
+                Log::debug('Testing path: ' . $testPath);
+                if (file_exists($testPath) && is_readable($testPath)) {
+                    $fullPath = $testPath;
+                    $actualPath = $testPath;
+                    break;
+                }
+            }
+
+            // If not found, try using Storage::disk to check existence
+            if (!$fullPath && Storage::disk('public')->exists($documentPath)) {
+                $fullPath = Storage::disk('public')->path($documentPath);
+                $actualPath = $fullPath;
+            }
+
+            if (!$fullPath || !file_exists($fullPath)) {
+                Log::error('PandocDocumentPreviewService: File not found', [
+                    'original_path' => $documentPath,
+                    'tested_paths' => $possiblePaths,
+                    'storage_exists' => Storage::disk('public')->exists($documentPath),
+                    'storage_path' => Storage::disk('public')->path($documentPath)
+                ]);
+
                 return [
                     'success' => false,
-                    'message' => 'Document file not found',
+                    'message' => 'Document file not found at any expected location',
                     'html' => null
                 ];
             }
 
-            $fullPath = Storage::disk('public')->path($documentPath);
-            $extension = strtolower(pathinfo($documentPath, PATHINFO_EXTENSION));
-            
+            $extension = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+
             Log::info('PandocDocumentPreviewService: File details', [
-                'full_path' => $fullPath,
+                'original_path' => $documentPath,
+                'resolved_path' => $fullPath,
                 'extension' => $extension,
-                'file_exists' => file_exists($fullPath)
+                'file_exists' => file_exists($fullPath),
+                'file_size' => filesize($fullPath)
             ]);
 
             // Check if Pandoc is available
@@ -69,7 +107,8 @@ class PandocDocumentPreviewService
         } catch (Exception $e) {
             Log::error('PandocDocumentPreviewService: Error converting document', [
                 'path' => $documentPath,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
 
             return [
@@ -88,8 +127,7 @@ class PandocDocumentPreviewService
     private function isPandocAvailable(): bool
     {
         try {
-            $result = Process::run('pandoc --version');
-            return $result->successful();
+            return Process::run('pandoc --version')->successful();
         } catch (Exception $e) {
             Log::warning('PandocDocumentPreviewService: Pandoc not available', ['error' => $e->getMessage()]);
             return false;
@@ -110,10 +148,12 @@ class PandocDocumentPreviewService
             // Create temporary output file
             $tempDir = storage_path('app/temp');
             if (!file_exists($tempDir)) {
-                mkdir($tempDir, 0755, true);
+                if (!mkdir($tempDir, 0755, true) && !is_dir($tempDir)) {
+                    throw new \RuntimeException(sprintf('Directory "%s" was not created', $tempDir));
+                }
             }
 
-            $outputFile = $tempDir . '/' . uniqid() . '.html';
+            $outputFile = $tempDir . '/' . uniqid('', true) . '.html';
 
             // Pandoc command to convert DOCX to HTML with styling
             $command = sprintf(
@@ -150,7 +190,7 @@ class PandocDocumentPreviewService
             }
 
             $html = file_get_contents($outputFile);
-            
+
             // Clean up temporary file
             unlink($outputFile);
 
@@ -192,8 +232,8 @@ class PandocDocumentPreviewService
     {
         try {
             $content = file_get_contents($filePath);
-            $html = '<div style="font-family: monospace; white-space: pre-wrap; padding: 20px;">' . 
-                    htmlspecialchars($content) . 
+            $html = '<div style="font-family: monospace; white-space: pre-wrap; padding: 20px;">' .
+                    htmlspecialchars($content) .
                     '</div>';
 
             return [
@@ -222,10 +262,12 @@ class PandocDocumentPreviewService
         try {
             $tempDir = storage_path('app/temp');
             if (!file_exists($tempDir)) {
-                mkdir($tempDir, 0755, true);
+                if (!mkdir($tempDir, 0755, true) && !is_dir($tempDir)) {
+                    throw new \RuntimeException(sprintf('Directory "%s" was not created', $tempDir));
+                }
             }
 
-            $outputFile = $tempDir . '/' . uniqid() . '.html';
+            $outputFile = $tempDir . '/' . uniqid('', true) . '.html';
 
             $command = sprintf(
                 'pandoc "%s" -t html5 --standalone -o "%s"',
@@ -382,12 +424,12 @@ class PandocDocumentPreviewService
                 e.preventDefault();
                 return false;
             });
-            
+
             document.addEventListener("selectstart", function(e) {
                 e.preventDefault();
                 return false;
             });
-            
+
             document.addEventListener("dragstart", function(e) {
                 e.preventDefault();
                 return false;
