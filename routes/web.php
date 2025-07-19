@@ -54,10 +54,10 @@ Route::prefix('journals')->group(function () {
     Route::match(['get', 'post'], '/', [JournalController::class, 'searchJournal'])->name('journals');
     Route::get('/view/{slug}', [JournalController::class, 'showJournal'])->name('journals.view');
     Route::get('/preview/{uuid}', [JournalController::class, 'previewDocument'])->name('journals.preview');
-    Route::match(['get', 'post'], '/like-journal/', [JournalController::class, 'likeJournal'])->name('journals.like')->middleware('auth');
-    Route::match(['get', 'post'], '/dislike-journal/', [JournalController::class, 'dislikeJournal'])->name('journals.dislike')->middleware('auth');
-    Route::match(['get', 'post'], '/add-to-collection/', [MyJournalCollectionController::class, 'store'])->name('journals.add-to-collection')->middleware('auth');
-    Route::match(['get', 'post'], '/remove-from-collection/', [MyJournalCollectionController::class, 'removeFromCollection'])->name('journals.remove-from-collection')->middleware('auth');
+    Route::post('/like-journal/', [JournalController::class, 'likeJournal'])->name('journals.like')->middleware(['auth', 'throttle:60,1']);
+    Route::post('/dislike-journal/', [JournalController::class, 'dislikeJournal'])->name('journals.dislike')->middleware(['auth', 'throttle:60,1']);
+    Route::post('/add-to-collection/', [MyJournalCollectionController::class, 'store'])->name('journals.add-to-collection')->middleware(['auth', 'throttle:60,1']);
+    Route::post('/remove-from-collection/', [MyJournalCollectionController::class, 'removeFromCollection'])->name('journals.remove-from-collection')->middleware(['auth', 'throttle:60,1']);
 });
 
 // Review Policy Route
@@ -198,6 +198,16 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
 //Editor Routes
 Route::group(['prefix' => 'editor', 'middleware' => ['auth', 'editor']], function () {
     Route::get('/', [EditorDashboardController::class, 'index'])->name('editor.dashboard');
+    
+    // Regional reviewer assignment routes
+    Route::prefix('regional-assignment')->group(function () {
+        Route::get('/{journalUuid}', [\App\Http\Controllers\Editor\RegionalReviewerController::class, 'showRegionalAssignment'])->name('editor.regional-assignment');
+        Route::post('/{journalUuid}/assign', [\App\Http\Controllers\Editor\RegionalReviewerController::class, 'assignRegionalReviewers'])->name('editor.regional-assignment.assign');
+        Route::get('/{journalUuid}/suggestions', [\App\Http\Controllers\Editor\RegionalReviewerController::class, 'getOptimalSuggestions'])->name('editor.regional-assignment.suggestions');
+        Route::get('/reviewers/by-region', [\App\Http\Controllers\Editor\RegionalReviewerController::class, 'getReviewersByRegion'])->name('editor.reviewers.by-region');
+        Route::get('/reviewers/by-interest', [\App\Http\Controllers\Editor\RegionalReviewerController::class, 'getReviewersByInterest'])->name('editor.reviewers.by-interest');
+        Route::get('/reviewer/{reviewerUuid}/details', [\App\Http\Controllers\Editor\RegionalReviewerController::class, 'getReviewerDetails'])->name('editor.reviewer.details');
+    });
 
     // Editor Notifications
     Route::group(['prefix' => 'notifications'], function () {

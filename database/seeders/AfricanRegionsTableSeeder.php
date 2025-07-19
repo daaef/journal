@@ -14,17 +14,18 @@ class AfricanRegionsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create a seeder data for names of african regions in alphabetical order and thier respective countries
+        // Create a seeder data for names of african regions in alphabetical order and their respective countries
         $regions = [
             'Central Africa' => [
                 'Angola',
                 'Cameroon',
                 'Central African Republic',
                 'Chad',
-                'Congo',
+                'Congo, Democratic Republic of the',
+                'Congo, Republic of the',
                 'Equatorial Guinea',
                 'Gabon',
-                'São Tomé and Príncipe',
+                'Sao Tome and Principe',
             ],
             'Eastern Africa' => [
                 'Burundi',
@@ -43,6 +44,8 @@ class AfricanRegionsTableSeeder extends Seeder
                 'South Sudan',
                 'Tanzania',
                 'Uganda',
+                'Zambia',
+                'Zimbabwe',
             ],
             'Northern Africa' => [
                 'Algeria',
@@ -51,6 +54,7 @@ class AfricanRegionsTableSeeder extends Seeder
                 'Morocco',
                 'Sudan',
                 'Tunisia',
+                'Western Sahara',
             ],
             'Southern Africa' => [
                 'Botswana',
@@ -63,11 +67,11 @@ class AfricanRegionsTableSeeder extends Seeder
                 'Benin',
                 'Burkina Faso',
                 'Cape Verde',
+                'Cote d\'Ivoire',
                 'Gambia',
                 'Ghana',
                 'Guinea',
                 'Guinea-Bissau',
-                'Ivory Coast',
                 'Liberia',
                 'Mali',
                 'Mauritania',
@@ -79,14 +83,22 @@ class AfricanRegionsTableSeeder extends Seeder
             ],
         ];
 
-        foreach ($regions as $region => $countries) {
-            $region = Region::create(['name' => $region]);
+        foreach ($regions as $regionName => $countries) {
+            // Create the region
+            $region = Region::create(['name' => $regionName]);
 
-            foreach ($countries as $country) {
-                $countryIds = Country::whereIn('name', $countries)->pluck('id')->toArray();
-                $region->countries()->attach($countryIds);
+            // Create countries for this region
+            foreach ($countries as $countryName) {
+                Country::create([
+                    'name' => $countryName,
+                    'code' => strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $countryName), 0, 2)), // Remove special chars for code
+                    'region_id' => $region->id,
+                ]);
             }
+
+            $this->command->info("Created region: {$regionName} with " . count($countries) . " countries");
         }
 
+        $this->command->info('African regions and countries seeding completed successfully!');
     }
 }

@@ -16,7 +16,7 @@
         <hr class="">
     </x-slot:breadcrumb>
 
-    <form class="py-5" method="post" action="{{ route('user.settings.update', $user->uuid) }}">
+    <form class="py-5 settings-form" method="post" action="{{ route('user.settings.update', $user->uuid) }}">
         @csrf
         
         {{-- Display validation errors --}}
@@ -78,7 +78,7 @@
                         <label for="fullname" class="block text-sm font-medium leading-6 text-gray-900">Full Name</label>
                         <div class="mt-2">
                             <input id="fullname" name="fullname" type="text" value="{{ old('fullname', $user->fullname) }}" autocomplete="fullname" required
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 @error('fullname') ring-red-500 focus:ring-red-500 @enderror">
+                                class="form-control @error('fullname') is-invalid @enderror">
                             @error('fullname')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -88,7 +88,7 @@
                         <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username</label>
                         <div class="mt-2">
                             <input id="username" name="username" type="text" value="{{ old('username', $user->username) }}" autocomplete="username" required
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 @error('username') ring-red-500 focus:ring-red-500 @enderror">
+                                class="form-control @error('username') is-invalid @enderror">
                             @error('username')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -98,7 +98,7 @@
                         <label for="institution" class="block text-sm font-medium leading-6 text-gray-900">Institution</label>
                         <div class="mt-2">
                             <input id="institution" name="institution" type="text" value="{{ old('institution', $user->institution) }}" autocomplete="institution"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 @error('institution') ring-red-500 focus:ring-red-500 @enderror">
+                                class="form-control @error('institution') is-invalid @enderror">
                             @error('institution')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -109,13 +109,13 @@
                             Interests <a href="{{ route('user.interests') }}" class="text-primary-500 font-bold hover:underline">Edit</a></label>
                         <div class="mt-2">
                             <input disabled id="interests" name="interests" type="text" value="{{ $interests ?? 'No interests set' }}" autocomplete="interests"
-                                class="block w-full pointer-events-none rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                class="form-control pointer-events-none">
                         </div>
                     </div>
                     <div class="w-full">
                         <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Country / Region</label>
                         <div class="mt-2">
-                            <select name="country" id="country" class="block w-full bg-white rounded-md border-0 px-3 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 @error('country') ring-red-500 focus:ring-red-500 @enderror">
+                            <select name="country" id="country" class="form-control @error('country') is-invalid @enderror">
                                 <option value="">Select your country</option>
                                 @include('components.country-options', ['selectedCountry' => old('country', $user->country)])
                             </select>
@@ -124,6 +124,92 @@
                             @enderror
                         </div>
                     </div>
+                    
+                    @if($user->hasRole('Associate Editor'))
+                    <div class="w-full">
+                        <label for="regional_expertise" class="block text-sm font-medium leading-6 text-gray-900">
+                            Regional Expertise <span class="text-xs text-gray-500">(For Associate Editors)</span>
+                        </label>
+                        <div class="mt-2">
+                            <select name="regional_expertise[]" id="regional_expertise" multiple class="form-control @error('regional_expertise') is-invalid @enderror">
+                                <option value="West Africa">West Africa</option>
+                                <option value="East Africa">East Africa</option>
+                                <option value="Central Africa">Central Africa</option>
+                                <option value="Southern Africa">Southern Africa</option>
+                                <option value="North Africa">North Africa</option>
+                                <option value="Europe">Europe</option>
+                                <option value="North America">North America</option>
+                                <option value="Asia">Asia</option>
+                                <option value="South America">South America</option>
+                                <option value="Oceania">Oceania</option>
+                            </select>
+                            @error('regional_expertise')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            <p class="mt-1 text-xs text-gray-500">Hold Ctrl/Cmd to select multiple regions</p>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full">
+                        <label for="research_interests" class="block text-sm font-medium leading-6 text-gray-900">
+                            Research Interests <span class="text-xs text-gray-500">(For Associate Editors)</span>
+                        </label>
+                        <div class="mt-2">
+                            <select name="research_interests[]" id="research_interests" multiple class="form-control @error('research_interests') is-invalid @enderror">
+                                <option value="Agriculture">Agriculture</option>
+                                <option value="Medicine">Medicine</option>
+                                <option value="Engineering">Engineering</option>
+                                <option value="Social Sciences">Social Sciences</option>
+                                <option value="Natural Sciences">Natural Sciences</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Business">Business</option>
+                                <option value="Education">Education</option>
+                                <option value="Public Health">Public Health</option>
+                                <option value="Environmental Science">Environmental Science</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Economics">Economics</option>
+                                <option value="Psychology">Psychology</option>
+                                <option value="Law">Law</option>
+                                <option value="Arts and Humanities">Arts and Humanities</option>
+                                <option value="Mathematics">Mathematics</option>
+                                <option value="Physics">Physics</option>
+                                <option value="Chemistry">Chemistry</option>
+                                <option value="Biology">Biology</option>
+                                <option value="Geology">Geology</option>
+                                <option value="Astronomy">Astronomy</option>
+                            </select>
+                            @error('research_interests')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            <p class="mt-1 text-xs text-gray-500">Hold Ctrl/Cmd to select multiple interests</p>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full">
+                        <label for="biography" class="block text-sm font-medium leading-6 text-gray-900">
+                            Academic Biography <span class="text-xs text-gray-500">(For Associate Editors)</span>
+                        </label>
+                        <div class="mt-2">
+                            <textarea name="biography" id="biography" rows="4" class="form-control @error('biography') is-invalid @enderror">{{ old('biography', $user->biography) }}</textarea>
+                            @error('biography')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            <p class="mt-1 text-xs text-gray-500">Brief description of your academic background and expertise</p>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full">
+                        <label for="available_for_review" class="block text-sm font-medium leading-6 text-gray-900">
+                            Available for Review <span class="text-xs text-gray-500">(For Associate Editors)</span>
+                        </label>
+                        <div class="mt-2">
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" name="available_for_review" value="1" {{ old('available_for_review', $user->available_for_review) ? 'checked' : '' }} class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <span class="ml-2 text-sm text-gray-700">I am available to review manuscripts</span>
+                            </label>
+                        </div>
+                    </div>
+                    @endif
                     <div>
                         <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
                         <div class="mt-2">
@@ -182,6 +268,29 @@
     </form>
 
 <script>
+// Pre-select existing values for multiple select fields
+document.addEventListener('DOMContentLoaded', function() {
+    // Regional expertise
+    const regionalExpertise = @json($user->regional_expertise ?? []);
+    const regionalSelect = document.getElementById('regional_expertise');
+    if (regionalSelect) {
+        regionalExpertise.forEach(region => {
+            const option = regionalSelect.querySelector(`option[value="${region}"]`);
+            if (option) option.selected = true;
+        });
+    }
+    
+    // Research interests
+    const researchInterests = @json($user->research_interests ?? []);
+    const researchSelect = document.getElementById('research_interests');
+    if (researchSelect) {
+        researchInterests.forEach(interest => {
+            const option = researchSelect.querySelector(`option[value="${interest}"]`);
+            if (option) option.selected = true;
+        });
+    }
+});
+
 document.getElementById('updateButton').addEventListener('click', function() {
     const button = this;
     const buttonText = document.getElementById('buttonText');

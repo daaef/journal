@@ -80,7 +80,7 @@
                                         <div class="flex-align justify-content-center gap-8">
                                             <!-- Quick Actions -->
                                             <div class="dropdown">
-                                                <button class="btn btn-sm btn-outline-main dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                <button class="action-btn action-btn-outline-secondary action-btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                                     Actions
                                                 </button>
                                                 <ul class="dropdown-menu">

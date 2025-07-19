@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Journal extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'title',
@@ -50,7 +49,9 @@ class Journal extends Model
         'declined_by',
         'approved_at',
         'managing_editor_notice',
-        'managing_editor_notice_sent_at'
+        'managing_editor_notice_sent_at',
+        'country',
+        'region'
         // 'dislikes',
     ];
 

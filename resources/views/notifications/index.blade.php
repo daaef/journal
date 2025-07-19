@@ -22,7 +22,7 @@
                 <button type="button" id="mark-all-read" class="btn btn-primary btn-sm">
                     <i class="ph ph-check"></i> Mark All Read
                 </button>
-                <button type="button" id="delete-read" class="btn btn-outline-danger btn-sm">
+                <button type="button" id="delete-read" class="action-btn action-btn-outline-danger action-btn-sm">
                     <i class="ph ph-trash"></i> Delete Read
                 </button>
             </div>
@@ -214,16 +214,16 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                             <div class="d-flex gap-2">
                                 ${data.action_url && data.action_url !== '#' ?
-                                    `<button class="btn btn-sm btn-outline-primary view-btn" data-url="${data.action_url}" data-notification-id="${notification.id}">
+                                    `<button class="action-btn action-btn-outline-primary action-btn-sm view-btn" data-url="${data.action_url}" data-notification-id="${notification.id}">
                                         <i class="ph ph-eye"></i> View
                                     </button>` : ''
                                 }
                                 ${!isRead ?
-                                    `<button class="btn btn-sm btn-outline-success mark-read-btn" data-notification-id="${notification.id}">
+                                    `<button class="action-btn action-btn-outline-success action-btn-sm mark-read-btn" data-notification-id="${notification.id}">
                                         <i class="ph ph-check"></i>
                                     </button>` : ''
                                 }
-                                <button class="btn btn-sm btn-outline-danger delete-btn" data-notification-id="${notification.id}">
+                                <button class="action-btn action-btn-outline-danger action-btn-sm delete-btn" data-notification-id="${notification.id}">
                                     <i class="ph ph-trash"></i>
                                 </button>
                             </div>

@@ -483,49 +483,21 @@
                 </div>
             </div>
             <div class="grid gap-4">
-
                 <x-journal :journals="$journals" />
             </div>
-            <div class="flex justify-between mt-6">
-                <div class="flex gap-x-4">
-                    <a href="#" class="flex gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                             stroke-linejoin="round" class="lucide lucide-chevrons-left">
-                            <path d="m11 17-5-5 5-5" />
-                            <path d="m18 17-5-5 5-5" />
-                        </svg>
-                        First
-                    </a>
-                    <a href="#" class="flex gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                             stroke-linejoin="round" class="lucide lucide-chevron-left">
-                            <path d="m15 18-6-6 6-6" />
-                        </svg>
-                        Previous
-                    </a>
+            
+            <!-- Pagination -->
+            @if($journals->hasPages())
+            <div class="flex justify-between items-center mt-6">
+                <div class="text-sm text-gray-700">
+                    Showing {{ $journals->firstItem() }} to {{ $journals->lastItem() }} of {{ $journals->total() }} results
                 </div>
-                <div class="flex gap-x-4">
-                    <a href="#" class="flex gap-1">
-                        Next
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                             stroke-linejoin="round" class="lucide lucide-chevron-right">
-                            <path d="m9 18 6-6-6-6" />
-                        </svg>
-                    </a>
-                    <a href="#" class="flex gap-1">
-                        Last
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                             stroke-linejoin="round" class="lucide lucide-chevrons-right">
-                            <path d="m6 17 5-5-5-5" />
-                            <path d="m13 17 5-5-5-5" />
-                        </svg>
-                    </a>
+                <div class="flex gap-x-2">
+                    {{ $journals->links() }}
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </x-layouts.layout>
+

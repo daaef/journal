@@ -70,25 +70,68 @@
                         <ul class="sidebar-submenu">
                             <li class="sidebar-submenu__item">
                                 <a href="{{ route('reviewer.journals.pendingApproval') }}" class="sidebar-submenu__link">
-                                    Pending </a>
+                                    <span class="d-flex align-items-center">
+                                        Pending
+                                        @php
+                                            $pendingCount = \App\Models\Journal::whereIn('approval_status', ['pending', 'in-review'])->count();
+                                        @endphp
+                                        @if($pendingCount > 0)
+                                            <span class="badge bg-warning text-dark ms-2">{{ $pendingCount }}</span>
+                                        @endif
+                                    </span>
+                                </a>
                             </li>
                             <li class="sidebar-submenu__item">
                                 <a href="{{ route('reviewer.journals.inProgress') }}" class="sidebar-submenu__link">
-                                    In Progress </a>
+                                    <span class="d-flex align-items-center">
+                                        In Progress
+                                        @php
+                                            $inProgressCount = \App\Models\Journal::whereIn('approval_status', ['in-progress', 'in_progress', 'in-review'])->count();
+                                        @endphp
+                                        @if($inProgressCount > 0)
+                                            <span class="badge bg-blue text-white ms-2">{{ $inProgressCount }}</span>
+                                        @endif
+                                    </span>
+                                </a>
                             </li>
                             <li class="sidebar-submenu__item">
                                 <a href="{{ route('reviewer.journals.reviewed') }}" class="sidebar-submenu__link">
-                                    Reviewed
+                                    <span class="d-flex align-items-center">
+                                        Reviewed
+                                        @php
+                                            $reviewedCount = \App\Models\Journal::where('approval_status', 'reviewed')->count();
+                                        @endphp
+                                        @if($reviewedCount > 0)
+                                            <span class="badge bg-purple text-white ms-2">{{ $reviewedCount }}</span>
+                                        @endif
+                                    </span>
                                 </a>
                             </li>
                             <li class="sidebar-submenu__item">
                                 <a href="{{ route('reviewer.journals.approved') }}" class="sidebar-submenu__link">
-                                    Approved
+                                    <span class="d-flex align-items-center">
+                                        Approved
+                                        @php
+                                            $approvedCount = \App\Models\Journal::whereIn('approval_status', ['approved', 'approved_with_comment'])->count();
+                                        @endphp
+                                        @if($approvedCount > 0)
+                                            <span class="badge bg-success text-white ms-2">{{ $approvedCount }}</span>
+                                        @endif
+                                    </span>
                                 </a>
                             </li>
                             <li class="sidebar-submenu__item">
                                 <a href="{{ route('reviewer.journals.rejected') }}" class="sidebar-submenu__link">
-                                    Declined </a>
+                                    <span class="d-flex align-items-center">
+                                        Declined/Rejected
+                                        @php
+                                            $rejectedCount = \App\Models\Journal::whereIn('approval_status', ['declined', 'rejected'])->count();
+                                        @endphp
+                                        @if($rejectedCount > 0)
+                                            <span class="badge bg-danger text-white ms-2">{{ $rejectedCount }}</span>
+                                        @endif
+                                    </span>
+                                </a>
                             </li>
                         </ul>
                         <!-- Submenu End -->

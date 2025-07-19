@@ -53,7 +53,42 @@ class EloquentUserRepository implements UserContract {
             $user->username = $request->username;
             $user->email = $request->email;
             $user->country = $request->country;
-            $user->password = Hash::make($request->password);
+            $user->institution = $request->institution;
+            
+            // Handle new fields
+            if ($request->has('regional_expertise')) {
+                $user->regional_expertise = $request->regional_expertise;
+            }
+            if ($request->has('research_interests')) {
+                $user->research_interests = $request->research_interests;
+            }
+            if ($request->has('academic_degree')) {
+                $user->academic_degree = $request->academic_degree;
+            }
+            if ($request->has('specialization')) {
+                $user->specialization = $request->specialization;
+            }
+            if ($request->has('biography')) {
+                $user->biography = $request->biography;
+            }
+            if ($request->has('publications')) {
+                $user->publications = $request->publications;
+            }
+            if ($request->has('available_for_review')) {
+                $user->available_for_review = $request->available_for_review ? true : false;
+            }
+            if ($request->has('max_reviews_per_month')) {
+                $user->max_reviews_per_month = $request->max_reviews_per_month;
+            }
+            if ($request->has('preferred_review_types')) {
+                $user->preferred_review_types = $request->preferred_review_types;
+            }
+            
+            // Update password only if provided
+            if ($request->filled('password')) {
+                $user->password = Hash::make($request->password);
+            }
+            
             $user->save();
 
             // Send notification

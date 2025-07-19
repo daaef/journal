@@ -68,7 +68,7 @@ class EloquentJournalRepository implements JournalContract {
     }
 
     public function getAll() {
-        return Journal::where('approval_status', 'approved')->where('is_draft', false)->get();
+        return Journal::where('approval_status', 'approved')->where('is_draft', false);
     }
 
     public function findByUUID($uuid) {
@@ -90,11 +90,11 @@ class EloquentJournalRepository implements JournalContract {
 
     public function getPendingApprovedJournals()
     {
-        return Journal::whereIn('approval_status', ['pending', 'approved_with_comment'])->get();
+        return Journal::whereIn('approval_status', ['pending', 'in-review', 'approved_with_comment'])->get();
     }
 
     public function getJournalsInProgress() {
-        return Journal::where('approval_status', 'in-progress')->get();
+        return Journal::whereIn('approval_status', ['in-progress', 'in-review'])->get();
     }
 
     public function getJournalsReviewed() {
@@ -107,6 +107,12 @@ class EloquentJournalRepository implements JournalContract {
 
     public function getRejectedJournals(){
         return Journal::where('approval_status', 'declined')->get();
+    }
+
+    public function getJournalsUnderPeerReview(){
+        return Journal::where('approval_status', 'under_peer_review')
+            ->with(['reviewers', 'user'])
+            ->get() ?? collect();
     }
 
     public function getJournalsForReviewer($user_id) {
@@ -127,6 +133,10 @@ class EloquentJournalRepository implements JournalContract {
         $journal->title = $request->title;
         $journal->author = $request->author;
         $journal->country = $request->country;
+        
+        // Automatically set region based on country
+        $journal->region = $this->getRegionByCountry($request->country);
+        
         $journal->journal_language = $request->journal_language;
         $journal->abstract = $request->abstract;
         $journal->is_active = $request->submit == 'submit' ? true : false;
@@ -306,6 +316,7 @@ class EloquentJournalRepository implements JournalContract {
                 $q->where('title', 'like', "%$search%")
                     ->orWhere('author', 'like', "%$search%")
                     ->orWhere('country', 'like', "%$search%")
+                    ->orWhere('region', 'like', "%$search%")
                     ->orWhere('journal_language', 'like', "%$search%")
                     ->orWhere('abstract', 'like', "%$search%")
                     ->orWhere('meta_title', 'like', "%$search%")
@@ -316,16 +327,30 @@ class EloquentJournalRepository implements JournalContract {
             });
         }
 
-        if ($request->has('category_id')) {
+        if ($request->has('category') && is_array($request->category)) {
+            $query->whereIn('category_id', $request->category);
+        } elseif ($request->has('category_id')) {
             $query->where('category_id', $request->category_id);
         }
 
-        if ($request->has('sub_category_id')) {
+        if ($request->has('subcategory') && is_array($request->subcategory)) {
+            $query->whereIn('sub_category_id', $request->subcategory);
+        } elseif ($request->has('sub_category_id')) {
             $query->where('sub_category_id', $request->sub_category_id);
         }
 
-        if ($request->has('sub_sub_category_id')) {
+        if ($request->has('subsubcategory') && is_array($request->subsubcategory)) {
+            $query->whereIn('sub_sub_category_id', $request->subsubcategory);
+        } elseif ($request->has('sub_sub_category_id')) {
             $query->where('sub_sub_category_id', $request->sub_sub_category_id);
+        }
+
+        if ($request->has('country') && is_array($request->country)) {
+            $query->whereIn('country', $request->country);
+        }
+
+        if ($request->has('license') && is_array($request->license)) {
+            $query->whereIn('license', $request->license);
         }
 
         if ($request->has('approval_status')) {
@@ -350,7 +375,7 @@ class EloquentJournalRepository implements JournalContract {
     {
         $userId = Auth::id();
 
-        $journalQuery = Journal::where('approval_status', 'pending')
+        $journalQuery = Journal::whereIn('approval_status', ['pending', 'in-review'])
             ->whereIn('id', function ($query) use ($userId) {
                 $query->select('journal_id')
                     ->from('reviewers')
@@ -364,7 +389,7 @@ class EloquentJournalRepository implements JournalContract {
     {
         $userId = Auth::id();
 
-        $journalQuery = Journal::where('approval_status', 'in-progress')
+        $journalQuery = Journal::whereIn('approval_status', ['in-progress', 'in-review'])
             ->whereIn('id', function ($query) use ($userId) {
                 $query->select('journal_id')
                     ->from('reviewers')
@@ -1423,4 +1448,26 @@ protected function sendManuscriptSubmissionNotifications($journal)
 
         return $newVersion;
     }
+
+    /**
+     * Get region by country name using the globalRegions helper function
+     */
+    private function getRegionByCountry($countryName)
+    {
+        if (!$countryName) {
+            return null;
+        }
+
+        $regions = globalRegions();
+        
+        foreach ($regions as $region => $countries) {
+            if (in_array($countryName, $countries)) {
+                return $region;
+            }
+        }
+        
+        return null;
+    }
+
+
 }

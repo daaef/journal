@@ -20,22 +20,22 @@ class EloquentReviewerRepository implements ReviewerContract {
 
         $reviewers = $request->reviewers;
         $journal = $this->journalRepository->findByUUID($uuid);
-        // Get users by uuid for the requesr array
+        
+        // Clear existing reviewers
+        Reviewer::where('journal_id', $journal->id)->delete();
+        
+        // Get users by uuid for the request array
         foreach ($reviewers as $key => $value) {
-            # code...
-            // dd($value);
             $user = User::where('uuid', $value)->first();
 
-            // check if the user is already a reviewer
-            $reviewer = Reviewer::where('journal_id', $journal->id)->where('user_id', $user->id)->first();
-
-            // create a new reviewer if the user is not a reviewer
-            if(!$reviewer){
+            if ($user) {
                 $reviewer = new Reviewer();
                 $reviewer->fullname = $user->fullname;
                 $reviewer->journal_id = $journal->id;
                 $reviewer->user_id = $user->id;
                 $reviewer->token = Str::random(64); // Generate unique token for invitation
+                $reviewer->status = 'invited';
+                $reviewer->assigned_at = now();
                 $reviewer->save();
 
                 // Send invitation email to the reviewer
@@ -48,7 +48,10 @@ class EloquentReviewerRepository implements ReviewerContract {
                 $user->notify(new ReviewAssignedNotification($journal, auth()->user()));
             }
         }
-
+        
+        // Update journal status to in-review
+        $journal->update(['approval_status' => 'in-review']);
+        
         // Update the reviewers count
         //get all reviewers for the journal
         $reviewers = Reviewer::where('journal_id', $journal->id)->get();

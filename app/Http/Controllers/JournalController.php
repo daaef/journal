@@ -16,6 +16,7 @@ use App\Services\PandocDocumentPreviewService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -58,21 +59,22 @@ class JournalController extends Controller
     public function index()
     {
         $categories = $this->categoryRepo->getAll();
-        $journals = $this->repo->getAll();
+        $journals = $this->repo->getAll()->paginate(20); // Add pagination
         $regions = globalRegions();
-        // dd($regions);
         $languages = journalLanguages();
         return view('journals', compact('journals', 'regions', 'categories', 'languages'));
     }
 
     public function searchJournal(Request $request)
     {
-        $journals = $this->repo->getAll();
         $categories = $this->categoryRepo->getAll();
 
         if ($request->search) {
             $journals = $this->repo->searchJournal($request);
+        } else {
+            $journals = $this->repo->getAll()->paginate(20);
         }
+        
         $regions = globalRegions();
         return view('journals', compact('journals', 'categories', 'regions'));
     }
@@ -81,27 +83,24 @@ class JournalController extends Controller
     {
         if (!Auth::check()) {
             $notification = array(
-                'message' => 'You need to login to download the journal.',
+                'message' => 'You need to login to like journals.',
                 'alert-type' => 'warning'
             );
-
-            // User is not authenticated, redirect to login page
             return redirect()->route('login')->with($notification);
         }
-        // dd($request->all(), 'likeJournal');
-        // validate user id
-        // Validate request
+
+        // Validate and sanitize request
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
+            'journal_id' => 'required|integer|exists:journals,id',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator);
         }
 
-        //check if user has already liked the journal
-        $check = $this->likeJournalRepo->checkIfUserHasLikedJournal($request->journal_id, $request->user_id);
-        // dd($check);
+        // Check if user has already liked the journal using authenticated user ID
+        $check = $this->likeJournalRepo->checkIfUserHasLikedJournal($request->journal_id, Auth::id());
+        
         if ($check) {
             $notification = array(
                 'message' => 'You have already liked this journal',
@@ -110,45 +109,57 @@ class JournalController extends Controller
             return redirect()->back()->with($notification);
         }
 
-        $journal = $this->likeJournalRepo->likeJournal($request->journal_id, $request->user_id);
-        // dd($journal);
-        if ($journal) {
+        // Use authenticated user ID for security with database transaction
+        try {
+            DB::transaction(function () use ($request) {
+                $journal = $this->likeJournalRepo->likeJournal($request->journal_id, Auth::id());
+                
+                if (!$journal) {
+                    throw new \Exception('Failed to like journal');
+                }
+            });
+            
             $notification = array(
                 'message' => 'Journal Liked successfully',
                 'alert-type' => 'success'
             );
             return redirect()->back()->with($notification);
+            
+        } catch (\Exception $e) {
+            Log::error('Journal like error: ' . $e->getMessage(), [
+                'user_id' => Auth::id(),
+                'journal_id' => $request->journal_id,
+                'ip' => $request->ip()
+            ]);
+            
+            $notification = array(
+                'message' => 'Error Liking journal. Please try again.',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
         }
-        $notification = array(
-            'message' => 'Error Liking journal',
-            'alert-type' => 'error'
-        );
-        return redirect()->back()->with($notification);
     }
 
     public function dislikeJournal(Request $request)
     {
         if (!Auth::check()) {
             $notification = array(
-                'message' => 'You need to login to download the journal.',
+                'message' => 'You need to login to dislike journals.',
                 'alert-type' => 'error'
             );
-
-            // User is not authenticated, redirect to login page
             return redirect()->route('login')->with($notification);
         }
 
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'journal_id'
+            'journal_id' => 'required|integer|exists:journals,id',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator);
         }
 
-        //check if user has already liked the journal
-        $check = $this->dislikeJournalRepo->checkIfUserHasLikedJournal($request->journal_id, $request->user_id);
+        // Check if user has already disliked the journal using authenticated user ID
+        $check = $this->dislikeJournalRepo->checkIfUserHasLikedJournal($request->journal_id, Auth::id());
 
         if ($check) {
             $notification = array(
@@ -158,20 +169,35 @@ class JournalController extends Controller
             return redirect()->back()->with($notification);
         }
 
-        $journal = $this->likeJournalRepo->dislikeJournal($request->journal_id, $request->user_id);
-
-        if ($journal) {
+        // Use authenticated user ID for security with database transaction
+        try {
+            DB::transaction(function () use ($request) {
+                $journal = $this->likeJournalRepo->dislikeJournal($request->journal_id, Auth::id());
+                
+                if (!$journal) {
+                    throw new \Exception('Failed to dislike journal');
+                }
+            });
+            
             $notification = array(
                 'message' => 'Journal disliked successfully',
                 'alert-type' => 'success'
             );
             return redirect()->back()->with($notification);
+            
+        } catch (\Exception $e) {
+            Log::error('Journal dislike error: ' . $e->getMessage(), [
+                'user_id' => Auth::id(),
+                'journal_id' => $request->journal_id,
+                'ip' => $request->ip()
+            ]);
+            
+            $notification = array(
+                'message' => 'Error disliking journal. Please try again.',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
         }
-        $notification = array(
-            'message' => 'Error disliking journal',
-            'alert-type' => 'error'
-        );
-        return redirect()->back()->with($notification);
     }
 
     /**
@@ -407,6 +433,17 @@ class JournalController extends Controller
             }
 
             if (!$canView) {
+                // Check if user is not logged in
+                if (!Auth::check()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Please log in to view this document',
+                        'requires_login' => true,
+                        'login_url' => route('auth.login.get')
+                    ], 401);
+                }
+                
+                // User is logged in but doesn't have permission
                 abort(403, 'Unauthorized to view this document');
             }
 
@@ -634,9 +671,28 @@ class JournalController extends Controller
         $journal = $this->repo->findByUuid($uuid);
         $reviewers = $this->userRepo->getReviewers();
         // dd($reviewers);
-        $assignedReviewers = $journal->reviewers()->with('reviewer')->get();
+        $assignedReviewers = $journal->reviewers()->with('user')->get();
         $comments = $journal->comments()->with('user')->get();
-        return view('dashboard.editor.journals.journalPreview', compact('journal', 'reviewers', 'assignedReviewers', 'comments'));
+        
+        // Ensure assignedReviewers is always a collection, even if empty
+        if (!$assignedReviewers) {
+            $assignedReviewers = collect();
+        }
+
+        // Prepare availableReviewers for Blade (move mapping logic here)
+        $availableReviewers = $reviewers
+            ->whereNotIn('id', $assignedReviewers ? $assignedReviewers->pluck('user_id') : collect())
+            ->map(function($reviewer) {
+                return [
+                    'uuid' => $reviewer->uuid,
+                    'fullname' => $reviewer->fullname,
+                    'regional_expertise' => $reviewer->regional_expertise
+                ];
+            })
+            ->values()
+            ->toArray();
+        
+        return view('dashboard.editor.journals.journalPreview', compact('journal', 'reviewers', 'assignedReviewers', 'comments', 'availableReviewers'));
     }
 
     public function reviewerPreviewJournal(string $uuid)
@@ -644,8 +700,14 @@ class JournalController extends Controller
         $journal = $this->repo->findByUuid($uuid);
         $reviewers = $this->userRepo->getReviewers();
         // dd($reviewers);
-        $assignedReviewers = $journal->reviewers()->with('reviewer')->get();
+        $assignedReviewers = $journal->reviewers()->with('user')->get();
         $comments = $journal->comments()->with('user')->get();
+        
+        // Ensure assignedReviewers is always a collection, even if empty
+        if (!$assignedReviewers) {
+            $assignedReviewers = collect();
+        }
+        
         return view('dashboard.reviewer.journals.journalPreview', compact('journal', 'reviewers', 'assignedReviewers', 'comments'));
     }
 
@@ -1008,6 +1070,15 @@ class JournalController extends Controller
     {
         $journals = $this->repo->getRejectedJournals();
         return view('dashboard.editor.journals.showRejectedJournals', compact('journals'));
+    }
+
+    /**
+     * Get journals under peer review
+     */
+    public function underPeerReview()
+    {
+        $journals = $this->repo->getJournalsUnderPeerReview() ?? collect();
+        return view('dashboard.editor.journals.showUnderPeerReview', compact('journals'));
     }
 
     /**
@@ -1383,6 +1454,15 @@ class JournalController extends Controller
         );
 
         return redirect()->back()->with($notification);
+    }
+
+    /**
+     * Get journals with revision requested
+     */
+    public function revisionRequested()
+    {
+        $journals = $this->repo->getJournalsWithRevisionRequested();
+        return view('dashboard.editor.journals.showRevisionRequested', compact('journals'));
     }
 
     /**

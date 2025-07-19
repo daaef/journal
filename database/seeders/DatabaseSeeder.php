@@ -25,9 +25,16 @@ class DatabaseSeeder extends Seeder
             SubCategoriesTableSeeder::class,
             SubSubCategoriesSeeder::class,
             UsersTableSeeder::class,
-            AfricanRegionsTableSeeder::class,
+            CountriesTableSeeder::class,
             // JournalsTableSeeder::class,
             ReviewersTableSeeder::class,
+            AssociateEditorSeeder::class,
+            TestJournalSeeder::class,
         ]);
+
+        // Generate PDFs for all seeded journals as the final step
+        $this->command->info('Generating PDFs for all seeded journals...');
+        \Artisan::call('journals:generate-abstracts-pdfs');
+        $this->command->info('PDF generation completed!');
     }
 }

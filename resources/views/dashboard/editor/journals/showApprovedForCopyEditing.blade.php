@@ -68,7 +68,7 @@
                                     <td class="text-center">
                                         <div class="flex-align justify-content-center gap-8">
                                             <a href="{{ route('editor.journals.preview', [$journal->uuid, $journal->slug]) }}" 
-                                               class="btn btn-sm btn-outline-primary">
+                                               class="action-btn action-btn-outline-primary action-btn-sm">
                                                 <i class="ph ph-eye me-4"></i>View Details
                                             </a>
                                         </div>

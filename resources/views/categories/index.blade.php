@@ -76,10 +76,10 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('categories.edit', $category->uuid) }}"
-                                        class="bg-main-50 text-main-600 py-2 px-14 rounded-pill hover-bg-main-600 hover-text-white">
+                                        class="action-btn action-btn-outline-primary">
                                         Edit</a>
                                     <a href="{{ route('categories.destroy', $category->uuid) }}"
-                                        class="bg-danger-50 text-danger-600 py-2 px-14 rounded-pill hover-bg-danger-600 hover-text-white">
+                                        class="action-btn action-btn-outline-danger">
                                         Delete</a>
                                 </td>
                             </tr>

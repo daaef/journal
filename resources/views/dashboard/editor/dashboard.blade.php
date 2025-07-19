@@ -98,17 +98,42 @@
                     <h5 class="mb-0">📢 Managing Editor Actions Required</h5>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-info">
-                        <div class="d-flex align-items-center">
-                            <i class="ph ph-bell me-2"></i>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <i class="ph ph-bell mr-2 text-blue-600"></i>
                             <div>
-                                <strong>{{ $readyForNotice }} manuscript(s)</strong> have completed peer review and are ready for your approval/decline notice.
+                                <strong class="text-blue-800">{{ $readyForNotice }} manuscript(s)</strong> have completed peer review and are ready for your approval/decline notice.
                             </div>
                         </div>
                     </div>
-                    <a href="{{ route('editor.journals.readyForNotice') }}" class="btn btn-info">
-                        <i class="ph ph-eye me-2"></i>Review & Send Notices
+                    <a href="{{ route('editor.journals.readyForNotice') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="ph ph-eye mr-2"></i>Review & Send Notices
                     </a>
+                </div>
+            </div>
+            @endif
+
+            <!-- Regional Expertise Quick Actions -->
+            @if(auth()->user()->hasRole('Editor in Chief') || auth()->user()->hasRole('Managing Editor'))
+            <div class="card mt-14">
+                <div class="card-header">
+                    <h5 class="mb-0">🌍 Regional Expertise Tools</h5>
+                </div>
+                <div class="card-body">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <i class="ph ph-globe mr-2 text-blue-600"></i>
+                            <div>
+                                <strong class="text-blue-800">Smart Reviewer Matching</strong> is now available for manuscripts requiring regional expertise.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 grid grid-cols-2 gap-2 items-center">
+                        <a href="{{ route('editor.journals.pendingApproval') }}" class="flex items-center px-3 py-2 border bg-blue-600 text-white p-4 justify-center font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="ph ph-users mr-2"></i>Assign Regional Reviewers
+                        </a>
+                    
+                    </div>
                 </div>
             </div>
             @endif

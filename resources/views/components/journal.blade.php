@@ -26,6 +26,10 @@
                         <span class="text-secondary-900 w-[45%]">Country:</span>
                         <span class="w-[50%]">{{ $journal->country }}</span>
                     </h5>
+                    <h5 class="flex w-full justify-between">
+                        <span class="text-secondary-900 w-[45%]">Region:</span>
+                        <span class="w-[50%]">{{ $journal->region ?? 'N/A' }}</span>
+                    </h5>
                 </div>
                 <div class="lg:w-[2px] lg:h-full w-full h-[2px] bg-secondary-900"></div>
                 <div class="py-3 space-y-3] w-full lg:pl-5">
@@ -62,7 +66,6 @@
                 <div class="flex gap-x-3">
                     <form action="{{ route('journals.dislike') }}" method="post">
                         @csrf
-                        <input type="hidden" name="user_id" value="{{ auth()->user() ? auth()->user()->id : null }}">
                         <input type="hidden" name="journal_id" value="{{ $journal->id }}" />
                         <button
                             class="text-gray-100 h-full bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600"
@@ -77,7 +80,6 @@
                     </form>
                     <form action="{{ route('journals.like') }}" method="post">
                         @csrf
-                        <input type="hidden" name="user_id" value="{{ auth()->user() ? auth()->user()->id : null }}">
                         <input type="hidden" name="journal_id" value="{{ $journal->id }}" />
                         <button
                             class="text-gray-100 bg-primary-500 h-full rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600"
@@ -91,12 +93,10 @@
                         </button>
                     </form>
 
-                    {{-- checkn if pivot_user_id exist --}}
+                    {{-- Check if journal exists in user's collection --}}
                     @if (auth()->user() && checkJournalInMyCollection($journal->id, auth()->user()->id))
                         <form action="{{ route('journals.remove-from-collection') }}" method="post">
                             @csrf
-                            <input type="hidden" name="user_id"
-                                value="{{ auth()->user() ? auth()->user()->id : null }}">
                             <input type="hidden" name="journal_id" value="{{ $journal->id }}" />
                             <button name="remove_from_collection" value="remove_from_collection"
                                 class="text-gray-100 bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600">Remove
@@ -105,8 +105,6 @@
                     @else
                         <form action="{{ route('journals.add-to-collection') }}" method="post">
                             @csrf
-                            <input type="hidden" name="user_id"
-                                value="{{ auth()->user() ? auth()->user()->id : null }}">
                             <input type="hidden" name="journal_id" value="{{ $journal->id }}" />
                             <button name="add_to_collection" value="add_to_collection"
                                 class="text-gray-100 bg-primary-500 rounded-[8px] px-4 py-1 font-bold hover:bg-primary-600">Add

@@ -155,7 +155,7 @@
                                     </div>
                                 </div>
                                 <a href="{{ $comparison['file_comparison']['other_file']['url'] }}" 
-                                   target="_blank" class="btn btn-sm btn-outline-primary w-100">
+                                   target="_blank" class="action-btn action-btn-outline-primary action-btn-sm w-100">
                                     <i class="ph ph-eye me-8"></i>View File
                                 </a>
                             </div>
@@ -171,7 +171,7 @@
                                     </div>
                                 </div>
                                 <a href="{{ $comparison['file_comparison']['current_file']['url'] }}" 
-                                   target="_blank" class="btn btn-sm btn-outline-primary w-100">
+                                   target="_blank" class="action-btn action-btn-outline-primary action-btn-sm w-100">
                                     <i class="ph ph-eye me-8"></i>View File
                                 </a>
                             </div>

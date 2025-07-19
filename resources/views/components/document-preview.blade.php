@@ -30,16 +30,18 @@
                 </svg>
                 <h3 class="text-lg font-medium text-gray-900 mb-2">Preview Error</h3>
                 <p id="{{ $componentId }}-error-message" class="text-sm text-gray-600 mb-4"></p>
-                @if($showControls)
-                    <button onclick="retryDocumentPreview('{{ $componentId }}')"
-                            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                        </svg>
-                        Retry Preview
-                    </button>
-                @endif
+                <div id="{{ $componentId }}-error-actions">
+                    @if($showControls)
+                        <button onclick="retryDocumentPreview('{{ $componentId }}')"
+                                class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            Retry Preview
+                        </button>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
@@ -132,6 +134,13 @@
                         if (getContentType && getContentType.includes('application/json')) {
                             return getResponse.json().then(data => {
                                 console.log('JSON response data:', data);
+                                
+                                // Handle login requirement
+                                if (!data.success && data.requires_login) {
+                                    showLoginRequiredError(data.message, data.login_url, componentId);
+                                    return;
+                                }
+                                
                                 if (data.success && data.type === 'pdf' && data.url) {
                                     loadPdfPreview(data.url, displayEl, loadingEl, errorEl, componentId);
                                 } else if (data.success && data.html) {
@@ -312,5 +321,44 @@
         if (wrapper) {
             loadDocumentPreview(wrapper);
         }
+    }
+
+    function showLoginRequiredError(message, loginUrl, componentId) {
+        const loadingEl = document.getElementById(componentId + '-loading');
+        const displayEl = document.getElementById(componentId + '-display');
+        const errorEl = document.getElementById(componentId + '-error');
+        const errorMessageEl = document.getElementById(componentId + '-error-message');
+        const errorActionsEl = document.getElementById(componentId + '-error-actions');
+
+        if (errorMessageEl) {
+            errorMessageEl.textContent = message;
+        }
+
+        if (errorActionsEl) {
+            errorActionsEl.innerHTML = `
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <a href="${loginUrl}" 
+                       class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                        </svg>
+                        Log In to View Document
+                    </a>
+                    <button onclick="retryDocumentPreview('${componentId}')"
+                            class="inline-flex items-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Retry Preview
+                    </button>
+                </div>
+            `;
+        }
+
+        loadingEl.classList.add('hidden');
+        displayEl.classList.add('hidden');
+        errorEl.classList.remove('hidden');
     }
 </script>

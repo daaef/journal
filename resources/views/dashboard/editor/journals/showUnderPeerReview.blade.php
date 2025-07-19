@@ -9,7 +9,7 @@
                 <div class="card-header">
                     <div class="mb-0 flex-between flex-wrap gap-8">
                         <h4 class="mb-0">Manuscripts Under Peer Review</h4>
-                        <span class="text-13 fw-medium text-primary">{{ $journals->count() }} Total</span>
+                        <span class="text-13 fw-medium text-primary">{{ ($journals ?? collect())->count() }} Total</span>
                     </div>
                 </div>
                 <div class="card-body p-0 overflow-x-auto scroll-sm scroll-sm-horizontal">
@@ -24,7 +24,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($journals as $journal)
+                            @forelse (($journals ?? collect()) as $journal)
                                 <tr>
                                     <td>
                                         <div class="flex-align gap-8">
@@ -43,7 +43,7 @@
                                     <td>
                                         <div>
                                             <h6 class="mb-0 text-14">{{ $journal->author }}</h6>
-                                            @if($journal->user)
+                                            @if($journal->user && $journal->user->email)
                                                 <span class="text-13 text-gray-600">{{ $journal->user->email }}</span>
                                             @endif
                                         </div>
@@ -51,8 +51,8 @@
                                     <td>
                                         <div>
                                             @php
-                                                $totalReviewers = $journal->reviewers->count();
-                                                $completedReviews = $journal->reviewers->whereNotNull('review_submitted_at')->count();
+                                                $totalReviewers = ($journal->reviewers ?? collect())->count();
+                                                $completedReviews = ($journal->reviewers ?? collect())->whereNotNull('review_submitted_at')->count();
                                             @endphp
                                             <span class="text-14 fw-medium">{{ $completedReviews }}/{{ $totalReviewers }}</span>
                                             <div class="text-13 text-gray-600">Reviews completed</div>
@@ -66,7 +66,7 @@
                                     <td class="text-center">
                                         <div class="flex-align justify-content-center gap-8">
                                             <a href="{{ route('editor.journals.preview', [$journal->uuid, $journal->slug]) }}" 
-                                               class="btn btn-sm btn-outline-primary">
+                                               class="action-btn action-btn-outline-primary action-btn-sm">
                                                 <i class="ph ph-eye me-4"></i>View Details
                                             </a>
                                         </div>
