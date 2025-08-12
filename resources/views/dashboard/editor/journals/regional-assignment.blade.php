@@ -105,21 +105,90 @@
                         <label class="text-sm font-medium text-gray-500">Category</label>
                         <p class="text-gray-900 font-medium">{{ $journal->category->name }}</p>
                     </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Current Status</label>
+                        <p class="text-gray-900 font-medium">{{ ucfirst(str_replace('_', ' ', $journal->approval_status)) }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Submission Date</label>
+                        <p class="text-gray-900 font-medium">{{ $journal->created_at->format('M d, Y') }}</p>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Assignment Strategy Explanation -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+            <h3 class="text-lg font-semibold text-blue-900 mb-3">📋 Assignment Strategy</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
+                <div>
+                    <h4 class="font-medium mb-2">🌍 Regional Matching:</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>Priority given to reviewers from the same region as the manuscript</li>
+                        <li>Secondary priority to reviewers with regional expertise</li>
+                        <li>Ensures cultural and contextual understanding</li>
+                        <li><strong>Minimum 2 reviewers required</strong></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-2">🔬 Research Interest Matching:</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>Matches reviewers with relevant research interests</li>
+                        <li>Considers category and subcategory expertise</li>
+                        <li>Balances workload across available reviewers</li>
+                        <li>Use when regional reviewers are insufficient</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <h4 class="font-medium text-yellow-800 mb-2">⚠️ Important Note:</h4>
+                <p class="text-sm text-yellow-700">
+                    If there aren't enough regional reviewers available, you can select reviewers from other regions. 
+                    The system will show you a warning when regional reviewers are insufficient, and you can choose 
+                    from the "Other Available Reviewers" or "All Available Reviewers" sections below.
+                </p>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Optimal Suggestions -->
             <div class="lg:col-span-2">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                <!-- Regional Reviewers Section -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
                     <div class="p-6 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">Optimal Reviewer Suggestions</h3>
-                        <p class="text-sm text-gray-600 mt-1">Suggestions based on regional expertise and research interests</p>
+                        <h3 class="text-lg font-semibold text-gray-900">🌍 Regional Reviewers</h3>
+                        <p class="text-sm text-gray-600 mt-1">Reviewers from {{ $journal->region ?? 'the same region' }} or with regional expertise</p>
                     </div>
                     <div class="p-6">
-                        <div id="optimal-suggestions" class="space-y-4">
-                            @foreach($optimalReviewers as $reviewer)
+                        @php
+                            $regionalReviewers = $optimalReviewers->filter(function($reviewer) use ($journal) {
+                                return $reviewer->hasRegionalExpertise($journal->country) || 
+                                       $reviewer->hasRegionalExpertise($journal->region);
+                            });
+                            $regionalCount = $regionalReviewers->count();
+                            $minimumRequired = 2;
+                            $hasEnoughRegional = $regionalCount >= $minimumRequired;
+                        @endphp
+                        
+                        @if(!$hasEnoughRegional)
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 text-yellow-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <div>
+                                        <h4 class="text-sm font-medium text-yellow-800">Insufficient Regional Reviewers</h4>
+                                        <p class="text-sm text-yellow-700 mt-1">
+                                            Only {{ $regionalCount }} regional reviewer(s) available. You need at least {{ $minimumRequired }} reviewers. 
+                                            You can select additional reviewers from other regions below.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        
+                        <div id="regional-suggestions" class="space-y-4">
+                            @forelse($regionalReviewers as $reviewer)
                             <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-3">
@@ -130,11 +199,9 @@
                                             <h4 class="font-semibold text-gray-900">{{ $reviewer->fullname }}</h4>
                                             <p class="text-sm text-gray-600">{{ $reviewer->email }}</p>
                                             <div class="flex items-center space-x-2 mt-1">
-                                                @if($reviewer->hasRegionalExpertise($journal->country))
-                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                        Regional Expert
-                                                    </span>
-                                                @endif
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    Regional Expert
+                                                </span>
                                                 @if($reviewer->hasResearchInterest($journal->category->name))
                                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                                         Research Expert
@@ -161,44 +228,136 @@
                                     </div>
                                 </div>
                             </div>
-                            @endforeach
+                            @empty
+                            <div class="text-center py-8">
+                                <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                                <p class="text-gray-500">No regional reviewers available for this manuscript.</p>
+                                <p class="text-sm text-gray-400 mt-1">Please select reviewers from other regions below.</p>
+                            </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>
 
-                <!-- Already Assigned Reviewers -->
-                @if($assignedReviewers->count() > 0)
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 mt-8">
+                <!-- Other Reviewers Section -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
                     <div class="p-6 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">Already Assigned Reviewers</h3>
-                        <p class="text-sm text-gray-600 mt-1">{{ $assignedReviewers->count() }} reviewer(s) currently assigned</p>
+                        <h3 class="text-lg font-semibold text-gray-900">🔬 Other Available Reviewers</h3>
+                        <p class="text-sm text-gray-600 mt-1">Reviewers from other regions with relevant research interests</p>
                     </div>
                     <div class="p-6">
-                        <div class="space-y-4">
-                            @foreach($assignedReviewers as $assignedReviewer)
-                            <div class="border border-green-200 bg-green-50 rounded-lg p-4">
+                        @php
+                            $otherReviewers = $optimalReviewers->filter(function($reviewer) use ($journal) {
+                                return !$reviewer->hasRegionalExpertise($journal->country) && 
+                                       !$reviewer->hasRegionalExpertise($journal->region);
+                            });
+                        @endphp
+                        
+                        <div id="other-suggestions" class="space-y-4">
+                            @forelse($otherReviewers as $reviewer)
+                            <div class="border border-gray-200 rounded-lg p-4 hover:border-orange-300 transition-colors">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-3">
-                                        <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
-                                            <span class="text-white font-bold text-sm">{{ strtoupper(substr($assignedReviewer->user->fullname, 0, 2)) }}</span>
+                                        <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center">
+                                            <span class="text-white font-bold text-sm">{{ strtoupper(substr($reviewer->fullname, 0, 2)) }}</span>
                                         </div>
                                         <div>
-                                            <h4 class="font-semibold text-gray-900">{{ $assignedReviewer->user->fullname }}</h4>
-                                            <p class="text-sm text-gray-600">{{ $assignedReviewer->user->email }}</p>
+                                            <h4 class="font-semibold text-gray-900">{{ $reviewer->fullname }}</h4>
+                                            <p class="text-sm text-gray-600">{{ $reviewer->email }}</p>
                                             <div class="flex items-center space-x-2 mt-1">
-                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                    Assigned {{ $assignedReviewer->assigned_at ? $assignedReviewer->assigned_at->diffForHumans() : '' }}
-                                                </span>
-                                                @if($assignedReviewer->status)
+                                                @if($reviewer->hasResearchInterest($journal->category->name))
                                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                        {{ ucfirst($assignedReviewer->status) }}
+                                                        Research Expert
+                                                    </span>
+                                                @endif
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                                    Other Region
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        @if($assignedReviewers->where('user.uuid', $reviewer->uuid)->count() > 0)
+                                            <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-md font-medium">
+                                                Assigned
+                                            </span>
+                                        @else
+                                            <button onclick="addReviewer('{{ $reviewer->uuid }}', '{{ $reviewer->fullname }}')" 
+                                                    class="px-3 py-1 bg-orange-600 text-white text-sm rounded-md hover:bg-orange-700 transition-colors">
+                                                Add
+                                            </button>
+                                        @endif
+                                        <button onclick="showReviewerDetails('{{ $reviewer->uuid }}')" 
+                                                class="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-md hover:bg-gray-200 transition-colors">
+                                            Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            @empty
+                            <div class="text-center py-8">
+                                <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                                <p class="text-gray-500">No other reviewers available.</p>
+                            </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Available Reviewers Section -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">👥 All Available Reviewers</h3>
+                        <p class="text-sm text-gray-600 mt-1">Complete list of all available Associate Editors</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <input type="text" id="reviewer-search" placeholder="Search reviewers by name or expertise..." 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div id="all-reviewers" class="space-y-4 max-h-96 overflow-y-auto">
+                            @foreach($allReviewers as $reviewer)
+                            <div class="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors reviewer-item" 
+                                 data-name="{{ strtolower($reviewer->fullname) }}" 
+                                 data-expertise="{{ strtolower(implode(' ', $reviewer->regional_expertise ?? [])) }}">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-700 rounded-full flex items-center justify-center">
+                                            <span class="text-white font-bold text-sm">{{ strtoupper(substr($reviewer->fullname, 0, 2)) }}</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-900">{{ $reviewer->fullname }}</h4>
+                                            <p class="text-sm text-gray-600">{{ $reviewer->email }}</p>
+                                            <div class="flex items-center space-x-2 mt-1">
+                                                @if($reviewer->regional_expertise)
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                        {{ implode(', ', array_slice($reviewer->regional_expertise, 0, 2)) }}
+                                                    </span>
+                                                @endif
+                                                @if($reviewer->research_interests)
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                                        {{ implode(', ', array_slice($reviewer->research_interests, 0, 2)) }}
                                                     </span>
                                                 @endif
                                             </div>
                                         </div>
                                     </div>
                                     <div class="flex items-center space-x-2">
-                                        <button onclick="showReviewerDetails('{{ $assignedReviewer->user->uuid }}')" 
+                                        @if($assignedReviewers->where('user.uuid', $reviewer->uuid)->count() > 0)
+                                            <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-md font-medium">
+                                                Assigned
+                                            </span>
+                                        @else
+                                            <button onclick="addReviewer('{{ $reviewer->uuid }}', '{{ $reviewer->fullname }}')" 
+                                                    class="px-3 py-1 bg-gray-600 text-white text-sm rounded-md hover:bg-gray-700 transition-colors">
+                                                Add
+                                            </button>
+                                        @endif
+                                        <button onclick="showReviewerDetails('{{ $reviewer->uuid }}')" 
                                                 class="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-md hover:bg-gray-200 transition-colors">
                                             Details
                                         </button>
@@ -209,7 +368,6 @@
                         </div>
                     </div>
                 </div>
-                @endif
             </div>
 
             <!-- Assignment Panel -->
@@ -250,6 +408,52 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+                <!-- Already Assigned Reviewers -->
+                @if($assignedReviewers->count() > 0)
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 mt-8">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">✅ Already Assigned Reviewers</h3>
+                        <p class="text-sm text-gray-600 mt-1">{{ $assignedReviewers->count() }} reviewer(s) currently assigned</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            @foreach($assignedReviewers as $assignedReviewer)
+                            <div class="border border-green-200 bg-green-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                                            <span class="text-white font-bold text-sm">{{ strtoupper(substr($assignedReviewer->user->fullname, 0, 2)) }}</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-900">{{ $assignedReviewer->user->fullname }}</h4>
+                                            <p class="text-sm text-gray-600">{{ $assignedReviewer->user->email }}</p>
+                                            <div class="flex items-center space-x-2 mt-1">
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    Assigned {{ $assignedReviewer->assigned_at ? $assignedReviewer->assigned_at->diffForHumans() : '' }}
+                                                </span>
+                                                @if($assignedReviewer->status)
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                        {{ ucfirst($assignedReviewer->status) }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="showReviewerDetails('{{ $assignedReviewer->user->uuid }}')" 
+                                                class="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-md hover:bg-gray-200 transition-colors">
+                                            Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -551,5 +755,25 @@ function closeReviewerSidebar() {
     sidebar.classList.add('-translate-x-full');
     overlay.classList.add('hidden');
 }
+
+// Search functionality for all-reviewers list
+const reviewerSearchInput = document.getElementById('reviewer-search');
+const allReviewersList = document.getElementById('all-reviewers');
+
+reviewerSearchInput.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const reviewerItems = allReviewersList.querySelectorAll('.reviewer-item');
+
+    reviewerItems.forEach(item => {
+        const name = item.dataset.name;
+        const expertise = item.dataset.expertise;
+
+        if (name.includes(searchTerm) || expertise.includes(searchTerm)) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
 </script>
 </x-layouts.editor_layout> 

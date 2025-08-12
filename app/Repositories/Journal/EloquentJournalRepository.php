@@ -90,7 +90,12 @@ class EloquentJournalRepository implements JournalContract {
 
     public function getPendingApprovedJournals()
     {
-        return Journal::whereIn('approval_status', ['pending', 'in-review', 'approved_with_comment'])->get();
+        return Journal::whereIn('approval_status', [
+            'pending', 
+            'in-review', 
+            'approved_with_comment',
+            'ready_for_managing_editor_notice'  // Add this status for managing editors
+        ])->get();
     }
 
     public function getJournalsInProgress() {

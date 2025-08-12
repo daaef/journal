@@ -113,6 +113,47 @@
             </div>
             @endif
 
+            <!-- Status Reference Card -->
+            @if(auth()->user()->hasAnyRole(['Editor in Chief', 'Managing Editor']))
+            <div class="card mt-14">
+                <div class="card-header">
+                    <h5 class="mb-0">📊 Manuscript Status Reference</h5>
+                </div>
+                <div class="card-body">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-yellow-500 rounded-full"></span>
+                                <span><strong>Pending:</strong> New submissions awaiting assignment</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-blue-500 rounded-full"></span>
+                                <span><strong>In Review:</strong> Assigned to reviewers</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-purple-500 rounded-full"></span>
+                                <span><strong>Ready for Notice:</strong> Reviews complete, awaiting editor decision</span>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                                <span><strong>Approved:</strong> Final approval granted</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-orange-500 rounded-full"></span>
+                                <span><strong>Revision Requested:</strong> Changes needed from author</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                                <span><strong>Declined:</strong> Manuscript rejected</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- Regional Expertise Quick Actions -->
             @if(auth()->user()->hasRole('Editor in Chief') || auth()->user()->hasRole('Managing Editor'))
             <div class="card mt-14">
@@ -130,9 +171,11 @@
                     </div>
                     <div class="space-y-2 grid grid-cols-2 gap-2 items-center">
                         <a href="{{ route('editor.journals.pendingApproval') }}" class="flex items-center px-3 py-2 border bg-blue-600 text-white p-4 justify-center font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                            <i class="ph ph-users mr-2"></i>Assign Regional Reviewers
+                            <i class="ph ph-users mr-2"></i>View Pending Manuscripts
                         </a>
-                    
+                        <a href="{{ route('editor.journals.underPeerReview') }}" class="flex items-center px-3 py-2 border bg-green-600 text-white p-4 justify-center font-medium rounded-lg hover:bg-green-700 transition-colors">
+                            <i class="ph ph-eye mr-2"></i>Under Peer Review
+                        </a>
                     </div>
                 </div>
             </div>
